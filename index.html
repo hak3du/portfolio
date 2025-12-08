@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker Terminal - Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0f0;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            padding: 1rem 1.5rem;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #0f0;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: #0f0;
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(0, 255, 0, 0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #0f0;
+        }
+
+        .nav-links a:hover::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #0f0;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(0, 255, 0, 0.5);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #0f0;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Matrix Rain Canvas */
+        #matrix {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+        }
+
+        /* Scanlines */
+        .scanlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 0, 0.03) 2px,
+                rgba(0, 255, 0, 0.03) 4px
+            );
+            pointer-events: none;
+        }
+
+        /* Grid */
+        .grid-container {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200%;
+            height: 400px;
+            perspective: 600px;
+            perspective-origin: 50% 100%;
+        }
+
+        .grid {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transform: rotateX(75deg);
+            animation: gridMove 10s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: rotateX(75deg) translateY(0); }
+            100% { transform: rotateX(75deg) translateY(50%); }
+        }
+
+        .grid-line-h, .grid-line-v {
+            position: absolute;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 5px rgba(0, 255, 0, 0.1);
+        }
+
+        .grid-line-h {
+            left: 0;
+            right: 0;
+            border-width: 1px 0 0 0;
+        }
+
+        .grid-line-v {
+            top: 0;
+            bottom: 0;
+            border-width: 0 0 0 1px;
+        }
+
+        /* Terminal Windows */
+        .terminal-window {
+            position: absolute;
+            width: 280px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(0, 255, 0, 0.5);
+            backdrop-filter: blur(5px);
+            font-size: 11px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .terminal-window:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            z-index: 100;
+        }
+
+        .terminal-header {
+            background: rgba(0, 100, 0, 0.3);
+            border-bottom: 1px solid rgba(0, 255, 0, 0.5);
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: rgba(255, 0, 0, 0.7); }
+        .dot-yellow { background: rgba(255, 255, 0, 0.7); }
+        .dot-green { background: rgba(0, 255, 0, 0.7); }
+
+        .terminal-body {
+            padding: 12px;
+            color: #0f0;
+        }
+
+        .terminal-line {
+            margin-bottom: 4px;
+            color: rgba(0, 255, 0, 0.7);
+        }
+
+        /* Main Content */
+        .main-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 20;
+            max-width: 900px;
+            padding: 0 1rem;
+        }
+
+        .ascii-art {
+            color: #0f0;
+            font-size: 10px;
+            line-height: 1.2;
+            white-space: pre;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .glitch-title {
+            font-size: 2.5rem;
+            color: #0f0;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            margin-bottom: 1rem;
+            letter-spacing: 0.2em;
+            animation: fadeIn 1s 0.8s forwards;
+            opacity: 0;
+        }
+
+        .glitch-title.glitch {
+            animation: glitch 0.3s;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); text-shadow: 2px 2px #f0f, -2px -2px #0ff; }
+            40% { transform: translate(2px, -2px); text-shadow: -2px -2px #f0f, 2px 2px #0ff; }
+            60% { transform: translate(-2px, -2px); text-shadow: 2px -2px #f0f, -2px 2px #0ff; }
+            80% { transform: translate(2px, 2px); text-shadow: -2px 2px #f0f, 2px -2px #0ff; }
+        }
+
+        .subtitle {
+            color: rgba(0, 255, 0, 0.7);
+            letter-spacing: 0.3em;
+            margin-bottom: 2rem;
+            animation: fadeIn 1s 1.2s forwards;
+            opacity: 0;
+        }
+
+        .terminal-output {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            padding: 1.5rem;
+            text-align: left;
+            margin-bottom: 2rem;
+            animation: fadeIn 1s 1.5s forwards;
+            opacity: 0;
+        }
+
+        .output-line {
+            color: rgba(0, 255, 0, 0.9);
+            margin-bottom: 0.5rem;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: #0f0;
+            margin-left: 4px;
+            animation: blink 0.8s infinite;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            animation: fadeIn 1s 3.5s forwards;
+            opacity: 0;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 1px solid #0f0;
+            color: #0f0;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 255, 0, 0.1);
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+
+        .btn:hover::before {
+            transform: translateY(0);
+        }
+
+        .btn:hover {
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            transform: scale(1.05);
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Floating Code */
+        .floating-code {
+            position: absolute;
+            font-size: 11px;
+            color: rgba(0, 255, 0, 0.4);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Additional Content */
+        .content-section {
+            position: relative;
+            z-index: 10;
+            padding: 8rem 2rem;
+            min-height: 100vh;
+        }
+
+        .content-box {
+            max-width: 1000px;
+            margin: 0 auto;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .glitch-title {
+                font-size: 1.5rem;
+            }
+
+            .ascii-art {
+                font-size: 6px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .terminal-window {
+                width: 220px;
+                font-size: 9px;
+            }
+        }
+
+        /* Vignette */
+        .vignette {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle, transparent 0%, transparent 50%, rgba(0, 0, 0, 0.6) 100%);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-content">
+                <div class="nav-logo">
+                    <span>Thabang Tony Ngoepe</span>
+                    <span class="cursor"></span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home">./home</a></li>
+                    <li><a href="#projects">./projects</a></li>
+                    <li><a href="#skills">./skills</a></li>
+                    <li><a href="#contact">./contact</a></li>
+                </ul>
+                <div class="status">
+                    <div class="status-dot"></div>
+                    <span>ONLINE</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <!-- Matrix Rain -->
+        <canvas id="matrix"></canvas>
+
+        <!-- Scanlines -->
+        <div class="scanlines"></div>
+
+        <!-- Grid -->
+        <div class="grid-container">
+            <div class="grid" id="grid"></div>
+        </div>
+
+        <!-- Terminal Windows -->
+        <div class="terminal-window" id="terminal1" style="left: 10%; top: 20%;">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <div class="dot dot-red"></div>
+                    <div class="dot dot-yellow"></div>
+                    <div class="dot dot-green"></div>
+                </div>
+                <span style="color: rgba(0, 255, 0, 0.7);">terminal</span>
+            </div>
+            <div class="terminal-body">
+                <div><span style="color: #0f0;">$</span> cat /etc/profile</div>
+            </div>
+        </div>
+
+        <div class="terminal-window" id="terminal2" style="left: 70%; top: 60%;">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <div class="dot dot-red"></div>
+                    <div class="dot dot-yellow"></div>
+                    <div class="dot dot-green"></div>
+                </div>
+                <span style="color: rgba(0, 255, 0, 0.7);">terminal</span>
+            </div>
+            <div class="terminal-body">
+                <div><span style="color: #0f0;">$</span> ps aux | grep node</div>
+            </div>
+        </div>
+
+        <div class="terminal-window" id="terminal3" style="left: 80%; top: 25%;">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <div class="dot dot-red"></div>
+                    <div class="dot dot-yellow"></div>
+                    <div class="dot dot-green"></div>
+                </div>
+                <span style="color: rgba(0, 255, 0, 0.7);">terminal</span>
+            </div>
+            <div class="terminal-body">
+                <div><span style="color: #0f0;">$</span> netstat -an</div>
+            </div>
+        </div>
+
+        <!-- Floating Code -->
+        <div class="floating-code" style="left: 15%; top: 35%;">
+            function hack() {<br>
+            &nbsp;&nbsp;return 0x1337;<br>
+            }
+        </div>
+
+        <div class="floating-code" style="left: 75%; top: 45%; animation-delay: 1.5s;">
+            const init = () => {<br>
+            &nbsp;&nbsp;console.log('>');<br>
+            }
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- ASCII Art -->
+            <div class="ascii-art">
+ ██░ ██  ▄▄▄       ▄████▄   ██ ▄█▀▓█████  ██▀███  
+▓██░ ██▒▒████▄    ▒██▀ ▀█   ██▄█▒ ▓█   ▀ ▓██ ▒ ██▒
+▒██▀▀██░▒██  ▀█▄  ▒▓█    ▄ ▓███▄░ ▒███   ▓██ ░▄█ ▒
+░▓█ ░██ ░██▄▄▄▄██ ▒▓▓▄ ▄██▒▓██ █▄ ▒▓█  ▄ ▒██▀▀█▄  
+░▓█▒░██▓ ▓█   ▓██▒▒ ▓███▀ ░▒██▒ █▄░▒████▒░██▓ ▒██▒
+ ▒ ░░▒░▒ ▒▒   ▓▒█░░ ░▒ ▒  ░▒ ▒▒ ▓▒░░ ▒░ ░░ ▒▓ ░▒▓░
+ ▒ ░▒░ ░  ▒   ▒▒ ░  ░  ▒   ░ ░▒ ▒░ ░ ░  ░  ░▒ ░ ▒░
+ ░  ░░ ░  ░   ▒   ░        ░ ░░ ░    ░     ░░   ░ 
+ ░  ░  ░      ░  ░░ ░      ░  ░      ░  ░   ░     
+            </div>
+
+            <!-- Glitch Title -->
+            <h1 class="glitch-title" id="glitchTitle">>> SYSTEM ACCESS GRANTED <<</h1>
+
+            <!-- Subtitle -->
+            <p class="subtitle">[ CREATIVE DEVELOPER | DIGITAL ARCHITECT ]</p>
+
+            <!-- Terminal Output -->
+            <div class="terminal-output">
+                <div class="output-line" id="line1"></div>
+                <div class="output-line" id="line2"></div>
+                <div class="output-line" id="line3"></div>
+                <div class="output-line" id="line4"></div>
+                <div class="output-line" id="line5"></div>
+                <div style="margin-top: 1rem;">
+                    <span style="color: #0f0;">$</span>
+                    <span class="typing-cursor" id="finalCursor" style="display: none;"></span>
+                </div>
+            </div>
+
+            <!-- CTA Buttons -->
+            <div class="cta-buttons">
+                <button class="btn">
+                    <span>> Download CV</span>
+                </button>
+                <button class="btn">
+                    <span>> cat contact.txt</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Vignette -->
+        <div class="vignette"></div>
+    </section>
+
+    <!-- Additional Content -->
+    <section class="content-section">
+        <div class="content-box">
+            <p style="color: #0f0;">> system.continue()</p>
+            <p style="color: rgba(0, 255, 0, 0.7); margin-top: 1rem;">
+                // Scroll to experience the parallax depth<br>
+                // Move cursor to interact with the terminal environment
+            </p>
+        </div>
+    </section>
+
+    <script>
+        // Matrix Rain Effect
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+        const fontSize = 14;
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = Array(columns).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const char = chars[Math.floor(Math.random() * chars.length)];
+                const x = i * fontSize;
+                const y = drops[i] * fontSize;
+
+                const brightness = Math.random();
+                if (brightness > 0.975) {
+                    ctx.fillStyle = '#fff';
+                } else if (brightness > 0.95) {
+                    ctx.fillStyle = '#0f0';
+                } else {
+                    ctx.fillStyle = '#0a0';
+                }
+
+                ctx.fillText(char, x, y);
+
+                if (y > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 33);
+
+        // Resize canvas on window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Generate Grid Lines
+        const grid = document.getElementById('grid');
+        for (let i = 0; i < 20; i++) {
+            const hLine = document.createElement('div');
+            hLine.className = 'grid-line-h';
+            hLine.style.top = (i * 10) + '%';
+            grid.appendChild(hLine);
+
+            const vLine = document.createElement('div');
+            vLine.className = 'grid-line-v';
+            vLine.style.left = (i * 10) + '%';
+            grid.appendChild(vLine);
+        }
+
+        // Glitch Effect
+        const glitchTitle = document.getElementById('glitchTitle');
+        setInterval(() => {
+            glitchTitle.classList.add('glitch');
+            setTimeout(() => {
+                glitchTitle.classList.remove('glitch');
+            }, 100);
+        }, 3000);
+
+        // Typing Effect
+        const lines = [
+            { id: 'line1', text: '$ whoami', delay: 1500 },
+            { id: 'line2', text: '> Full Stack Developer | Creative Coder', delay: 2000 },
+            { id: 'line3', text: '$ cat skills.txt', delay: 2500 },
+            { id: 'line4', text: '> React | Node.js | TypeScript | AI/ML', delay: 3000 }
+        ];
+
+        function typeText(element, text, delay) {
+            setTimeout(() => {
+                let i = 0;
+                const interval = setInterval(() => {
+                    if (i < text.length) {
+                        element.textContent += text[i];
+                        i++;
+                    } else {
+                        clearInterval(interval);
+                    }
+                }, 50);
+            }, delay);
+        }
+
+        lines.forEach(line => {
+            const element = document.getElementById(line.id);
+            typeText(element, line.text, line.delay);
+        });
+
+        // Show final cursor
+        setTimeout(() => {
+            document.getElementById('finalCursor').style.display = 'inline-block';
+        }, 3500);
+
+        // Terminal Window Hover Effect
+        const terminals = document.querySelectorAll('.terminal-window');
+        terminals.forEach((terminal, index) => {
+            terminal.addEventListener('mouseenter', function() {
+                const body = this.querySelector('.terminal-body');
+                const output = [
+                    'Initializing...',
+                    'Loading modules...',
+                    'Process running...',
+                    '[OK] Complete'
+                ];
+                
+                // Clear existing content
+                body.innerHTML = '<div><span style="color: #0f0;">$</span> ' + body.textContent.split('$')[1] + '</div>';
+                
+                // Add output lines
+                output.forEach((line, i) => {
+                    setTimeout(() => {
+                        const div = document.createElement('div');
+                        div.className = 'terminal-line';
+                        div.textContent = line;
+                        body.appendChild(div);
+                    }, i * 200);
+                });
+            });
+        });
+
+        // Parallax Effect
+        let mouseX = 0;
+        let mouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+
+            terminals.forEach((terminal, index) => {
+                const speed = 20 + (index * 10);
+                terminal.style.transform = `translate(${mouseX * speed}px, ${mouseY * speed}px)`;
+            });
+
+            const floatingCodes = document.querySelectorAll('.floating-code');
+            floatingCodes.forEach((code, index) => {
+                const speed = 10 + (index * 5);
+                code.style.transform = `translate(${mouseX * speed}px, ${mouseY * speed}px)`;
+            });
+        });
+
+        // Scroll Parallax
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            canvas.style.transform = `translateY(${scrolled * 0.5}px)`;
+            document.querySelector('.grid-container').style.transform = `translateX(-50%) translateY(${scrolled * 0.3}px)`;
+        });
+    </script>
+</body>
+</html>

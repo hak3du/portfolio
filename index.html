@@ -1351,27 +1351,74 @@
                 cursorLight.style.setProperty('--ttn-y', e.clientY + 'px');
             });
 
-            // Canvas Mist
-            const canvas = wrapper.querySelector('#ttn-code-canvas');
-            const ctx = canvas.getContext('2d');
-            let width, height, particles = [];
-            const chars = "01ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz{}[]<>|/\\^";
-            function resizeCanvas() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
-            window.addEventListener('resize', resizeCanvas); resizeCanvas();
-            class Particle {
-                constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.speed = Math.random() * 2 + 1; this.char = chars[Math.floor(Math.random() * chars.length)]; this.size = Math.floor(Math.random() * 14 + 10); this.opacity = Math.random() * 0.5 + 0.1; }
-                update() { this.y += this.speed; if (this.y > height) { this.y = -20; this.x = Math.random() * width; this.char = chars[Math.floor(Math.random() * chars.length)]; } }
-                draw(color) { ctx.fillStyle = color; ctx.globalAlpha = this.opacity; ctx.font = `${this.size}px monospace`; ctx.fillText(this.char, this.x, this.y); ctx.globalAlpha = 1.0; }
+  // --- ISO IMAGE TOWER MODULE ---
+
+const towerGroup = new THREE.Group();
+
+// 1. LOAD YOUR TEXTURES
+// Replace these URLs with your own images (e.g., architectural photos, blueprints, or code screenshots)
+const textureLoader = new THREE.TextureLoader();
+const textures = [
+    textureLoader.load('https://picsum.photos/seed/arch/512/512'), // Texture A
+    textureLoader.load('https://picsum.photos/seed/tech/512/512'), // Texture B
+    textureLoader.load('https://picsum.photos/seed/structure/512/512') // Texture C
+];
+
+// 2. CONFIGURATION
+const blockSize = 25;      // Size of each cube
+const gridSize = 6;        // How wide the city is (6x6)
+const maxHeight = 10;      // How high the towers can stack
+
+// 3. GENERATE THE CITY
+for (let x = -gridSize; x <= gridSize; x++) {
+    for (let z = -gridSize; z <= gridSize; z++) {
+        
+        // Randomize height for this specific column
+        // (Math.random() > 0.3) creates empty spaces, making it look like a skyline
+        const stackHeight = Math.floor(Math.random() * maxHeight);
+        
+        if (stackHeight > 0) {
+            // Pick a random texture for this column
+            const randomTex = textures[Math.floor(Math.random() * textures.length)];
+
+            const geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
+            const material = new THREE.MeshStandardMaterial({ 
+                map: randomTex,
+                roughness: 0.4,
+                metalness: 0.6
+            });
+
+            for (let y = 0; y < stackHeight; y++) {
+                const cube = new THREE.Mesh(geometry, material);
+                
+                // Position the cube
+                cube.position.set(x * blockSize, y * blockSize, z * blockSize);
+                
+                // Add subtle variation to scale for realism
+                const scale = 0.95 + Math.random() * 0.1;
+                cube.scale.set(scale, scale, scale);
+
+                towerGroup.add(cube);
             }
-            for(let i=0; i<100; i++) particles.push(new Particle());
-            function animateMist() {
-                ctx.clearRect(0, 0, width, height);
-                const isTech = wrapper.classList.contains('tech-mode');
-                const color = isTech ? 'rgba(6, 182, 212, 1)' : 'rgba(197, 160, 89, 1)';
-                particles.forEach(p => { p.update(); p.draw(color); });
-                requestAnimationFrame(animateMist);
-            }
-            animateMist();
+        }
+    }
+}
+
+// 4. POSITION & ROTATE FOR ISO VIEW
+// We rotate the group, not the camera, so your hero sphere stays in front
+towerGroup.rotation.x = Math.PI / 4; // 45 degrees
+towerGroup.rotation.z = Math.PI / 4; // 45 degrees
+
+// Move it into the background (behind your main sphere)
+towerGroup.position.set(0, -200, -1200); 
+
+scene.add(towerGroup);
+
+// 5. ADD LIGHTING SO IMAGES ARE VISIBLE
+// Standard material needs light to show the image
+const towerLight = new THREE.DirectionalLight(0xffffff, 1.5);
+towerLight.position.set(200, 500, 200);
+scene.add(towerLight);
 
             // Voice Player (Global Scope)
             window.ttnToggleVoice = function(id) {

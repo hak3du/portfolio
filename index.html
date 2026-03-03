@@ -1,856 +1,1264 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#030303">
+    <title>HACK U | Secure Architect & Full-Stack Developer</title>
     
-    <!-- SEO Meta Tags -->
-    <title>HPE Developer Portal | Enterprise API Architecture</title>
-    <meta name="description" content="Access HPE enterprise-grade APIs. Build secure, scalable applications with our interactive developer console, documentation, and real-time media demos.">
-    <meta name="keywords" content="HPE API, Enterprise Architecture, Cloud Computing, Developer Portal, Edge Computing, REST API">
-    <meta name="author" content="Hewlett Packard Enterprise">
-    <meta name="robots" content="index, follow">
-    
-    <!-- Open Graph / Social Sharing -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="HPE Developer Portal">
-    <meta property="og:description" content="Architecting the secure, high-performance edge-to-cloud ecosystem for the modern enterprise.">
-    <meta property="og:image" content="https://images.pexels.com/photos/2582937/pexels-photo-2582937.jpeg">
-    <meta property="og:url" content="https://developer.hpe.com">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="HPE Developer Portal">
-    <meta name="twitter:description" content="Build the future with HPE APIs. Try our interactive console.">
-    
-    <!-- Favicon (Placeholder) -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%2240%22 height=%22100%25%22 fill=%22%2301A982%22/><rect x=%2260%22 width=%2240%22 height=%22100%25%22 fill=%22%2301A982%22 fill-opacity=%22.6%22/></svg>">
-
-    <!-- Google Fonts -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    
-    <!-- Structured Data (JSON-LD) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "HPE Developer Portal",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "Web",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "description": "Official developer portal for Hewlett Packard Enterprise APIs."
-    }
-    </script>
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Three.js Import Map -->
+    <script type="importmap">{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }</script>
+
     <style>
+        /* --- MATHEMATICAL FOUNDATION (PYTHAGOREAN TRITONE) --- */
         :root {
-            /* Brand Colors */
-            --hpe-green: #01A982;
-            --hpe-green-dark: #008c6c;
-            --bg-dark: #0f1215;
-            --bg-card: rgba(30, 35, 45, 0.6);
-            --text-main: #ffffff;
-            --text-muted: #9ca3af;
+            /* The Tritone Ratio: sqrt(2) approx 1.4142 */
+            --tritone: 1.41421356;
             
-            /* Motion & Transitions */
-            --ease-elastic: cubic-bezier(0.16, 1, 0.3, 1); 
-            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1); 
+            /* Base Unit (Relative to viewport/root) */
+            --base: clamp(0.8rem, 2vw, 1.2rem);
+            
+            /* Geometric Scale based on Tritone */
+            --space-1: var(--base); /* 1.0 */
+            --space-2: calc(var(--space-1) * var(--tritone)); /* ~1.41 */
+            --space-3: calc(var(--space-2) * var(--tritone)); /* 2.0 */
+            --space-4: calc(var(--space-3) * var(--tritone)); /* ~2.82 */
+            --space-5: calc(var(--space-4) * var(--tritone)); /* 4.0 */
+
+            /* Color Palette */
+            --bg-void: #030303;
+            --text-main: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.7);
+            --accent: #6366f1; /* Indigo 500 */
+            --accent-glow: #818cf8; /* Indigo 400 */
+            
+            /* Materials */
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            
+            /* Typography */
+            --font-display: 'Syncopate', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            
+            /* Easing */
+            --ease-elastic: cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        /* --- RESET & BASE --- */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { scroll-behavior: smooth; font-size: 100%; }
+        
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
+            background-color: var(--bg-void);
             color: var(--text-main);
-            overflow-x: hidden;
+            font-family: var(--font-body);
+            overflow-x: hidden; 
             -webkit-font-smoothing: antialiased;
-            overflow-y: hidden; 
+            cursor: none; 
         }
 
-        body.loaded {
-            overflow-y: auto;
+        /* OPTIMIZATION: Force GPU compositing */
+        .tilt-target, .hero-grid, .intro-module, .edu-card, .project-dossier {
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+            will-change: transform; 
         }
 
-        /* --- ANIMATED INTRO --- */
-        #intro-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100vh;
-            background: #000;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        a { text-decoration: none; color: inherit; cursor: none; }
+        button { cursor: none; border: none; background: none; font-family: inherit; }
+
+        /* Hide Custom Cursor on Touch Devices */
+        @media (hover: none) and (pointer: coarse) {
+            * { cursor: auto !important; }
+            .cursor-spot, .cursor-dot { display: none !important; }
+        }
+
+        /* --- BACKGROUND LAYERS --- */
+        #main-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            z-index: -2; opacity: 0.25; 
+            transition: background-image 1.5s ease-in-out;
             pointer-events: none;
+            will-change: background-image;
+        }
+        
+        #three-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; pointer-events: none;
         }
 
-        .intro-curtain {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 0%;
-            background: var(--hpe-green);
-            z-index: 10000;
-            transition: height 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+        /* --- CURSOR SYSTEM --- */
+        .cursor-spot {
+            position: fixed; top: 0; left: 0; width: 40vw; height: 40vw; 
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none; z-index: 9999;
+            transform: translate3d(-50%, -50%, 0); 
+            mix-blend-mode: screen;
+            transition: width 0.3s, height 0.3s;
+            will-change: transform, left, top;
+        }
+        .cursor-dot {
+            position: fixed; top: 0; left: 0; width: 6px; height: 6px; 
+            background: var(--text-main); border-radius: 50%; pointer-events: none; 
+            z-index: 10000; 
+            transform: translate3d(-50%, -50%, 0); 
+            mix-blend-mode: difference;
+            will-change: transform, left, top;
         }
 
-        .intro-logo {
-            opacity: 0;
-            transform: scale(0.8);
-            transition: all 0.8s ease;
+        /* --- LAYOUT UTILITIES --- */
+        .container {
+            width: 90%; max-width: 1400px; margin: 0 auto;
+            padding-block: var(--space-4);
+            position: relative; z-index: 2;
         }
+
+        /* --- START OVERLAY --- */
+        #start-overlay {
+            position: fixed; inset: 0; background: #000; z-index: 100000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1s var(--ease-elastic);
+        }
+        #start-overlay.hidden { opacity: 0; pointer-events: none; }
+        
+        .init-btn {
+            padding: var(--space-2) var(--space-4);
+            font-family: var(--font-display); color: var(--accent-glow);
+            border: 1px solid var(--accent-glow);
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            letter-spacing: 0.2em; text-transform: uppercase;
+            transition: all 0.4s ease;
+            position: relative; overflow: hidden;
+        }
+        .init-btn:hover {
+            background: var(--accent-glow); color: #000;
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+        }
+        .loader-text {
+            margin-top: var(--space-2); font-family: monospace; 
+            font-size: 0.8rem; color: #444; letter-spacing: 0.1em;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 50% { opacity: 0.4; } }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%; 
+            padding: var(--space-2) 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; 
+            background: rgba(3, 3, 3, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            mix-blend-mode: exclusion;
+        }
+        .nav-logo { 
+            font-family: var(--font-display); font-weight: 700; 
+            font-size: var(--space-2); letter-spacing: 2px; pointer-events: auto; 
+        }
+        .nav-links { display: flex; gap: var(--space-3); list-style: none; }
+        .nav-link { 
+            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; 
+            position: relative; padding: 0.5rem; pointer-events: auto;
+        }
+        .nav-link::after {
+            content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 1px;
+            background: var(--accent-glow); transition: 0.3s var(--ease-elastic);
+            transform: translateX(-50%);
+        }
+        .nav-link:hover { color: var(--accent-glow); }
+        .nav-link:hover::after { width: 100%; }
+
+        .menu-toggle { display: none; pointer-events: auto; color: white; font-size: 1.5rem; }
 
         /* --- HERO SECTION --- */
-        .parallax-wrapper {
-            position: relative;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
+        .hero {
+            min-height: 100vh; position: relative; display: flex; align-items: center; justify-content: center;
+            perspective: 1200px; overflow: hidden;
+            padding-bottom: var(--space-4);
+        }
+
+        .hero-grid {
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            width: 100%; max-width: 1400px;
+            gap: var(--space-4);
             align-items: center;
-            justify-content: center;
-            perspective: 1000px; 
         }
 
-        .hero-bg {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 110%;
-            background-size: cover;
-            background-position: center;
-            z-index: -3;
-            opacity: 0;
-            transition: opacity 1.5s ease-in-out; 
-            filter: brightness(0.4) saturate(1.1);
-            will-change: opacity, transform;
+        .hero-text h1 {
+            font-family: var(--font-display); font-size: clamp(2rem, 6vw, 5rem);
+            line-height: 0.95; text-transform: uppercase; letter-spacing: -0.03em;
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: var(--space-2);
+            word-wrap: break-word;
+        }
+        .hero-text p {
+            font-size: clamp(0.9rem, 2vw, 1.1rem); color: var(--text-dim);
+            max-width: 600px; line-height: 1.6; letter-spacing: 0.02em;
+        }
+        
+        .hero-visual {
+            position: relative;
+            display: flex; align-items: center; justify-content: center;
+            width: 100%;
+            aspect-ratio: 1 / 1; 
+            max-width: 500px; 
+            width: 100%; 
+            margin: 0 auto;
         }
 
-        .hero-bg.active { opacity: 1; }
-
-        .hero-video-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover;
-            opacity: 0.1;
-            mix-blend-mode: overlay;
-            z-index: -2;
+        .profile-ring {
+            position: absolute; inset: -4%; border: 1px solid var(--glass-border);
+            border-radius: 50%; animation: spin 20s linear infinite;
             pointer-events: none;
         }
-
-        .hero-gradient {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, transparent 0%, var(--bg-dark) 90%);
-            z-index: -1;
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        .profile-img {
+            width: 100%; height: 100%; 
+            object-fit: cover; 
+            border-radius: 50%;
+            transition: 0.5s ease;
         }
+        .hero-visual:hover .profile-img { transform: scale(1.03); }
 
-        .hero-content {
-            text-align: center;
-            z-index: 10;
-            max-width: 900px;
-            padding: 0 20px;
-            will-change: transform, opacity;
-            backface-visibility: hidden;
-            -webkit-font-smoothing: subpixel-antialiased;
-            transform: translate3d(0,0,0);
-        }
-
-        .hero-title {
-            font-size: clamp(2.5rem, 5vw, 5rem);
-            line-height: 1.1;
-            font-weight: 700;
-            margin-bottom: 24px;
-            letter-spacing: -1px;
-            opacity: 0; 
-            transform: translateY(30px);
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5); 
-        }
-
-        .hero-title span { color: var(--hpe-green); display: inline-block; }
-
-        .hero-subtitle {
-            font-size: clamp(1rem, 2vw, 1.25rem);
-            color: var(--text-muted);
-            margin-bottom: 40px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        /* --- BUTTONS --- */
-        .btn-group {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        .btn {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 14px 32px; /* Larger touch targets for mobile */
-            font-size: 1rem; /* Readable size */
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: transform 0.2s var(--ease-elastic), box-shadow 0.3s ease, background-color 0.3s ease;
-            cursor: pointer;
-            overflow: hidden;
-            border: none;
-            min-height: 48px; /* Accessibility minimum height */
-        }
-
-        .btn:active { transform: scale(0.96); }
-
-        .btn-primary {
-            background-color: var(--hpe-green);
-            color: white;
-            box-shadow: 0 4px 15px rgba(1, 169, 130, 0.3);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--hpe-green-dark);
-            box-shadow: 0 8px 25px rgba(1, 169, 130, 0.5);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background-color: rgba(255,255,255,0.05);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-secondary:hover {
-            background-color: rgba(255,255,255,0.1);
-            border-color: white;
-            transform: translateY(-2px);
-        }
-
-        /* --- NAVIGATION (Mobile & Desktop) --- */
-        header {
-            position: fixed;
-            top: 0; width: 100%; z-index: 1000;
-            padding: 15px 5%;
-            background: rgba(15, 18, 21, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-weight: 700; font-size: 1.25rem; color: white; 
-            display: flex; align-items: center; gap: 10px;
-            text-decoration: none; /* Make logo clickable */
-        }
-
-        /* Desktop Nav */
-        nav {
-            display: flex;
-            align-items: center;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: #9ca3af; text-decoration: none; font-size: 0.9rem; 
-            transition: color 0.3s;
-            white-space: nowrap;
-        }
-
-        .nav-links a:hover, .nav-links a.active { color: var(--hpe-green); }
-
-        /* Mobile Hamburger */
-        .hamburger {
-            display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-            z-index: 1002;
-        }
-
-        .hamburger span {
-            display: block;
-            width: 25px;
-            height: 2px;
-            background: white;
-            margin: 5px 0;
-            transition: 0.3s;
-        }
-
-        /* --- SECTIONS --- */
-        main { position: relative; z-index: 5; }
-        section { padding: 80px 5%; position: relative; } /* Reduced padding for mobile */
-
-        .section-label {
-            color: var(--hpe-green);
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            margin-bottom: 16px;
-            display: block;
-        }
-
-        .section-header { margin-bottom: 40px; max-width: 800px; } /* Tighter spacing */
-
-        .section-header h2 {
-            font-size: clamp(1.8rem, 4vw, 2.8rem);
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
-
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-
-        .feature-card {
-            background: var(--bg-card);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 12px;
-            padding: 30px; /* Slightly less padding on mobile */
+        /* --- INTRO (UPDATED) --- */
+        .intro-module {
+            background: var(--glass); border: 1px solid var(--glass-border);
             backdrop-filter: blur(20px);
-            transition: all 0.5s var(--ease-smooth);
-            opacity: 0;
-            transform: translateY(30px);
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            min-height: 60vh; 
         }
 
-        .feature-card.visible { opacity: 1; transform: translateY(0); }
-
-        .feature-card:hover {
-            transform: translateY(-5px); /* Less movement on hover */
-            background: rgba(30, 35, 45, 0.8);
-            border-color: var(--hpe-green);
-        }
-
-        .feature-icon {
-            width: 48px; height: 48px;
-            background: linear-gradient(135deg, rgba(1, 169, 130, 0.2), rgba(1, 169, 130, 0.05));
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--hpe-green); margin-bottom: 20px; font-size: 1.5rem;
-        }
-
-        /* --- MEDIA & API --- */
-        .media-section { background: #0a0c0e; overflow: hidden; }
-        .media-container { display: grid; grid-template-columns: 1fr; gap: 40px; align-items: center; }
-        
-        .video-box {
-            position: relative; border-radius: 16px; overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            /* Remove 3D tilt on mobile for better performance/usability */
-        }
-        
-        @media (min-width: 901px) {
-            .media-container { grid-template-columns: 1fr 1fr; }
-            .video-box {
-                transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
-                transition: transform 0.5s var(--ease-elastic);
-            }
-            .video-box:hover { transform: perspective(1000px) rotateY(0) rotateX(0); }
-        }
-
-        video { width: 100%; display: block; opacity: 0.85; }
-
-        .api-wrapper { perspective: 1500px; }
-        .api-console {
-            background: rgba(13, 17, 23, 0.95); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px; display: grid; 
-            /* Stack vertically on mobile */
-            grid-template-columns: 1fr; 
-            min-height: auto;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-            transform-style: preserve-3d; transition: transform 0.1s ease-out;
+        .intro-visual {
+            position: relative; border-right: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.4);
+            min-height: 40vh; 
             overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
         }
-
-        /* Desktop console layout */
-        @media (min-width: 901px) {
-            .api-console { grid-template-columns: 40% 60%; min-height: 500px; }
-        }
-
-        .console-left { padding: 30px; }
-        @media (min-width: 901px) { .console-left { border-right: 1px solid rgba(255,255,255,0.05); } }
         
-        .console-right { background: #000; padding: 30px; font-family: 'JetBrains Mono', monospace; overflow-y: auto; min-height: 300px; }
-        
-        .input-group { margin-bottom: 20px; }
-        .input-label { display: block; color: var(--text-muted); font-size: 0.8rem; margin-bottom: 8px; text-transform: uppercase; }
-        .styled-select, .styled-input, .styled-textarea {
-            width: 100%; background: #161b22; border: 1px solid #30363d;
-            color: #fff; padding: 12px; border-radius: 6px;
-            font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; transition: border-color 0.3s;
+        /* Content Containers */
+        .intro-media-item {
+            position: absolute; inset: 0; opacity: 0; transition: opacity 0.5s ease;
+            width: 100%; height: 100%; object-fit: cover;
+            display: flex; align-items: center; justify-content: center;
         }
-        .styled-select:focus, .styled-input:focus { outline: none; border-color: var(--hpe-green); }
+        .intro-media-item.active { opacity: 1; position: relative; }
 
-        /* Syntax */
-        .json-key { color: #79c0ff; }
-        .json-string { color: #a5d6ff; }
-        .json-number { color: #d2a8ff; }
-        .json-boolean { color: #ff7b72; }
+        .intro-video-container { width: 100%; height: 100%; }
+        iframe { width: 100%; height: 100%; border: none; object-fit: cover; }
 
-        /* --- FOOTER --- */
-        footer { border-top: 1px solid rgba(255,255,255,0.05); padding: 60px 5% 30px; background: #050608; }
-        .footer-grid { display: grid; grid-template-columns: 1fr; gap: 40px; margin-bottom: 40px; }
-        @media (min-width: 768px) { .footer-grid { grid-template-columns: 1fr 2fr; gap: 60px; margin-bottom: 60px; } }
+        .intro-profile-img-wrap {
+            width: 300px; height: 300px; max-width: 80%;
+            border-radius: 50%; overflow: hidden; border: 2px solid var(--accent-glow);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+        }
+        .intro-profile-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- MOBILE SPECIFIC MEDIA QUERIES --- */
+        .intro-words-visual {
+            width: 100%; height: 100%;
+            background: url('https://picsum.photos/seed/typography/1200/800') center/cover;
+            filter: grayscale(100%) contrast(1.2);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .intro-words-visual::after {
+            content: 'WORDS';
+            font-family: var(--font-display);
+            font-size: 5rem; opacity: 0.1; font-weight: 700; color: white;
+        }
+
+        /* --- TAB DESIGN --- */
+        .tab-dock {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 10px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        .glass-btn {
+            position: relative;
+            padding: 12px 24px;
+            font-family: var(--font-display);
+            font-size: 0.85rem; 
+            font-weight: 600; 
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: all 0.3s var(--ease-elastic);
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .glass-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: 0.5s;
+        }
+        .glass-btn:hover::before { left: 100%; }
+
+        .glass-btn:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .glass-btn.active {
+            color: var(--accent-glow);
+            background: rgba(99, 102, 241, 0.15);
+            border-color: var(--accent-glow);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+            pointer-events: none; 
+        }
+
+
+        .intro-content { padding: var(--space-4); display: flex; flex-direction: column; justify-content: center; }
+        .intro-body { font-size: clamp(1rem, 1.5vw, 1.25rem); line-height: 1.7; color: #ccc; margin-bottom: var(--space-3); }
+        
+        .bio-list { list-style: none; margin-bottom: var(--space-3); }
+        .bio-list li { margin-bottom: var(--space-1); display: flex; justify-content: space-between; border-bottom: 1px solid var(--glass-border); padding-bottom: 5px; }
+        .bio-label { color: var(--accent-glow); font-family: var(--font-display); font-size: 0.8rem; }
+        
+        .tag-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: var(--space-2); }
+        .tag {
+            font-family: var(--font-display); font-size: 0.65rem; padding: 0.3rem 0.8rem;
+            border: 1px solid var(--accent); color: var(--accent-glow); text-transform: uppercase;
+        }
+
+        /* --- EDUCATION (RESTORED TABS) --- */
+        .edu-grid { display: flex; flex-direction: column; gap: var(--space-5); padding-bottom: var(--space-5); }
+        
+        .edu-card {
+            display: grid; grid-template-columns: 1fr 1fr;
+            background: var(--glass); border: 1px solid var(--glass-border);
+            min-height: auto; height: 100%;
+            overflow: hidden; 
+        }
+        
+        .edu-visual-area { 
+            background: #000; position: relative; 
+            border-right: 1px solid var(--glass-border); overflow: hidden; 
+            min-height: 40vh; 
+            display: flex; flex-direction: column;
+        }
+        
+        .edu-content-wrapper {
+            position: absolute; inset: 0;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s;
+            width: 100%; height: 100%;
+        }
+        .edu-content-wrapper.active { opacity: 1; visibility: visible; position: relative; }
+
+        /* --- UPDATED: CLEAN DATA LOG STYLE (Instead of harsh Terminal) --- */
+        .data-log-window {
+            padding: var(--space-3); 
+            font-family: 'Inter', monospace; 
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            color: #d1d5db; /* Lighter grey, easier on eyes */
+            height: 100%; 
+            overflow-y: auto; line-height: 1.6;
+            /* Cleaner, less "hacker" background */
+            background: rgba(15, 23, 42, 0.6); /* Deep Indigo Slate */
+            border-left: 2px solid var(--accent-glow);
+            backdrop-filter: blur(8px);
+            position: relative;
+        }
+        
+        .log-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: var(--space-3);
+            padding-bottom: var(--space-1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .log-id { color: var(--accent-glow); font-weight: 600; font-size: 0.8rem; letter-spacing: 1px; }
+        .log-status { font-size: 0.7rem; color: #22c55e; background: rgba(34, 197, 94, 0.1); padding: 2px 6px; border-radius: 2px; }
+
+        .log-title { 
+            color: #ffffff; 
+            font-family: var(--font-display); 
+            font-size: 1.2rem; 
+            margin-bottom: var(--space-2);
+        }
+        
+        .log-content-text { color: #94a3b8; font-family: var(--font-body); /* Sans serif for body text inside log */ }
+        .log-content-text strong { color: #fff; }
+
+        .play-log-btn {
+            position: absolute; top: 15px; right: 15px; 
+            background: var(--bg-void); border: 1px solid var(--accent-glow); 
+            color: var(--accent-glow); padding: 6px 12px; 
+            font-family: var(--font-display); font-size: 0.65rem; 
+            text-transform: uppercase; letter-spacing: 1px;
+            z-index: 10; cursor: none; 
+            display: flex; align-items: center; gap: 6px;
+            border-radius: 4px; transition: 0.3s;
+        }
+        .play-log-btn:hover { background: var(--accent-glow); color: #000; }
+
+        /* 2. VIDEO */
+        .video-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #000; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* 3. VISUALS GRID */
+        .visuals-grid { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 2px; height: 100%; width: 100%; 
+        }
+        .visual-img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
+        .visual-img:hover { opacity: 0.8; }
+
+        /* Edu Info */
+        .edu-info { padding: var(--space-4); display: flex; flex-direction: column; justify-content: center; }
+        .edu-year { color: var(--accent-glow); font-family: var(--font-display); font-size: 0.8rem; margin-bottom: 0.5rem; }
+        .edu-school { font-size: clamp(1.5rem, 3vw, 2.2rem); font-family: var(--font-display); margin-bottom: var(--space-2); line-height: 1; }
+        
+        /* Edu Tabs */
+        .edu-tab-container {
+            margin-top: var(--space-3); 
+            border-top: 1px solid var(--glass-border); 
+            padding-top: var(--space-3);
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+
+        /* --- PROJECTS --- */
+        .project-list { display: flex; flex-direction: column; gap: var(--space-5); padding-bottom: var(--space-5); }
+        .project-dossier {
+            display: grid; grid-template-columns: 2fr 3fr; 
+            background: var(--glass); border: 1px solid var(--glass-border);
+            min-height: 60vh; position: relative; overflow: hidden;
+        }
+        .project-dossier:hover { border-color: var(--accent); }
+        
+        .project-img-wrap { position: relative; overflow: hidden; height: 100%; }
+        .project-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s var(--ease-elastic); filter: grayscale(100%); }
+        .project-dossier:hover .project-img-wrap img { transform: scale(1.05); filter: grayscale(0%); }
+        
+        .project-data { padding: var(--space-4); display: flex; flex-direction: column; justify-content: center; }
+        .p-title { font-size: clamp(1.5rem, 3vw, 2.5rem); font-family: var(--font-display); margin-bottom: 0.5rem; }
+        .p-sub { font-family: monospace; color: var(--accent-glow); margin-bottom: var(--space-2); font-size: 0.9rem; }
+        .p-desc { line-height: 1.6; color: #bbb; margin-bottom: var(--space-3); font-size: 1rem; }
+
+        .btn-link {
+            display: inline-flex; align-items: center; gap: 10px;
+            color: white; font-family: var(--font-display); text-transform: uppercase; font-size: 0.8rem;
+            border: 1px solid rgba(255,255,255,0.2); padding: 10px 20px;
+            transition: 0.3s; width: fit-content;
+        }
+        .btn-link:hover { background: white; color: black; }
+
+        /* --- FOOTER / TICKER --- */
+        .ticker-wrap {
+            width: 100%; background: var(--accent); color: #000;
+            padding: var(--space-2) 0; overflow: hidden; white-space: nowrap;
+            position: relative; border-top: 1px solid var(--glass-border);
+            margin-top: var(--space-5);
+        }
+        .ticker-content {
+            display: inline-block; animation: ticker 30s linear infinite;
+            font-family: var(--font-display); font-weight: 700; font-size: 1rem;
+        }
+        @keyframes ticker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+
+        footer {
+            padding: var(--space-4); text-align: center; font-size: 0.8rem; color: #555;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        /* --- RESPONSIVE LOGIC --- */
         @media (max-width: 900px) {
-            .hamburger { display: block; }
+            .hero-grid, .intro-module, .edu-card, .project-dossier { grid-template-columns: 1fr; }
             
-            .nav-links {
-                position: fixed;
-                top: 0; right: 0;
-                height: 100vh;
-                width: 70%;
-                background: #0f1215;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                transform: translateX(100%);
-                transition: transform 0.3s ease-in-out;
-                box-shadow: -5px 0 15px rgba(0,0,0,0.5);
-                z-index: 1001;
-            }
-
-            .nav-links.nav-open { transform: translateX(0); }
+            .intro-visual { height: 40vh; border-right: none; border-bottom: 1px solid var(--glass-border); order: -1; }
+            .edu-visual-area { height: 40vh; border-right: none; border-bottom: 1px solid var(--glass-border); order: -1; }
+            .project-img-wrap { height: 40vh; border-bottom: 1px solid var(--glass-border); }
             
-            .nav-links a { font-size: 1.2rem; }
+            .nav-links { display: none; position: absolute; inset: 0; background: #000; flex-direction: column; justify-content: center; align-items: center; }
+            .nav-links.active { display: flex; }
+            .menu-toggle { display: block; }
+            
+            .hero-grid { text-align: center; gap: var(--space-3); }
+            .hero-text { order: 1; } 
+            .hero-visual { order: 2; width: 280px; } 
 
-            /* Disable 3D tilt on mobile via CSS hover check */
-            #tiltCard { transform: none !important; }
+            .tab-dock { width: 90%; justify-content: center; gap: 5px; padding: 6px; bottom: 10px; }
+            .glass-btn { padding: 10px 15px; font-size: 0.75rem; flex: 1; text-align: center; }
+            .edu-tab-container { justify-content: center; gap: 10px; }
+            
+            .nav-widget-svg-container { zoom: 1.0 !important; bottom: 80px !important; right: 10px !important; }
+        }
+        
+        /* --- CUSTOM SVG WIDGET STYLES --- */
+        .nav-widget-svg-container {
+            position: fixed; bottom: 30px; right: 30px; z-index: 999; cursor: pointer;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+            transition: transform 0.3s ease;
+        }
+        .nav-widget-svg-container:hover { transform: scale(1.05); }
+        .nav-label {
+            position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
+            font-family: var(--font-display); font-size: 0.6rem; color: var(--accent-glow); white-space: nowrap; opacity: 0.8; pointer-events: none;
         }
 
-        /* Reduce motion preference */
-        @media (prefers-reduced-motion: reduce) {
-            .hero-bg { transition: none; }
-            .hero-title, .hero-subtitle, .btn-group { transition: none; opacity: 1; transform: none; }
-            .btn, .feature-card, .video-box { transition: none; transform: none; }
-            #intro-overlay { display: none; } /* Skip intro for reduced motion */
-        }
+        /* --- PROVIDED SVG STYLES --- */
+        #svg-container { zoom: 1.3; }
+        #id-repo-ghost-instagram .container-g-icons g, #id-repo-ghost-facebook .container-g-icons g, #id-repo-ghost-linkelind .container-g-icons g, #id-repo-ghost-twich .container-g-icons g { opacity: 0.5; transition: 0.3s ease-in-out; }
+        #id-repo-ghost-instagram:hover .container-g-icons g, #id-repo-ghost-facebook:hover .container-g-icons g, #id-repo-ghost-linkelind:hover .container-g-icons g, #id-repo-ghost-twich:hover .container-g-icons g { opacity: 1; }
+        #id-repo-ghost-twich, #id-repo-ghost-instagram, #id-repo-ghost-facebook, #id-repo-ghost-linkelind { cursor: pointer; }
+        #id-03-instagram, #id-01-facebook, #id-04-linkelind, #id-02-twich, .react-path-v1, .react-path-v2 { transition: 0.5s ease-in-out; }
+        #id-repo-ghost-instagram:hover #id-03-instagram, #id-repo-ghost-facebook:hover #id-01-facebook, #id-repo-ghost-linkelind:hover #id-04-linkelind, #id-repo-ghost-twich:hover #id-02-twich { transform: translate(0px, -10px); }
+        #id-repo-ghost-instagram:hover .react-path-v1, #id-repo-ghost-facebook:hover .react-path-v1, #id-repo-ghost-linkelind:hover .react-path-v1, #id-repo-ghost-twich:hover .react-path-v1 { transform: translate(0px, -6px); }
+        #id-repo-ghost-instagram:hover .react-path-v2, #id-repo-ghost-facebook:hover .react-path-v2, #id-repo-ghost-linkelind:hover .react-path-v2, #id-repo-ghost-twich:hover .react-path-v2 { transform: translate(0px, -2px); }
+        @keyframes bounce-lines { 0%, 100% { transform: translateY(-3); } 50% { transform: translateY(-3px); } }
+        #line-animation-v1, #line-animation-v2 { animation: bounce-lines 3s infinite ease-in-out; }
+        #line-animation-v2 { animation-delay: 0.2s; }
     </style>
 </head>
 <body>
 
-    <!-- 1. Animated Intro Overlay -->
-    <div id="intro-overlay" aria-hidden="true">
-        <div class="intro-logo">
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" aria-label="HPE Logo">
-                <rect width="10" height="24" fill="#01A982"/>
-                <rect x="14" width="10" height="24" fill="#01A982" fill-opacity="0.6"/>
-            </svg>
-        </div>
-        <div class="intro-curtain"></div>
+    <!-- FIXED BACKGROUND -->
+    <div id="main-bg"></div>
+
+    <!-- CURSOR -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-spot" id="cursor-spot"></div>
+
+    <!-- START OVERLAY -->
+    <div id="start-overlay">
+        <button class="init-btn scramble" data-text="INITIALIZE_SYSTEM" onclick="initSystem()">INITIALIZE_SYSTEM</button>
+        <div class="loader-text">Thabang Tony Ngoepe</div>
     </div>
 
-    <!-- 2. Header / Navigation -->
-    <header role="banner">
-        <a href="#" class="logo" aria-label="HPE Developers Home">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect width="10" height="24" fill="#01A982"/><rect x="14" width="10" height="24" fill="#01A982" fill-opacity="0.6"/></svg>
-            HPE Developers
-        </a>
-        
-        <button class="hamburger" id="nav-toggle" aria-label="Toggle Navigation" aria-expanded="false">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+    <!-- NAV -->
+    <nav>
+        <div class="nav-logo scramble" data-text="HACK_U">HACK_U</div>
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+        <ul class="nav-links">
+            <li><a href="#intro" class="nav-link" onclick="toggleMenu()">Intro</a></li>
+            <li><a href="#education" class="nav-link" onclick="toggleMenu()">Archive</a></li>
+            <li><a href="#projects" class="nav-link" onclick="toggleMenu()">Operations</a></li>
+            <li><a href="#uplink" class="nav-link" onclick="toggleMenu()">Uplink</a></li>
+        </ul>
+    </nav>
 
-        <nav role="navigation">
-            <ul class="nav-links" id="nav-links">
-                <li><a href="#mission">Platform</a></li>
-                <li><a href="#media">Media</a></li>
-                <li><a href="#api" class="active">API Console</a></li>
-            </ul>
-        </nav>
+    <!-- HERO -->
+    <header class="hero" id="hero">
+        <div id="three-canvas"></div>
+        <div class="hero-grid tilt-target">
+            <div class="hero-text">
+                <h1>SECURE_ARCHITECT</h1>
+                <p>
+                    QUANTUM-SAFE ENCRYPTION // ZERO-KNOWLEDGE PROTOCOLS<br>
+                    <span style="color: var(--accent-glow);">[ SYSTEM STATUS: ONLINE ]</span>
+                </p>
+            </div>
+            <div class="hero-visual">
+                <div class="profile-ring"></div>
+                <img src="https://media.licdn.com/dms/image/v2/D4D03AQGLriDk_HYNnA/profile-displayphoto-scale_400_400/B4DZxOsC5PI8Ag-/0/1770846697445?e=1773878400&v=beta&t=7t1HAfFs6smb_ITZus_5Ck_xFn9IsAxPchmbIM1JwLw">
+            </div>
+        </div>
     </header>
 
-    <!-- 3. Dynamic Hero Section -->
-    <div class="parallax-wrapper" id="hero" role="img" aria-label="Background showing server infrastructure and data connections">
-        <!-- Background Images (Slideshow) -->
-        <div class="hero-bg active" style="background-image: url('https://images.pexels.com/photos/2582937/pexels-photo-2582937.jpeg?auto=compress&cs=tinysrgb&w=1920');"></div>
-        <div class="hero-bg" style="background-image: url('https://images.pexels.com/photos/5380642/pexels-photo-5380642.jpeg?auto=compress&cs=tinysrgb&w=1920');"></div>
-        <div class="hero-bg" style="background-image: url('https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg?auto=compress&cs=tinysrgb&w=1920');"></div>
-
-        <!-- Video Texture -->
-        <video class="hero-video-overlay" autoplay muted loop playsinline aria-hidden="true">
-            <source src="https://videos.pexels.com/video-files/3129671/3129671-uhd_2560_1440_30fps.mp4" type="video/mp4">
-        </video>
-
-        <div class="hero-gradient"></div>
-
-        <div class="hero-content">
-            <h1 class="hero-title">Transforming Data<br>Into <span>Value</span>.</h1>
-            <p class="hero-subtitle">Architecting the secure, high-performance edge-to-cloud ecosystem for the modern enterprise.</p>
-            <div class="btn-group">
-                <a href="#api" class="btn btn-primary">Start Building</a>
-                <a href="#media" class="btn btn-secondary">View Solutions</a>
+    <main class="container">
+        <!-- NEW INTRO SECTION (VIDEO, PROFILE, WORDS) -->
+        <section id="intro">
+            <div class="section-header">
+                <span class="section-num">01</span>
+                <h2 class="section-title">Introduction</h2>
             </div>
+            
+            <div class="intro-module tilt-target">
+                <div class="intro-visual">
+                    
+                    <!-- TAB 1: VIDEO (PAUSED BY DEFAULT) -->
+                    <div id="media-video" class="intro-media-item active">
+                        <div class="intro-video-container">
+                            <!-- UPDATED: autoplay=0, controls=1 -->
+                            <iframe src="https://www.youtube.com/embed/LXb3EKWsInQ?autoplay=0&controls=1&mute=1&loop=1&playlist=LXb3EKWsInQ&modestbranding=1&rel=0&playsinline=1&showinfo=0&enablejsapi=1" title="Intro Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: PROFILE -->
+                    <div id="media-profile" class="intro-media-item">
+                        <div class="intro-profile-img-wrap">
+                            <img src="https://media.licdn.com/dms/image/v2/D4D03AQGLriDk_HYNnA/profile-displayphoto-scale_400_400/B4DZxOsC5PI8Ag-/0/1770846697445?e=1773878400&v=beta&t=7t1HAfFs6smb_ITZus_5Ck_xFn9IsAxPchmbIM1JwLw">
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: WORDS -->
+                    <div id="media-words" class="intro-media-item">
+                        <div class="intro-words-visual"></div>
+                    </div>
+                    
+                    <!-- TABS -->
+                    <div class="tab-dock">
+                        <button class="glass-btn active" onclick="switchTab(1, 'intro')">VIDEO</button>
+                        <button class="glass-btn" onclick="switchTab(2, 'intro')">PROFILE</button>
+                        <button class="glass-btn" onclick="switchTab(3, 'intro')">WORDS</button>
+                    </div>
+                </div>
+
+                <div class="intro-content">
+                    <div id="intro-text-container">
+                        <h3 style="font-family: var(--font-display); margin-bottom: 1rem;">INCOMING TRANSMISSION</h3>
+                        <div class="intro-body" id="intro-text">
+                            Analyzing surveillance systems and global data streams. The architecture is designed to be immutable and invisible.
+                        </div>
+                        <div class="tag-row">
+                            <span class="tag">Surveillance</span>
+                            <span class="tag">Encryption</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EDUCATION (UPDATED LOGS STYLE & VIDEO PAUSED) -->
+        <section id="education">
+            <div class="section-header">
+                <span class="section-num">02</span>
+                <h2 class="section-title">Academic Archive</h2>
+            </div>
+
+            <div class="edu-grid">
+                <!-- SCHOOL 1: RHODES -->
+                <article class="edu-card tilt-target" id="edu-rhodes">
+                    <div class="edu-visual-area">
+                        <!-- UPDATED STYLE: Data Log instead of Terminal -->
+                        <div id="rhodes-logs" class="edu-content-wrapper active">
+                            <button class="play-log-btn" onclick="playAudio()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> PLAY LOG</button>
+                            
+                            <div class="data-log-window">
+                                <div class="log-header">
+                                    <span class="log-id">ID: RU-2017</span>
+                                    <span class="log-status">ARCHIVED</span>
+                                </div>
+                                <div class="log-title">Dual Discipline Approach</div>
+                                <div class="log-content-text">
+                                    <p><strong>Focus:</strong> Merged the analytical rigor of economics with the structural logic of law.</p>
+                                    <p><strong>Outcome:</strong> Established a foundational understanding of digital rights, liability, and the economic impact of security breaches.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- VIDEO (PAUSED) -->
+                        <div id="rhodes-video" class="edu-content-wrapper">
+                            <div class="video-container">
+                                <!-- UPDATED: autoplay=0 -->
+                                <iframe id="if-rhodes" src="https://www.youtube.com/embed/LXb3EKWsInQ?autoplay=0&controls=1&mute=1&loop=1&playlist=LXb3EKWsInQ&modestbranding=1&rel=0&playsinline=1&showinfo=0&enablejsapi=1" title="Rhodes University Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                            </div>
+                        </div>
+                        
+                        <div id="rhodes-visuals" class="edu-content-wrapper">
+                            <div class="visuals-grid">
+                                <img src="https://mg.co.za/wp-content/uploads/2019/03/2e1faf8c-rhodes-university-a-demand-for-transformation.jpeg" class="visual-img" alt="Campus">
+                                <img src="https://partners.24.com/ru120/virtual-tour-explore-the-rhodes-university-campus-as-we-take-you-through-120-years-of-excellence/assets/ALxLJnNdec/rhodes-building-walkthrough.00_00_02_04.still001-1920x1080.png" class="visual-img" alt="Library">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="edu-info">
+                        <div class="edu-year">2017 - 2019</div>
+                        <h3 class="edu-school">RHODES UNIVERSITY</h3>
+                        <p style="color:#aaa; line-height:1.6; margin-bottom: 2rem;">A rigorous dual-discipline approach. Combined the analytical frameworks of economics with the structural understanding of legal systems.</p>
+                        <div class="edu-tab-container">
+                            <button class="glass-btn active" onclick="switchEduTab('rhodes', 'logs', 'https://picsum.photos/seed/darkmatrix/1920/1080')">// LOGS</button>
+                            <button class="glass-btn" onclick="switchEduTab('rhodes', 'video', 'https://picsum.photos/seed/cinematicdark/1920/1080')">// VIDEO</button>
+                            <button class="glass-btn" onclick="switchEduTab('rhodes', 'visuals', 'https://picsum.photos/seed/rhodes1/1920/1080')">// VISUALS</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- SCHOOL 2: NMU -->
+                <article class="edu-card tilt-target" id="edu-nmu">
+                    <div class="edu-visual-area">
+                        <div id="nmu-logs" class="edu-content-wrapper active">
+                            <button class="play-log-btn" onclick="playAudio()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> PLAY LOG</button>
+                            
+                            <div class="data-log-window">
+                                <div class="log-header">
+                                    <span class="log-id">ID: NMU-2022</span>
+                                    <span class="log-status">ARCHIVED</span>
+                                </div>
+                                <div class="log-title">Commerce Systems & Digital Economy</div>
+                                <div class="log-content-text">
+                                    <p><strong>Focus:</strong> The intersection of business systems and digital commerce value chains.</p>
+                                    <p><strong>Insight:</strong> Security is not merely technical overhead; it is a tangible business asset and value driver.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="nmu-video" class="edu-content-wrapper">
+                            <div class="video-container">
+                                <!-- UPDATED: autoplay=0 -->
+                                <iframe id="if-nmu" src="https://www.youtube.com/embed/ScMzIvxBSi4?autoplay=0&controls=1&mute=1&loop=1&playlist=ScMzIvxBSi4&controls=0&modestbranding=1&rel=0&playsinline=1&showinfo=0&enablejsapi=1" title="NMU Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                            </div>
+                        </div>
+                        
+                        <div id="nmu-visuals" class="edu-content-wrapper">
+                            <div class="visuals-grid">
+                                <img src="https://picsum.photos/seed/nmu1/600/600" class="visual-img" alt="Campus">
+                                <img src="https://picsum.photos/seed/nmu2/600/600" class="visual-img" alt="Students">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="edu-info">
+                        <div class="edu-year">2022</div>
+                        <h3 class="edu-school">NELSON MANDELA UNIV</h3>
+                        <p style="color:#aaa; line-height:1.6; margin-bottom: 2rem;">Focused on the value chain in digital products. Provided the foundational understanding of how economic models function in a digital ecosystem.</p>
+                        <div class="edu-tab-container">
+                            <button class="glass-btn active" onclick="switchEduTab('nmu', 'logs', 'https://picsum.photos/seed/darkmatrix/1920/1080')">// LOGS</button>
+                            <button class="glass-btn" onclick="switchEduTab('nmu', 'video', 'https://picsum.photos/seed/techdark/1920/1080')">// VIDEO</button>
+                            <button class="glass-btn" onclick="switchEduTab('nmu', 'visuals', 'https://picsum.photos/seed/nmu1/1920/1080')">// VISUALS</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- SCHOOL 3: CYBER ACADEMY -->
+                <article class="edu-card tilt-target" id="edu-cyber">
+                    <div class="edu-visual-area">
+                        <div id="cyber-logs" class="edu-content-wrapper active">
+                            <button class="play-log-btn" onclick="playAudio()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> PLAY LOG</button>
+                            
+                            <div class="data-log-window">
+                                <div class="log-header">
+                                    <span class="log-id">ID: CA-2023</span>
+                                    <span class="log-status">ACTIVE</span>
+                                </div>
+                                <div class="log-title">Continuous Evolution</div>
+                                <div class="log-content-text">
+                                    <p><strong>Pursuit:</strong> Ethical Hacking, AR/VR Development, and Post-Quantum Cryptography.</p>
+                                    <p><strong>Mission:</strong> Bridge the gap between theoretical security models and offensive capabilities to stay ahead of the quantum threat curve.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="cyber-video" class="edu-content-wrapper">
+                            <div class="video-container">
+                                <!-- UPDATED: autoplay=0 -->
+                                <iframe id="if-cyber" src="https://www.youtube.com/embed/3kK0YLrO_pY?autoplay=0&controls=1&mute=1&loop=1&playlist=3kK0YLrO_pY&controls=0&modestbranding=1&rel=0&playsinline=1&showinfo=0&enablejsapi=1" title="Cyber Academy Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                            </div>
+                        </div>
+                        
+                        <div id="cyber-visuals" class="edu-content-wrapper">
+                            <div class="visuals-grid">
+                                <img src="https://picsum.photos/seed/cyber1/600/600" class="visual-img" alt="Lab">
+                                <img src="https://picsum.photos/seed/cyber2/600/600" class="visual-img" alt="Quantum">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="edu-info">
+                        <div class="edu-year">2023 - Present</div>
+                        <h3 class="edu-school">CYBER ACADEMY</h3>
+                        <p style="color:#aaa; line-height:1.6; margin-bottom: 2rem;">Advanced certifications in Ethical Hacking, AR/VR Development, and Quantum-Safe Cryptography. Bridging the gap between theoretical security and offensive capabilities.</p>
+                        <div class="edu-tab-container">
+                            <button class="glass-btn active" onclick="switchEduTab('cyber', 'logs', 'https://picsum.photos/seed/darkmatrix/1920/1080')">// LOGS</button>
+                            <button class="glass-btn" onclick="switchEduTab('cyber', 'video', 'https://picsum.photos/seed/cyberdark/1920/1080')">// VIDEO</button>
+                            <button class="glass-btn" onclick="switchEduTab('cyber', 'visuals', 'https://picsum.photos/seed/cyber1/1920/1080')">// VISUALS</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- PROJECTS -->
+        <section id="projects">
+            <div class="section-header">
+                <span class="section-num">03</span>
+                <h2 class="section-title">Field Operations</h2>
+            </div>
+
+            <div class="project-list">
+                <!-- Project 1 -->
+                <article class="project-dossier tilt-target">
+                    <div class="project-img-wrap">
+                        <img src="https://picsum.photos/seed/quantum/800/800" alt="Project 1">
+                    </div>
+                    <div class="project-data">
+                        <h3 class="p-title">AHE SDK</h3>
+                        <div class="p-sub">ADAPTIVE HASHING ENCRYPTION</div>
+                        <p class="p-desc">
+                            A quantum-safe, anomaly-driven encryption API. Designed for future-proof data integrity using Homomorphic Encryption (HE) processes.
+                        </p>
+                        <div style="margin-top: auto; display: flex; gap: 1rem;">
+                            <a href="#" class="btn-link">View Schematic</a>
+                            <a href="#" class="btn-link" style="border-color: var(--accent); color: var(--accent-glow);">GitHub Repo</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Project 2 -->
+                <article class="project-dossier tilt-target">
+                    <div class="project-img-wrap">
+                        <img src="https://picsum.photos/seed/burnout/800/800" alt="Project 2">
+                    </div>
+                    <div class="project-data">
+                        <h3 class="p-title">Project Burnout</h3>
+                        <div class="p-sub">VOGUE-TYPE EXPERIENCE</div>
+                        <p class="p-desc">
+                            High-fidelity web experience mimicking editorial layouts. Implemented complex parallax scrolling and modular content grids using React and GSAP.
+                        </p>
+                        <div style="margin-top: auto; display: flex; gap: 1rem;">
+                            <a href="#" class="btn-link">Live Demo</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section id="uplink" style="padding: 10vh 0; text-align: center;">
+            <h2 style="font-family: var(--font-display); margin-bottom: 2rem;">INITIATE UPLINK</h2>
+            <a href="mailto:contact@hachu.com" style="font-size: clamp(1rem, 3vw, 2rem); color: white; border-bottom: 1px solid var(--accent-glow);">contact@hachu.com</a>
+        </section>
+    </main>
+
+    <!-- NAVIGATION WIDGET -->
+    <div class="nav-widget-svg-container" onclick="navigateToNextSection()">
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 114 173"
+            height="173"
+            width="114"
+            id="svg-container"
+        >
+            <g>
+                <path fill-opacity="0.3" fill="#414750" d="M6.5517 105.313L48.4827 129.435C52.4138 131.899 58.3103 133.531 65.1896 129.288L98.6034 110.029C108.103 104.741 109.414 104.089 109.82 101.543V108.969C109.82 110.693 109.227 112.007 108.17 112.622L98.6034 118.19L66.1724 136.795C59.6207 140.974 54.3793 140.974 48.4827 137.559L5.93929 113.1C4.68554 112.38 3.66895 110.625 3.66895 109.183V101.477C3.99512 103.22 4.62371 104.091 6.5517 105.313Z"></path>
+                <path stroke-opacity="0.5" stroke="white" fill-opacity="0.3" fill="#414750" d="M6.52505 98.1152L50.782 72.6548C54.0722 70.7616 59.4069 70.7616 62.6973 72.6548L106.954 98.1152C110.245 100.008 110.245 103.077 106.954 104.97L63.2646 130.104C59.661 132.177 53.8182 132.177 50.2145 130.104L6.52505 104.97C3.23473 103.077 3.23473 100.008 6.52505 98.1152Z"></path>
+                <path stroke="#DADADA" d="M51.4773 64.1132L14.4116 85.4366C11.4229 87.156 11.4229 89.9436 14.4116 91.663L51.4773 112.986C54.4661 114.706 59.3118 114.706 62.3005 112.986L99.3663 91.663C102.355 89.9436 102.355 87.156 99.3663 85.4366L62.3005 64.1132C59.3118 62.3938 54.4661 62.3938 51.4773 64.1132Z" id="line-animation-v1"></path>
+                <path stroke="#DADADA" d="M52.2674 78.5847L21.4931 96.2887C19.0116 97.7163 19.0116 100.031 21.4931 101.458L52.2674 119.162C54.7488 120.59 58.772 120.59 61.2535 119.162L92.0278 101.458C94.5092 100.031 94.5092 97.7163 92.0278 96.2887L61.2535 78.5847C58.772 77.1572 54.7488 77.1572 52.2674 78.5847Z" id="line-animation-v2"></path>
+                <path fill="url(#paint0_linear_54_145)" d="M6.5517 64.3775L48.4827 88.5C52.4138 90.9638 58.3103 92.5959 65.1896 88.3525L98.6034 69.094C108.5 63.5401 109.414 63.6133 109.82 61.0672V68.493C109.82 70.2178 109.227 71.5313 108.17 72.1462L98.6034 77.7142L66.1724 96.3199C59.6207 100.498 54.3793 100.498 48.4827 97.083L5.93929 72.6247C4.68554 71.904 3.66895 70.1499 3.66895 68.7078V61.002C3.99512 62.744 4.62371 63.1552 6.5517 64.3775Z"></path>
+                <path fill-opacity="0.3" fill="#414750" d="M6.5517 72.6711L48.4827 96.7938C52.4138 99.2576 58.3103 100.89 65.1896 96.6463L98.6034 77.3878C108.103 72.0998 109.414 71.447 109.82 68.901V76.3269C109.82 78.0517 109.227 79.3652 108.17 79.9802L98.6034 85.5482L66.1724 104.154C59.6207 108.332 54.3793 108.332 48.4827 104.917L5.93929 80.4587C4.68554 79.738 3.66895 77.9838 3.66895 76.5417V68.8357C3.99512 70.5781 4.62371 71.449 6.5517 72.6711Z"></path>
+                <path stroke="#3C4149" fill="url(#paint1_linear_54_145)" d="M6.67475 57.7257L50.9316 32.2653C54.1393 30.42 59.3399 30.42 62.5475 32.2653L106.804 57.7257C110.012 59.571 110.012 62.5628 106.804 64.4081L62.5475 89.8685C59.3399 91.7138 54.1393 91.7138 50.9316 89.8685L6.67475 64.4081C3.46711 62.5628 3.46711 59.571 6.67475 57.7257Z"></path>
+                <path stroke-width="0.5" stroke-opacity="0.3" stroke="white" d="M14.4148 58.4075L51.2752 37.1261C54.0265 35.5376 58.4873 35.5376 61.2387 37.1261L98.0991 58.4075C100.85 59.996 100.85 62.5714 98.0991 64.1599L61.2387 85.4413C58.4873 87.0298 54.0265 87.0298 51.2752 85.4413L14.4148 64.1599C11.6634 62.5714 11.6634 59.996 14.4148 58.4075Z"></path>
+            </g>
+
+            <g id="id-repo-ghost-twich">
+                <g class="react-path-v2"><rect fill="#9146FF5e" transform="matrix(0.866025 -0.5 0.866025 0.5 37.1982 49.0967)" rx="4" height="22.0331" width="22.0331"></rect></g>
+                <g class="react-path-v1"><rect fill="#9146FF5e" transform="matrix(0.866025 -0.5 0.866025 0.5 37.1982 49.0967)" rx="4" height="22.0331" width="22.0331"></rect></g>
+                <g class="container-g-icons" id="id-02-twich">
+                    <rect fill="#383D45" transform="matrix(0.866025 -0.5 0.866025 0.5 37.1982 49.0967)" rx="4" height="22.0331" width="22.0331"></rect>
+                    <g clip-path="url(#clip2_54_145)">
+                        <path fill="white" d="M47.735 47.5298L47.735 49.8511L54.9727 54.0298L57.3855 52.6367L59.3959 53.7974L59.3959 51.4761L61.003 50.5482L61.0037 46.3691L55.3745 43.1191L47.735 47.5298ZM59.7976 46.6015L59.7976 48.4581L58.1891 49.3867L58.1891 51.0117L56.7818 50.1992L54.9727 51.2437L48.9418 47.7617L55.3745 44.0478L59.7976 46.6015Z"></path>
+                        <path fill="white" d="M55.5758 45.5567L54.7715 46.021L57.1829 47.4132L57.9872 46.9489L55.5758 45.5567ZM53.3642 46.8335L52.5599 47.2979L54.9713 48.6901L55.7756 48.2257L53.3642 46.8335Z"></path>
+                    </g>
+                </g>
+            </g>
+
+            <g id="id-repo-ghost-linkelind">
+                <g class="react-path-v2"><rect fill="#0A66C25e" transform="matrix(0.866025 -0.5 0.866025 0.5 58.0114 61.1133)" rx="4" height="22.0331" width="22.0331"></rect></g>
+                <g class="react-path-v1"><rect fill="#0A66C25e" transform="matrix(0.866025 -0.5 0.866025 0.5 58.0114 61.1133)" rx="4" height="22.0331" width="22.0331"></rect></g>
+                <g class="container-g-icons" id="id-04-linkelind">
+                    <rect fill="#383D45" transform="matrix(0.866025 -0.5 0.866025 0.5 58.0114 61.1133)" rx="4" height="22.0331" width="22.0331"></rect>
+                    <g clip-path="url(#clip3_54_145)">
+                        <path fill="white" d="M66.6407 61.5788C66.1953 61.3217 66.2044 60.8996 66.6611 60.6359L76.2658 55.0906C76.7225 54.827 77.4536 54.8217 77.899 55.0788L87.5446 60.6477C87.99 60.9049 87.9808 61.327 87.5242 61.5906L77.9194 67.1359C77.4627 67.3996 76.7316 67.4049 76.2862 67.1477L66.6407 61.5788ZM78.737 64.5465L73.6532 61.6113L71.9637 62.5868L77.0476 65.5219L78.737 64.5465ZM72.1143 61.6979C72.7033 61.3578 72.6801 60.9211 72.1917 60.6392C71.6823 60.3573 70.9477 60.3434 70.3693 60.6774C69.7909 61.0113 69.793 61.4488 70.2912 61.7365C70.7795 62.0184 71.5359 62.0318 72.1031 61.7044L72.1143 61.6979ZM81.3462 63.0401L78.5069 61.4009C78.355 61.3132 78.2142 61.2189 78.1509 61.1303C77.9694 60.885 77.9328 60.5429 78.4 60.2732C79.0115 59.9201 79.7214 60.0481 80.4054 60.443L83.125 62.0131L84.8144 61.0377L81.8985 59.3542C80.3364 58.4523 78.7771 58.5141 77.6654 59.156C76.7689 59.6735 76.8597 60.1899 76.9814 60.5202L76.999 60.5303L76.9878 60.5368L76.9814 60.5202L76.2623 60.105L74.5736 61.08C75.0717 61.3432 79.6574 64.0151 79.6574 64.0151L81.3462 63.0401Z"></path>
+                    </g>
+                </g>
+            </g>
+
+            <g id="id-repo-ghost-facebook">
+                <g class="react-path-v2"><rect fill="#1877F25e" transform="matrix(0.866025 -0.5 0.866025 0.5 16.4136 61.0967)" rx="4" height="22.0331" width="22.0331"></rect></g>
+                <g class="react-path-v1"><rect fill="#1877F25e" transform="matrix(0.866025 -0.5 0.866025 0.5 16.4136 61.0967)" rx="4" height="22.0331" width="22.0331"></rect></g>
+                <g class="container-g-icons" id="id-01-facebook">
+                    <rect fill="#383D45" transform="matrix(0.866025 -0.5 0.866025 0.5 24.2365 61.0967)" rx="4" height="22.0331" width="22.0331"></rect>
+                    <g clip-path="url(#clip0_54_145)">
+                        <path fill="white" d="M41.1579 57.8667C38.0295 56.0605 32.9731 56.0515 29.8644 57.8464C26.755 59.6424 26.7698 62.5613 29.8989 64.3679C32.7254 65.9998 37.1274 66.1639 40.2432 64.8558L36.2852 62.5706L34.8568 63.3953L33.2201 62.4504L34.6499 61.6249L33.4009 60.9038C31.9817 60.0844 32.0387 59.1464 33.3242 58.4041C33.9406 58.0483 34.6949 57.7403 34.6949 57.7403L36.0881 58.5447L35.3782 58.9546C34.6794 59.358 34.8983 59.7362 35.3465 59.995L36.409 60.6084L37.9697 59.7074L39.3573 60.7961L38.045 61.5538L42.003 63.8389C44.2687 62.0401 43.9845 59.4986 41.1579 57.8667Z"></path>
+                    </g>
+                </g>
+            </g>
+
+            <g id="id-repo-ghost-instagram">
+                <g class="react-path-v2"><rect fill="#E4405F5e" transform="matrix(0.866025 -0.5 0.866025 0.5 37.2268 73.1133)" rx="4" height="22.0331" width="22.0331" class="react"></rect></g>
+                <g class="react-path-v1"><rect fill="#E4405F5e" transform="matrix(0.866025 -0.5 0.866025 0.5 37.2268 73.1133)" rx="4" height="22.0331" width="22.0331" class="react"></rect></g>
+                <g class="container-g-icons" id="id-03-instagram">
+                    <rect fill="#383D45" transform="matrix(0.866025 -0.5 0.866025 0.5 45.0497 73.1133)" rx="4" height="22.0331" width="22.0331"></rect>
+                    <g clip-path="url(#clip1_54_145)">
+                        <path fill="white" d="M50.6788 69.8633C49.1512 70.7453 48.9662 70.8602 48.3927 71.2222C47.8206 71.585 47.5061 71.8754 47.2873 72.1627C47.0524 72.461 46.9337 72.7855 47.2873 74.0639C47.8206 71.585 49.1498 75.4805 50.6796 76.3637C52.2079 77.2461 52.4063 77.3525 53.0332 77.6836C53.6609 78.0135 54.164 78.1951 54.6615 78.3214C55.1758 78.4518 55.6818 78.5221 56.308 78.5221C56.9336 78.5225 57.4402 78.4526 57.9538 78.3218C57.4377 67.7695 56.8757 67.701 56.308 67.7045C55.7404 67.701 55.1783 67.7695 54.6615 67.9052C54.1633 68.0319 53.6588 68.2135 53.0325 68.5434C52.4049 68.8749 52.2072 68.9809 50.6774 69.8641C50.187 74.1131 50.016 74.801 50.6796 76.3633C63.4662 75.4805 63.6499 75.3663 64.224 75.004C64.7947 74.642 65.1106 74.3507 65.3295 74.0635C65.564 73.7652 65.6824 73.4409 65.3287 72.1627C65.1092 71.8758 65.5546 72.3361 65.3287 72.1627Z"></path>
+                    </g>
+                </g>
+            </g>
+
+            <defs>
+                <linearGradient gradientUnits="userSpaceOnUse" y2="66.329" x2="109.999" y1="65.9358" x1="3.93103" id="paint0_linear_54_145"><stop stop-color="#1F2127"></stop><stop stop-color="#414750" offset="1"></stop></linearGradient>
+                <linearGradient gradientUnits="userSpaceOnUse" y2="110.105" x2="84.4463" y1="61" x1="9.71059e-08" id="paint1_linear_54_145"><stop stop-color="#414750"></stop><stop stop-color="#414750" offset="1"></stop></linearGradient>
+                <clipPath id="clip0_54_145"><rect transform="matrix(0.866025 -0.5 0.866025 0.5 24.2365 61.0967)" fill="white" height="13" width="13"></rect></clipPath>
+                <clipPath id="clip1_54_145"><rect transform="matrix(0.866025 -0.5 0.866025 0.5 45.0497 73.1133)" fill="white" height="13" width="13"></rect></clipPath>
+                <clipPath id="clip2_54_145"><rect transform="matrix(0.866025 -0.5 0.866025 0.5 45.0211 49.0967)" fill="white" height="13" width="13"></rect></clipPath>
+                <clipPath id="clip3_54_145"><rect transform="matrix(0.866025 -0.5 0.866025 0.5 65.8343 61.1133)" fill="white" height="13" width="13"></rect></clipPath>
+            </defs>
+        </svg>
+        <div class="nav-label">NEXT SECTION</div>
+    </div>
+
+    <!-- TICKER -->
+    <div class="ticker-wrap">
+        <div class="ticker-content">
+            SYSTEM_ACTIVE /// QUANTUM_ENCRYPTION_READY /// THREAT_LEVEL_LOW /// ZK_PROTocols_ENABLED /// SECURE_CONNECTION_ESTABLISHED /// 
+            SYSTEM_ACTIVE /// QUANTUM_ENCRYPTION_READY /// THREAT_LEVEL_LOW /// ZK_PROTocols_ENABLED /// SECURE_CONNECTION_ESTABLISHED ///
         </div>
     </div>
 
-    <!-- Main Content -->
-    <main id="main-content">
-
-        <!-- Mission Section -->
-        <section id="mission">
-            <div class="section-header">
-                <span class="section-label">Our Platform</span>
-                <h2>Engineered for Scale</h2>
-                <p style="color: var(--text-muted); max-width: 600px;">Every endpoint is designed with security, compliance, and performance as foundational pillars.</p>
-            </div>
-            <div class="grid-3">
-                <article class="feature-card">
-                    <div class="feature-icon" aria-hidden="true">🛡️</div>
-                    <h3>Enterprise Security</h3>
-                    <p style="color: var(--text-muted);">Built-in mTLS and OAuth2 ensure that your data remains secure across hybrid cloud environments.</p>
-                </article>
-                <article class="feature-card" style="transition-delay: 0.1s;">
-                    <div class="feature-icon" aria-hidden="true">⚡</div>
-                    <h3>Low Latency</h3>
-                    <p style="color: var(--text-muted);">Global edge caching points reduce latency by up to 40%, delivering real-time data where it's needed.</p>
-                </article>
-                <article class="feature-card" style="transition-delay: 0.2s;">
-                    <div class="feature-icon" aria-hidden="true">📊</div>
-                    <h3>Observability</h3>
-                    <p style="color: var(--text-muted);">Deep integration with HPE InfoSight for predictive analytics and automated troubleshooting.</p>
-                </article>
-            </div>
-        </section>
-
-        <!-- Media Section -->
-        <section id="media" class="media-section">
-            <div class="media-container">
-                <div>
-                    <span class="section-label">In Action</span>
-                    <h2 style="font-size: clamp(1.8rem, 4vw, 2.5rem); margin-bottom: 20px;">Visualizing the Flow</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 30px; line-height: 1.7;">Experience the HPE infrastructure handling complex workloads. Our platform visualizes data packets traversing from edge devices to the cloud core in real-time.</p>
-                    <ul style="list-style: none; color: var(--text-muted); margin-bottom: 30px;">
-                        <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;"><span style="color: var(--hpe-green);" aria-hidden="true">✓</span> Real-time topology mapping</li>
-                        <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;"><span style="color: var(--hpe-green);" aria-hidden="true">✓</span> Predictive AI scaling</li>
-                        <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;"><span style="color: var(--hpe-green);" aria-hidden="true">✓</span> Automated compliance reporting</li>
-                    </ul>
-                </div>
-                <div class="video-box">
-                    <div style="position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.7); color: white; padding: 5px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; z-index: 2;">LIVE DEMO</div>
-                    <video controls poster="https://picsum.photos/seed/hpehardware/800/500" preload="none">
-                        <source src="https://videos.pexels.com/video-files/853800/853800-hd_1920_1080_25fps.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                </div>
-            </div>
-        </section>
-
-        <!-- API Console -->
-        <section id="api">
-            <div class="section-header">
-                <span class="section-label">Developer Tools</span>
-                <h2>Try the API</h2>
-            </div>
-            <div class="api-wrapper">
-                <div class="api-console" id="tiltCard">
-                    <div class="console-left">
-                        <div class="input-group">
-                            <label class="input-label" for="method">Method</label>
-                            <select id="method" class="styled-select">
-                                <option value="GET">GET</option>
-                                <option value="POST">POST</option>
-                                <option value="PUT">PUT</option>
-                                <option value="DELETE">DELETE</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label class="input-label" for="endpoint">Endpoint</label>
-                            <input type="text" id="endpoint" class="styled-input" value="https://api.hpe.com/v1/infrastructure" readonly>
-                        </div>
-                        <div class="input-group" id="body-group" style="display:none;">
-                            <label class="input-label" for="payload">Payload</label>
-                            <textarea id="payload" class="styled-textarea" rows="5">{
-  "server_id": "hpe-gen11-01",
-  "action": "provision"
-}</textarea>
-                        </div>
-                        <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="runApi()" aria-label="Execute API Request">
-                            <span id="btn-text">Execute Request</span>
-                        </button>
-                    </div>
-                    <div class="console-right" id="output" aria-live="polite">
-                        <div style="color: #484f58; margin-bottom: 10px;">// Response Output</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Footer -->
-    <footer role="contentinfo">
-        <div class="footer-grid">
-            <div>
-                <div style="font-weight: 700; font-size: 1.5rem; color: white; margin-bottom: 20px;">HPE Developers</div>
-                <p style="color: var(--text-muted); max-width: 300px;">Accelerating outcomes for the modern enterprise through open, secure APIs.</p>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 40px;">
-                <div>
-                    <h4 style="color: white; margin-bottom: 20px;">Platform</h4>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <a href="#" style="color: var(--text-muted); text-decoration: none;">Overview</a>
-                        <a href="#" style="color: var(--text-muted); text-decoration: none;">Security</a>
-                    </div>
-                </div>
-                <div>
-                    <h4 style="color: white; margin-bottom: 20px;">Resources</h4>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <a href="#" style="color: var(--text-muted); text-decoration: none;">Docs</a>
-                        <a href="#" style="color: var(--text-muted); text-decoration: none;">SDKs</a>
-                    </div>
-                </div>
-                <div>
-                    <h4 style="color: white; margin-bottom: 20px;">Legal</h4>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <a href="#" style="color: var(--text-muted); text-decoration: none;">Privacy</a>
-                        <a href="#" style="color: var(--text-muted); text-decoration: none;">Terms</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div style="text-align: center; color: #4b5563; font-size: 0.85rem; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05);">
-            &copy; 2024 Hewlett Packard Enterprise Development LP.
-        </div>
+    <footer>
+        <p>&copy; 2023 HACK_U. ALL SYSTEMS NOMINAL.</p>
     </footer>
 
+    <!-- LOGIC -->
+    <script type="module">
+        import * as THREE from 'three';
+
+        const initThree = () => {
+            const container = document.getElementById('three-canvas');
+            if(!container) return;
+
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x030303, 0.02);
+
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 30;
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            const geometry = new THREE.IcosahedronGeometry(15, 2);
+            const count = geometry.attributes.position.count;
+            
+            const material = new THREE.PointsMaterial({
+                size: 0.15,
+                vertexColors: false,
+                color: 0x6366f1,
+                transparent: true,
+                opacity: 0.8,
+            });
+
+            const particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            let mouseX = 0; 
+            let mouseY = 0;
+            let targetX = 0; 
+            let targetY = 0;
+
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX - windowHalfX);
+                mouseY = (e.clientY - windowHalfY);
+            });
+
+            const clock = new THREE.Clock();
+
+            const animate = () => {
+                requestAnimationFrame(animate);
+                const elapsedTime = clock.getElapsedTime();
+
+                targetX = mouseX * 0.001;
+                targetY = mouseY * 0.001;
+
+                particles.rotation.y += 0.002;
+                particles.rotation.x += 0.001;
+
+                particles.rotation.y += 0.05 * (targetX - particles.rotation.y);
+                particles.rotation.x += 0.05 * (targetY - particles.rotation.x);
+
+                renderer.render(scene, camera);
+            };
+
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        };
+
+        window.initThree = initThree;
+    </script>
+
     <script>
-        // --- 1. Animated Intro Sequence ---
-        window.addEventListener('load', () => {
-            const overlay = document.getElementById('intro-overlay');
-            const curtain = document.querySelector('.intro-curtain');
-            const logo = document.querySelector('.intro-logo');
-            const body = document.body;
-            const heroTitle = document.querySelector('.hero-title');
-            const heroSub = document.querySelector('.hero-subtitle');
-            const heroBtns = document.querySelector('.btn-group');
+        // --- 2. SYSTEM CONTROLLER ---
+        let systemActive = false;
 
-            // Skip intro if reduced motion preferred
-            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                overlay.style.display = 'none';
-                body.classList.add('loaded');
-                heroTitle.style.opacity = 1;
-                heroTitle.style.transform = 'translateY(0)';
-                heroSub.style.opacity = 1;
-                heroSub.style.transform = 'translateY(0)';
-                heroBtns.style.opacity = 1;
-                heroBtns.style.transform = 'translateY(0)';
-                return;
-            }
-
-            // Step 1: Show Logo
-            setTimeout(() => {
-                logo.style.opacity = '1';
-                logo.style.transform = 'scale(1)';
-            }, 300);
-
-            // Step 2: Drop Green Curtain
-            setTimeout(() => {
-                curtain.style.height = '100%';
-            }, 1000);
-
-            // Step 3: Reveal Site & Fade Out Overlay
-            setTimeout(() => {
-                overlay.style.transition = 'opacity 0.8s ease';
-                overlay.style.opacity = '0';
-                body.classList.add('loaded');
-                
-                heroTitle.style.transition = 'all 0.8s ease-out';
-                heroTitle.style.opacity = '1';
-                heroTitle.style.transform = 'translateY(0)';
-
-                setTimeout(() => {
-                    heroSub.style.transition = 'all 0.8s ease-out';
-                    heroSub.style.opacity = '1';
-                    heroSub.style.transform = 'translateY(0)';
-                }, 200);
-
-                setTimeout(() => {
-                    heroBtns.style.transition = 'all 0.8s ease-out';
-                    heroBtns.style.opacity = '1';
-                    heroBtns.style.transform = 'translateY(0)';
-                }, 400);
-
-            }, 1800);
-
-            setTimeout(() => {
-                overlay.style.display = 'none';
-            }, 2600);
-        });
-
-        // --- 2. Mobile Navigation Toggle ---
-        const navToggle = document.getElementById('nav-toggle');
-        const navLinks = document.getElementById('nav-links');
-        const navLinksItems = document.querySelectorAll('.nav-links a');
-
-        function toggleMenu() {
-            const isOpen = navLinks.classList.contains('nav-open');
-            navLinks.classList.toggle('nav-open');
-            navToggle.setAttribute('aria-expanded', !isOpen);
-        }
-
-        navToggle.addEventListener('click', toggleMenu);
-        
-        // Close menu when clicking a link
-        navLinksItems.forEach(link => {
-            link.addEventListener('click', () => {
-                if(navLinks.classList.contains('nav-open')) {
-                    toggleMenu();
-                }
-            });
-        });
-
-        // --- 3. Dynamic Hero Slideshow (6.18 Seconds) ---
-        const slides = document.querySelectorAll('.hero-bg');
-        let currentSlide = 0;
-        const intervalTime = 6180; 
-
-        function nextSlide() {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % slides.length;
-            slides[currentSlide].classList.add('active');
-        }
-
-        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            setInterval(nextSlide, intervalTime);
-        }
-
-        // --- 4. Jitter-Free Parallax ---
-        let scrollY = 0;
-        const heroContent = document.querySelector('.hero-content');
-        
-        window.addEventListener('scroll', () => {
-            scrollY = window.scrollY;
-        });
-
-        function updateParallax() {
-            if (scrollY < window.innerHeight) {
-                // Round to integer to prevent sub-pixel jitter
-                const translateY = Math.round(scrollY * 0.3); 
-                const opacity = 1 - (scrollY / 700);
-                heroContent.style.transform = `translate3d(0, ${translateY}px, 0)`;
-                heroContent.style.opacity = Math.max(opacity, 0);
-            }
+        function initSystem() {
+            if(systemActive) return;
+            systemActive = true;
             
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                requestAnimationFrame(updateParallax);
-            }
+            document.getElementById('start-overlay').classList.add('hidden');
+            
+            if(window.initThree) window.initThree();
+            initTritonePhysics();
+            startAutoRotate();
         }
 
-        requestAnimationFrame(updateParallax);
+        // --- 3. AUTO-ROTATING BACKGROUND (6.18s) ---
+        const defaultBackgrounds = [
+            'https://picsum.photos/seed/nebula/1920/1080',
+            'https://picsum.photos/seed/stars/1920/1080',
+            'https://picsum.photos/seed/matrix/1920/1080',
+            'https://picsum.photos/seed/cyber/1920/1080'
+        ];
+        let bgIndex = 0;
+        let autoRotateInterval;
+        let isEducationActive = false;
 
-        // --- 5. Scroll Reveal ---
-        const observer = new IntersectionObserver((entries) => {
+        function setBg(url) {
+            document.getElementById('main-bg').style.backgroundImage = `url('${url}')`;
+        }
+
+        function startAutoRotate() {
+            if(autoRotateInterval) clearInterval(autoRotateInterval);
+            autoRotateInterval = setInterval(() => {
+                if(!isEducationActive) {
+                    bgIndex = (bgIndex + 1) % defaultBackgrounds.length;
+                    setBg(defaultBackgrounds[bgIndex]);
+                }
+            }, 6180); 
+        }
+
+        const educationObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+                isEducationActive = entry.isIntersecting;
+            });
+        }, { threshold: 0.1 });
+
+        // --- 4. INTRO TABS LOGIC (UPDATED: VIDEO, PROFILE, WORDS) ---
+        function switchTab(index, sectionId) {
+            // Update buttons
+            const btns = document.querySelectorAll('.tab-dock .glass-btn');
+            btns.forEach((btn, i) => {
+                if(i === index - 1) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+
+            // Update Media
+            const medias = ['media-video', 'media-profile', 'media-words'];
+            medias.forEach((id, i) => {
+                const el = document.getElementById(id);
+                if(el) {
+                    if(i === index - 1) el.classList.add('active');
+                    else el.classList.remove('active');
                 }
             });
-        }, { threshold: 0.2 });
 
-        document.querySelectorAll('.feature-card').forEach(card => observer.observe(card));
+            // Update Text Content
+            const titleEl = document.querySelector('#intro-text-container h3');
+            const bodyEl = document.getElementById('intro-text');
+            const tagsEl = document.querySelector('.tag-row');
 
-        // --- 6. 3D Tilt Effect (Desktop Only) ---
-        const card = document.getElementById('tiltCard');
-        const wrapper = document.querySelector('.api-wrapper');
-
-        // Only enable tilt if not touch device
-        if (window.matchMedia('(hover: hover)').matches) {
-            wrapper.addEventListener('mousemove', (e) => {
-                const rect = wrapper.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const xRot = -((y - rect.height / 2) / rect.height * 10);
-                const yRot = ((x - rect.width / 2) / rect.width * 10);
-                card.style.transform = `perspective(1500px) rotateX(${xRot}deg) rotateY(${yRot}deg)`;
-            });
-
-            wrapper.addEventListener('mouseleave', () => {
-                card.style.transform = `perspective(1500px) rotateX(0) rotateY(0)`;
-            });
-        }
-
-        // --- 7. API Logic ---
-        const methodSelect = document.getElementById('method');
-        const bodyGroup = document.getElementById('body-group');
-        const output = document.getElementById('output');
-
-        methodSelect.addEventListener('change', (e) => {
-            bodyGroup.style.display = (e.target.value === 'POST' || e.target.value === 'PUT') ? 'block' : 'none';
-        });
-
-        function syntaxHighlight(json) {
-            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-                let cls = 'json-number';
-                if (/^"/.test(match)) {
-                    if (/:$/.test(match)) cls = 'json-key';
-                    else cls = 'json-string';
-                } else if (/true|false/.test(match)) cls = 'json-boolean';
-                return '<span class="' + cls + '">' + match + '</span>';
-            });
-        }
-
-        function runApi() {
-            const btnText = document.getElementById('btn-text');
-            const originalText = btnText.innerText;
-            btnText.innerText = "Processing...";
-            
-            output.innerHTML = `<span style="color: #01A982;">> Connecting to hpe.com...</span>`;
-            
-            setTimeout(() => {
-                const method = methodSelect.value;
-                let response = {};
+            if (index === 1) { // VIDEO
+                titleEl.innerText = "INCOMING TRANSMISSION";
+                bodyEl.innerHTML = "Analyzing surveillance systems and global data streams. The architecture is designed to be immutable and invisible.";
+                tagsEl.innerHTML = '<span class="tag">Surveillance</span><span class="tag">Encryption</span>';
+            } else if (index === 2) { // PROFILE
+                titleEl.innerText = "IDENTITY CONFIRMED";
                 
-                if(method === 'GET') {
-                    response = { status: 200, data: [ { id: 1, type: "Compute", status: "Active" } ] };
-                } else {
-                    response = { status: 201, message: "Action successful" };
+                const bioHtml = `
+                    <ul class="bio-list">
+                        <li><span class="bio-label">CODENAME</span> <span>HACK_U</span></li>
+                        <li><span class="bio-label">ROLE</span> <span>SECURE ARCHITECT</span></li>
+                        <li><span class="bio-label">LOCATION</span> <span>THE GRID</span></li>
+                        <li><span class="bio-label">STATUS</span> <span>CLASSIFIED</span></li>
+                    </ul>
+                `;
+                
+                bodyEl.innerHTML = bioHtml;
+                tagsEl.innerHTML = '<span class="tag">Python</span><span class="tag">Cryptography</span><span class="tag">React</span>';
+            } else if (index === 3) { // WORDS
+                titleEl.innerText = "THE ARCHITECTURE";
+                bodyEl.innerHTML = "I build digital fortresses. My philosophy is rooted in the <strong>Pythagorean pursuit of harmony</strong>—balancing aesthetic perfection with cryptographic rigidity. Every system is designed to be immutable, scalable, and quantum-resistant.";
+                tagsEl.innerHTML = '<span class="tag">React</span><span class="tag">Web3</span><span class="tag">Zero-Knowledge</span>';
+            }
+        }
+
+        // --- 5. EDUCATION TABS LOGIC -->
+        function stopVideo(id) {
+            const iframe = document.getElementById(id);
+            if (iframe) {
+                iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            }
+        }
+
+        function switchEduTab(schoolId, tabName, bgUrl) {
+            const videoId = `if-${schoolId}`;
+            // Only pause if we are LEAVING the video tab, to save resources
+            if(tabName !== 'video') stopVideo(videoId);
+
+            const wrappers = ['logs', 'video', 'visuals'];
+            wrappers.forEach(w => {
+                const el = document.getElementById(`${schoolId}-${w}`);
+                if(el) {
+                    el.classList.remove('active');
                 }
-                
-                output.innerHTML += `<br><br><span style="color: #8b949e;">// Response:</span><br><pre style="margin:0;">${syntaxHighlight(JSON.stringify(response, null, 2))}</pre>`;
-                btnText.innerText = originalText;
-            }, 1000);
+            });
+            const selected = document.getElementById(`${schoolId}-${tabName}`);
+            if(selected) selected.classList.add('active');
+
+            const parentCard = document.getElementById(`edu-${schoolId}`);
+            const btns = parentCard.querySelectorAll('.glass-btn');
+            btns.forEach(btn => btn.classList.remove('active'));
+            btns.forEach(btn => {
+                if(btn.getAttribute('onclick').includes(tabName)) {
+                    btn.classList.add('active');
+                }
+            });
+
+            if(bgUrl) {
+                setBg(bgUrl);
+            }
         }
 
-        // --- 8. Smooth Scrolling Anchors ---
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
-            });
+        function playAudio() {
+            console.log("Playing Audio Log...");
+        }
+
+        // --- 6. SCRAMBLE TEXT EFFECT (ONLY ON LOGO) ---
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+        
+        document.querySelectorAll('.scramble').forEach(el => {
+            const original = el.dataset.text || el.innerText;
+            el.dataset.value = original;
+            el.onmouseover = (e) => {
+                let iteration = 0;
+                const interval = setInterval(() => {
+                    e.target.innerText = e.target.innerText
+                        .split("")
+                        .map((letter, index) => {
+                            if(index < iteration) return original[index];
+                            return letters[Math.floor(Math.random() * letters.length)];
+                        })
+                        .join("");
+                    
+                    if(iteration >= original.length) clearInterval(interval);
+                    iteration += 1/3;
+                }, 30);
+            }
         });
+
+        // --- 7. NAVIGATION WIDGET LOGIC ---
+        function navigateToNextSection() {
+            const sectionIds = ['hero', 'intro', 'education', 'projects', 'uplink'];
+            const scrollPos = window.scrollY + (window.innerHeight / 2);
+            let currentIndex = -1;
+            
+            for(let i = 0; i < sectionIds.length; i++) {
+                const section = document.getElementById(sectionIds[i]);
+                if(section) {
+                    const offsetTop = section.offsetTop;
+                    const offsetBottom = offsetTop + section.offsetHeight;
+                    if(scrollPos >= offsetTop && scrollPos < offsetBottom) {
+                        currentIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            let nextIndex = currentIndex + 1;
+            if(nextIndex >= sectionIds.length) nextIndex = 0; 
+
+            playSectionAudio(nextIndex);
+
+            const nextSection = document.getElementById(sectionIds[nextIndex]);
+            if(nextSection) {
+                nextSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function playSectionAudio(index) {
+            // Audio placeholder logic
+            console.log(`Navigating to section index: ${index} (Play Audio here)`);
+        }
+
+        // --- 8. OPTIMIZED PHYSICS (NO LAG) ---
+        function initTritonePhysics() {
+            const tritone = 1.414; 
+            let mouseX = 0, mouseY = 0;
+            let floatX = 0, floatY = 0;
+            let cursorX = 0, cursorY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                cursorX = e.clientX;
+                cursorY = e.clientY;
+                mouseX = (e.clientX - window.innerWidth / 2);
+                mouseY = (e.clientY - window.innerHeight / 2);
+            });
+
+            const targets = document.querySelectorAll('.tilt-target');
+            const dot = document.getElementById('cursor-dot');
+            const spot = document.getElementById('cursor-spot');
+            
+            const physicsEase = 0.2; 
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                floatX += (mouseX - floatX) * physicsEase;
+                floatY += (mouseY - floatY) * physicsEase;
+
+                targets.forEach(el => {
+                    const xPct = (floatX / window.innerWidth) * tritone; 
+                    const yPct = (floatY / window.innerHeight) * tritone;
+
+                    const rotateY = xPct * 10; 
+                    const rotateX = -yPct * 10; 
+
+                    el.style.transform = `
+                        perspective(1000px)
+                        rotateX(${rotateX}deg)
+                        rotateY(${rotateY}deg)
+                        translateZ(0)
+                    `;
+                });
+
+                if(dot && spot) {
+                    dot.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+                    spot.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+                    dot.style.left = '0px'; dot.style.top = '0px';
+                    spot.style.left = '0px'; spot.style.top = '0px';
+                }
+            }
+            animate();
+        }
+
+        // --- 9. MOBILE MENU ---
+        function toggleMenu() {
+            const nav = document.querySelector('.nav-links');
+            nav.classList.toggle('active');
+        }
+
+        // --- 10. INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const eduSection = document.getElementById('education');
+            if(eduSection) educationObserver.observe(eduSection);
+            setBg(defaultBackgrounds[0]);
+        });
+
     </script>
 </body>
 </html>

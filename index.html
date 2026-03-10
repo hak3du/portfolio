@@ -1,1264 +1,1336 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <meta name="theme-color" content="#030303">
-    <title>HACK U | Secure Architect & Full-Stack Developer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HACK U | Security Systems Engineer</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
-
-    <!-- Three.js Import Map -->
-    <script type="importmap">{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }</script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 
     <style>
-        /* --- MATHEMATICAL FOUNDATION (PYTHAGOREAN TRITONE) --- */
         :root {
-            /* The Tritone Ratio: sqrt(2) approx 1.4142 */
-            --tritone: 1.41421356;
-            
-            /* Base Unit (Relative to viewport/root) */
-            --base: clamp(0.8rem, 2vw, 1.2rem);
-            
-            /* Geometric Scale based on Tritone */
-            --space-1: var(--base); /* 1.0 */
-            --space-2: calc(var(--space-1) * var(--tritone)); /* ~1.41 */
-            --space-3: calc(var(--space-2) * var(--tritone)); /* 2.0 */
-            --space-4: calc(var(--space-3) * var(--tritone)); /* ~2.82 */
-            --space-5: calc(var(--space-4) * var(--tritone)); /* 4.0 */
-
-            /* Color Palette */
-            --bg-void: #030303;
-            --text-main: #ffffff;
-            --text-dim: rgba(255, 255, 255, 0.7);
-            --accent: #6366f1; /* Indigo 500 */
-            --accent-glow: #818cf8; /* Indigo 400 */
-            
-            /* Materials */
-            --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            
-            /* Typography */
-            --font-display: 'Syncopate', sans-serif;
-            --font-body: 'Inter', sans-serif;
-            
-            /* Easing */
-            --ease-elastic: cubic-bezier(0.19, 1, 0.22, 1);
+            --c-bg: #030305;
+            --c-text: #e0e0e0;
+            --c-accent: #00f3ff; /* Cyan */
+            --c-sec: #ff2a2a;    /* Red */
+            --c-enc: #bd00ff;    /* Purple */
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'Space Grotesk', sans-serif;
+            --card-bg: rgba(20, 20, 25, 0.6);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --glass-highlight: rgba(255, 255, 255, 0.05);
         }
 
-        /* --- RESET & BASE --- */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        html { scroll-behavior: smooth; font-size: 100%; }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background-color: var(--bg-void);
-            color: var(--text-main);
+            background-color: var(--c-bg);
+            color: var(--c-text);
             font-family: var(--font-body);
-            overflow-x: hidden; 
-            -webkit-font-smoothing: antialiased;
-            cursor: none; 
+            overflow-x: hidden;
+            scrollbar-width: none;
         }
 
-        /* OPTIMIZATION: Force GPU compositing */
-        .tilt-target, .hero-grid, .intro-module, .edu-card, .project-dossier {
-            backface-visibility: hidden;
-            transform-style: preserve-3d;
-            will-change: transform; 
+        body::-webkit-scrollbar { display: none; }
+
+        /* --- VN ACTIVE STATE (Transparency Effect) --- */
+        body.vn-active main {
+            filter: blur(15px) brightness(0.3);
+            pointer-events: none;
+            transition: filter 0.5s ease, opacity 0.5s ease;
+            opacity: 0.3;
+        }
+        
+        body.vn-active #gallery-layer {
+            opacity: 1; /* Ensure gallery is visible */
+            pointer-events: auto;
+        }
+        
+        body.vn-active .cursor {
+            display: none;
         }
 
-        a { text-decoration: none; color: inherit; cursor: none; }
-        button { cursor: none; border: none; background: none; font-family: inherit; }
-
-        /* Hide Custom Cursor on Touch Devices */
-        @media (hover: none) and (pointer: coarse) {
-            * { cursor: auto !important; }
-            .cursor-spot, .cursor-dot { display: none !important; }
+        /* --- Background Layers --- */
+        #webgl-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            z-index: -2; pointer-events: none;
         }
 
-        /* --- BACKGROUND LAYERS --- */
-        #main-bg {
+        #gallery-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover; background-position: center;
-            z-index: -2; opacity: 0.25; 
-            transition: background-image 1.5s ease-in-out;
-            pointer-events: none;
-            will-change: background-image;
+            z-index: 9998; pointer-events: none;
+            opacity: 0; transition: opacity 0.5s ease;
+            background: rgba(0,0,0,0.85); 
+            display: flex; align-items: center; justify-content: center;
         }
         
-        #three-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; pointer-events: none;
+        .gallery-img {
+            position: absolute; width: 100%; height: 100%; object-fit: cover;
+            opacity: 0; transition: opacity 1.5s ease-in-out;
+            filter: grayscale(80%) contrast(120%) brightness(0.5);
         }
 
-        /* --- CURSOR SYSTEM --- */
-        .cursor-spot {
-            position: fixed; top: 0; left: 0; width: 40vw; height: 40vw; 
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
-            border-radius: 50%; pointer-events: none; z-index: 9999;
-            transform: translate3d(-50%, -50%, 0); 
-            mix-blend-mode: screen;
-            transition: width 0.3s, height 0.3s;
-            will-change: transform, left, top;
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50; opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        .cursor-dot {
-            position: fixed; top: 0; left: 0; width: 6px; height: 6px; 
-            background: var(--text-main); border-radius: 50%; pointer-events: none; 
-            z-index: 10000; 
-            transform: translate3d(-50%, -50%, 0); 
+
+        /* --- Cursor --- */
+        .cursor {
+            position: fixed; width: 20px; height: 20px;
+            border: 1px solid var(--c-accent); border-radius: 50%;
+            pointer-events: none; z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
             mix-blend-mode: difference;
-            will-change: transform, left, top;
         }
+        .cursor.active { width: 50px; height: 50px; background-color: rgba(255,255,255,0.1); border-color: transparent; }
+        .cursor.sec-mode { border-color: var(--c-sec); }
+        .cursor.enc-mode { border-color: var(--c-enc); }
 
-        /* --- LAYOUT UTILITIES --- */
-        .container {
-            width: 90%; max-width: 1400px; margin: 0 auto;
-            padding-block: var(--space-4);
-            position: relative; z-index: 2;
-        }
-
-        /* --- START OVERLAY --- */
-        #start-overlay {
-            position: fixed; inset: 0; background: #000; z-index: 100000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 1s var(--ease-elastic);
-        }
-        #start-overlay.hidden { opacity: 0; pointer-events: none; }
-        
-        .init-btn {
-            padding: var(--space-2) var(--space-4);
-            font-family: var(--font-display); color: var(--accent-glow);
-            border: 1px solid var(--accent-glow);
-            font-size: clamp(0.8rem, 2vw, 1rem);
-            letter-spacing: 0.2em; text-transform: uppercase;
-            transition: all 0.4s ease;
-            position: relative; overflow: hidden;
-        }
-        .init-btn:hover {
-            background: var(--accent-glow); color: #000;
-            box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
-        }
-        .loader-text {
-            margin-top: var(--space-2); font-family: monospace; 
-            font-size: 0.8rem; color: #444; letter-spacing: 0.1em;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse { 50% { opacity: 0.4; } }
-
-        /* --- NAVIGATION --- */
+        /* --- Navigation --- */
         nav {
-            position: fixed; top: 0; left: 0; width: 100%; 
-            padding: var(--space-2) 5%;
+            position: fixed; top: 0; width: 100%; padding: 2rem 4rem;
             display: flex; justify-content: space-between; align-items: center;
-            z-index: 1000; 
-            background: rgba(3, 3, 3, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--glass-border);
-            mix-blend-mode: exclusion;
+            z-index: 100; mix-blend-mode: difference;
         }
-        .nav-logo { 
-            font-family: var(--font-display); font-weight: 700; 
-            font-size: var(--space-2); letter-spacing: 2px; pointer-events: auto; 
-        }
-        .nav-links { display: flex; gap: var(--space-3); list-style: none; }
-        .nav-link { 
-            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; 
-            position: relative; padding: 0.5rem; pointer-events: auto;
-        }
-        .nav-link::after {
-            content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 1px;
-            background: var(--accent-glow); transition: 0.3s var(--ease-elastic);
-            transform: translateX(-50%);
-        }
-        .nav-link:hover { color: var(--accent-glow); }
-        .nav-link:hover::after { width: 100%; }
+        .logo { font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; letter-spacing: 2px; }
+        .menu-btn { cursor: pointer; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
 
-        .menu-toggle { display: none; pointer-events: auto; color: white; font-size: 1.5rem; }
-
-        /* --- HERO SECTION --- */
-        .hero {
-            min-height: 100vh; position: relative; display: flex; align-items: center; justify-content: center;
-            perspective: 1200px; overflow: hidden;
-            padding-bottom: var(--space-4);
-        }
-
-        .hero-grid {
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            width: 100%; max-width: 1400px;
-            gap: var(--space-4);
-            align-items: center;
-        }
-
-        .hero-text h1 {
-            font-family: var(--font-display); font-size: clamp(2rem, 6vw, 5rem);
-            line-height: 0.95; text-transform: uppercase; letter-spacing: -0.03em;
-            background: linear-gradient(to bottom, #fff, #888);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: var(--space-2);
-            word-wrap: break-word;
-        }
-        .hero-text p {
-            font-size: clamp(0.9rem, 2vw, 1.1rem); color: var(--text-dim);
-            max-width: 600px; line-height: 1.6; letter-spacing: 0.02em;
-        }
+        /* --- Layout & Typography --- */
+        main { position: relative; width: 100%; z-index: 10; padding-bottom: 5rem; transition: filter 0.5s, opacity 0.5s; }
         
-        .hero-visual {
-            position: relative;
-            display: flex; align-items: center; justify-content: center;
-            width: 100%;
-            aspect-ratio: 1 / 1; 
-            max-width: 500px; 
-            width: 100%; 
-            margin: 0 auto;
-        }
-
-        .profile-ring {
-            position: absolute; inset: -4%; border: 1px solid var(--glass-border);
-            border-radius: 50%; animation: spin 20s linear infinite;
-            pointer-events: none;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        
-        .profile-img {
-            width: 100%; height: 100%; 
-            object-fit: cover; 
-            border-radius: 50%;
-            transition: 0.5s ease;
-        }
-        .hero-visual:hover .profile-img { transform: scale(1.03); }
-
-        /* --- INTRO (UPDATED) --- */
-        .intro-module {
-            background: var(--glass); border: 1px solid var(--glass-border);
-            backdrop-filter: blur(20px);
-            display: grid;
-            grid-template-columns: 3fr 2fr;
-            min-height: 60vh; 
-        }
-
-        .intro-visual {
-            position: relative; border-right: 1px solid var(--glass-border);
-            background: rgba(0,0,0,0.4);
-            min-height: 40vh; 
-            overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
-        }
-        
-        /* Content Containers */
-        .intro-media-item {
-            position: absolute; inset: 0; opacity: 0; transition: opacity 0.5s ease;
-            width: 100%; height: 100%; object-fit: cover;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .intro-media-item.active { opacity: 1; position: relative; }
-
-        .intro-video-container { width: 100%; height: 100%; }
-        iframe { width: 100%; height: 100%; border: none; object-fit: cover; }
-
-        .intro-profile-img-wrap {
-            width: 300px; height: 300px; max-width: 80%;
-            border-radius: 50%; overflow: hidden; border: 2px solid var(--accent-glow);
-            box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
-        }
-        .intro-profile-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-
-        .intro-words-visual {
-            width: 100%; height: 100%;
-            background: url('https://picsum.photos/seed/typography/1200/800') center/cover;
-            filter: grayscale(100%) contrast(1.2);
-            display: flex; align-items: center; justify-content: center;
-        }
-        .intro-words-visual::after {
-            content: 'WORDS';
-            font-family: var(--font-display);
-            font-size: 5rem; opacity: 0.1; font-weight: 700; color: white;
-        }
-
-        /* --- TAB DESIGN --- */
-        .tab-dock {
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 10px;
-            padding: 8px;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 10;
-        }
-
-        .glass-btn {
-            position: relative;
-            padding: 12px 24px;
-            font-family: var(--font-display);
-            font-size: 0.85rem; 
-            font-weight: 600; 
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            transition: all 0.3s var(--ease-elastic);
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .glass-btn::before {
-            content: ''; position: absolute; top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: 0.5s;
-        }
-        .glass-btn:hover::before { left: 100%; }
-
-        .glass-btn:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            border-color: rgba(255,255,255,0.2);
-        }
-
-        .glass-btn.active {
-            color: var(--accent-glow);
-            background: rgba(99, 102, 241, 0.15);
-            border-color: var(--accent-glow);
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
-            pointer-events: none; 
-        }
-
-
-        .intro-content { padding: var(--space-4); display: flex; flex-direction: column; justify-content: center; }
-        .intro-body { font-size: clamp(1rem, 1.5vw, 1.25rem); line-height: 1.7; color: #ccc; margin-bottom: var(--space-3); }
-        
-        .bio-list { list-style: none; margin-bottom: var(--space-3); }
-        .bio-list li { margin-bottom: var(--space-1); display: flex; justify-content: space-between; border-bottom: 1px solid var(--glass-border); padding-bottom: 5px; }
-        .bio-label { color: var(--accent-glow); font-family: var(--font-display); font-size: 0.8rem; }
-        
-        .tag-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: var(--space-2); }
-        .tag {
-            font-family: var(--font-display); font-size: 0.65rem; padding: 0.3rem 0.8rem;
-            border: 1px solid var(--accent); color: var(--accent-glow); text-transform: uppercase;
-        }
-
-        /* --- EDUCATION (RESTORED TABS) --- */
-        .edu-grid { display: flex; flex-direction: column; gap: var(--space-5); padding-bottom: var(--space-5); }
-        
-        .edu-card {
-            display: grid; grid-template-columns: 1fr 1fr;
-            background: var(--glass); border: 1px solid var(--glass-border);
-            min-height: auto; height: 100%;
-            overflow: hidden; 
-        }
-        
-        .edu-visual-area { 
-            background: #000; position: relative; 
-            border-right: 1px solid var(--glass-border); overflow: hidden; 
-            min-height: 40vh; 
+        section {
+            min-height: 100vh; width: 100%;
             display: flex; flex-direction: column;
-        }
-        
-        .edu-content-wrapper {
-            position: absolute; inset: 0;
-            opacity: 0; visibility: hidden;
-            transition: opacity 0.5s ease, visibility 0.5s;
-            width: 100%; height: 100%;
-        }
-        .edu-content-wrapper.active { opacity: 1; visibility: visible; position: relative; }
-
-        /* --- UPDATED: CLEAN DATA LOG STYLE (Instead of harsh Terminal) --- */
-        .data-log-window {
-            padding: var(--space-3); 
-            font-family: 'Inter', monospace; 
-            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
-            color: #d1d5db; /* Lighter grey, easier on eyes */
-            height: 100%; 
-            overflow-y: auto; line-height: 1.6;
-            /* Cleaner, less "hacker" background */
-            background: rgba(15, 23, 42, 0.6); /* Deep Indigo Slate */
-            border-left: 2px solid var(--accent-glow);
-            backdrop-filter: blur(8px);
+            justify-content: center;
+            padding: 10vh 5%; 
             position: relative;
         }
-        
-        .log-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: var(--space-3);
-            padding-bottom: var(--space-1);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .log-id { color: var(--accent-glow); font-weight: 600; font-size: 0.8rem; letter-spacing: 1px; }
-        .log-status { font-size: 0.7rem; color: #22c55e; background: rgba(34, 197, 94, 0.1); padding: 2px 6px; border-radius: 2px; }
 
-        .log-title { 
-            color: #ffffff; 
+        /* --- 3D HERO TEXT STYLES --- */
+        #hero {
+            perspective: 1000px; /* Adds depth */
+        }
+        
+        .hero-content {
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out; /* Smooth follow */
+        }
+
+        h1 { 
             font-family: var(--font-display); 
-            font-size: 1.2rem; 
-            margin-bottom: var(--space-2);
+            font-size: clamp(3rem, 6vw, 5rem); 
+            line-height: 1.1; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 0px rgba(0, 243, 255, 0.2),
+                         -2px -2px 0px rgba(189, 0, 255, 0.2);
+            transform: translateZ(50px); /* Initial 3D pop */
         }
         
-        .log-content-text { color: #94a3b8; font-family: var(--font-body); /* Sans serif for body text inside log */ }
-        .log-content-text strong { color: #fff; }
-
-        .play-log-btn {
-            position: absolute; top: 15px; right: 15px; 
-            background: var(--bg-void); border: 1px solid var(--accent-glow); 
-            color: var(--accent-glow); padding: 6px 12px; 
-            font-family: var(--font-display); font-size: 0.65rem; 
-            text-transform: uppercase; letter-spacing: 1px;
-            z-index: 10; cursor: none; 
-            display: flex; align-items: center; gap: 6px;
-            border-radius: 4px; transition: 0.3s;
+        .hero-content p {
+            transform: translateZ(20px);
         }
-        .play-log-btn:hover { background: var(--accent-glow); color: #000; }
 
-        /* 2. VIDEO */
-        .video-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #000; }
-        iframe { width: 100%; height: 100%; border: none; }
-
-        /* 3. VISUALS GRID */
-        .visuals-grid { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 2px; height: 100%; width: 100%; 
-        }
-        .visual-img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
-        .visual-img:hover { opacity: 0.8; }
-
-        /* Edu Info */
-        .edu-info { padding: var(--space-4); display: flex; flex-direction: column; justify-content: center; }
-        .edu-year { color: var(--accent-glow); font-family: var(--font-display); font-size: 0.8rem; margin-bottom: 0.5rem; }
-        .edu-school { font-size: clamp(1.5rem, 3vw, 2.2rem); font-family: var(--font-display); margin-bottom: var(--space-2); line-height: 1; }
+        h2 { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 2rem; text-transform: uppercase; }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: #fff; font-weight: 700; }
+        p { line-height: 1.6; color: rgba(255,255,255,0.8); margin-bottom: 1.5rem; font-size: 1.1rem; }
         
-        /* Edu Tabs */
-        .edu-tab-container {
-            margin-top: var(--space-3); 
-            border-top: 1px solid var(--glass-border); 
-            padding-top: var(--space-3);
-            display: flex;
-            justify-content: flex-start;
-            flex-wrap: wrap;
+        .highlight { color: var(--c-accent); }
+        .sec-text { color: var(--c-sec); }
+        .enc-text { color: var(--c-enc); }
+
+        /* --- Components --- */
+        .role-tag {
+            display: inline-block; padding: 0.5rem 1.2rem;
+            border: 1px solid rgba(255,255,255,0.3); border-radius: 50px;
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 2rem; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+            color: var(--c-accent);
+            transform: translateZ(30px); /* 3D pop */
         }
 
-        /* --- PROJECTS --- */
-        .project-list { display: flex; flex-direction: column; gap: var(--space-5); padding-bottom: var(--space-5); }
-        .project-dossier {
-            display: grid; grid-template-columns: 2fr 3fr; 
-            background: var(--glass); border: 1px solid var(--glass-border);
-            min-height: 60vh; position: relative; overflow: hidden;
-        }
-        .project-dossier:hover { border-color: var(--accent); }
-        
-        .project-img-wrap { position: relative; overflow: hidden; height: 100%; }
-        .project-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s var(--ease-elastic); filter: grayscale(100%); }
-        .project-dossier:hover .project-img-wrap img { transform: scale(1.05); filter: grayscale(0%); }
-        
-        .project-data { padding: var(--space-4); display: flex; flex-direction: column; justify-content: center; }
-        .p-title { font-size: clamp(1.5rem, 3vw, 2.5rem); font-family: var(--font-display); margin-bottom: 0.5rem; }
-        .p-sub { font-family: monospace; color: var(--accent-glow); margin-bottom: var(--space-2); font-size: 0.9rem; }
-        .p-desc { line-height: 1.6; color: #bbb; margin-bottom: var(--space-3); font-size: 1rem; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+        .content-container { max-width: 1200px; margin: 0 auto; width: 100%; }
 
-        .btn-link {
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            padding: 2rem; border-radius: 12px;
+            transition: transform 0.3s, border-color 0.3s;
+            height: 100%; display: flex; flex-direction: column;
+        }
+        .glass-card:hover { transform: translateY(-5px); border-color: var(--c-accent); }
+
+        .btn {
             display: inline-flex; align-items: center; gap: 10px;
-            color: white; font-family: var(--font-display); text-transform: uppercase; font-size: 0.8rem;
-            border: 1px solid rgba(255,255,255,0.2); padding: 10px 20px;
-            transition: 0.3s; width: fit-content;
+            padding: 1rem 2.5rem; border-radius: 50px;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; transition: all 0.3s ease; text-decoration: none;
+            font-size: 0.9rem;
         }
-        .btn-link:hover { background: white; color: black; }
-
-        /* --- FOOTER / TICKER --- */
-        .ticker-wrap {
-            width: 100%; background: var(--accent); color: #000;
-            padding: var(--space-2) 0; overflow: hidden; white-space: nowrap;
-            position: relative; border-top: 1px solid var(--glass-border);
-            margin-top: var(--space-5);
+        .btn-primary {
+            background: transparent; border: 1px solid var(--c-accent); color: var(--c-accent);
         }
-        .ticker-content {
-            display: inline-block; animation: ticker 30s linear infinite;
-            font-family: var(--font-display); font-weight: 700; font-size: 1rem;
+        .btn-primary:hover { background: var(--c-accent); color: #000; box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff;
         }
-        @keyframes ticker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+        .btn-secondary:hover { background: #fff; color: #000; }
 
-        footer {
-            padding: var(--space-4); text-align: center; font-size: 0.8rem; color: #555;
-            border-top: 1px solid var(--glass-border);
+        .profile-wrapper {
+            position: relative; width: 100%; max-width: 350px; aspect-ratio: 1;
+            border-radius: 50%; overflow: hidden; border: 2px solid var(--c-accent);
+            margin: 0 auto; box-shadow: 0 0 30px rgba(0, 243, 255, 0.15);
+        }
+        .profile-wrapper img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: 0.5s; }
+        .profile-wrapper:hover img { filter: grayscale(0%); transform: scale(1.05); }
+
+        /* --- Tabs --- */
+        .tabs-container { width: 100%; margin-top: 2rem; }
+        .tab-headers { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--card-border); overflow-x: auto; padding-bottom: 5px;}
+        .tab-btn {
+            background: none; border: none; color: rgba(255,255,255,0.5);
+            padding: 1rem; font-family: var(--font-body); font-size: 1rem; text-transform: uppercase;
+            cursor: pointer; position: relative; white-space: nowrap; transition: 0.3s;
+        }
+        .tab-btn.active { color: #fff; font-weight: 700; }
+        .tab-btn.active::after {
+            content: ''; position: absolute; bottom: -6px; left: 0; width: 100%; height: 2px;
+            background: var(--c-accent); box-shadow: 0 -2px 10px var(--c-accent);
+        }
+        .tab-content { display: none; animation: fadeIn 0.5s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- YOUTUBE VIDEO COMPONENT --- */
+        .media-wrapper {
+            margin-top: 2rem;
+            background: rgba(0,0,0,0.5);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            position: relative;
         }
 
-        /* --- RESPONSIVE LOGIC --- */
-        @media (max-width: 900px) {
-            .hero-grid, .intro-module, .edu-card, .project-dossier { grid-template-columns: 1fr; }
-            
-            .intro-visual { height: 40vh; border-right: none; border-bottom: 1px solid var(--glass-border); order: -1; }
-            .edu-visual-area { height: 40vh; border-right: none; border-bottom: 1px solid var(--glass-border); order: -1; }
-            .project-img-wrap { height: 40vh; border-bottom: 1px solid var(--glass-border); }
-            
-            .nav-links { display: none; position: absolute; inset: 0; background: #000; flex-direction: column; justify-content: center; align-items: center; }
-            .nav-links.active { display: flex; }
-            .menu-toggle { display: block; }
-            
-            .hero-grid { text-align: center; gap: var(--space-3); }
-            .hero-text { order: 1; } 
-            .hero-visual { order: 2; width: 280px; } 
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            background: #000;
+        }
 
-            .tab-dock { width: 90%; justify-content: center; gap: 5px; padding: 6px; bottom: 10px; }
-            .glass-btn { padding: 10px 15px; font-size: 0.75rem; flex: 1; text-align: center; }
-            .edu-tab-container { justify-content: center; gap: 10px; }
-            
-            .nav-widget-svg-container { zoom: 1.0 !important; bottom: 80px !important; right: 10px !important; }
+        /* FALLBACK IMAGE: Shown if YT fails */
+        .video-fallback {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            z-index: 0; opacity: 0.6;
+            transition: opacity 0.5s;
         }
         
-        /* --- CUSTOM SVG WIDGET STYLES --- */
-        .nav-widget-svg-container {
-            position: fixed; bottom: 30px; right: 30px; z-index: 999; cursor: pointer;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
-            transition: transform 0.3s ease;
-        }
-        .nav-widget-svg-container:hover { transform: scale(1.05); }
-        .nav-label {
-            position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
-            font-family: var(--font-display); font-size: 0.6rem; color: var(--accent-glow); white-space: nowrap; opacity: 0.8; pointer-events: none;
+        .video-container iframe {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border: 0;
+            pointer-events: auto;
+            z-index: 1;
         }
 
-        /* --- PROVIDED SVG STYLES --- */
-        #svg-container { zoom: 1.3; }
-        #id-repo-ghost-instagram .container-g-icons g, #id-repo-ghost-facebook .container-g-icons g, #id-repo-ghost-linkelind .container-g-icons g, #id-repo-ghost-twich .container-g-icons g { opacity: 0.5; transition: 0.3s ease-in-out; }
-        #id-repo-ghost-instagram:hover .container-g-icons g, #id-repo-ghost-facebook:hover .container-g-icons g, #id-repo-ghost-linkelind:hover .container-g-icons g, #id-repo-ghost-twich:hover .container-g-icons g { opacity: 1; }
-        #id-repo-ghost-twich, #id-repo-ghost-instagram, #id-repo-ghost-facebook, #id-repo-ghost-linkelind { cursor: pointer; }
-        #id-03-instagram, #id-01-facebook, #id-04-linkelind, #id-02-twich, .react-path-v1, .react-path-v2 { transition: 0.5s ease-in-out; }
-        #id-repo-ghost-instagram:hover #id-03-instagram, #id-repo-ghost-facebook:hover #id-01-facebook, #id-repo-ghost-linkelind:hover #id-04-linkelind, #id-repo-ghost-twich:hover #id-02-twich { transform: translate(0px, -10px); }
-        #id-repo-ghost-instagram:hover .react-path-v1, #id-repo-ghost-facebook:hover .react-path-v1, #id-repo-ghost-linkelind:hover .react-path-v1, #id-repo-ghost-twich:hover .react-path-v1 { transform: translate(0px, -6px); }
-        #id-repo-ghost-instagram:hover .react-path-v2, #id-repo-ghost-facebook:hover .react-path-v2, #id-repo-ghost-linkelind:hover .react-path-v2, #id-repo-ghost-twich:hover .react-path-v2 { transform: translate(0px, -2px); }
-        @keyframes bounce-lines { 0%, 100% { transform: translateY(-3); } 50% { transform: translateY(-3px); } }
-        #line-animation-v1, #line-animation-v2 { animation: bounce-lines 3s infinite ease-in-out; }
-        #line-animation-v2 { animation-delay: 0.2s; }
+        /* Video Overlay/HUD */
+        .video-hud {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; 
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 15px;
+            z-index: 5;
+            background: linear-gradient(rgba(0,0,0,0.3), transparent 20%, transparent 80%, rgba(0,0,0,0.3));
+        }
+
+        .video-top { display: flex; justify-content: space-between; align-items: center; }
+        .video-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+
+        .rec-indicator {
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 2px;
+            border: 1px solid var(--c-sec);
+            backdrop-filter: blur(4px);
+        }
+        .rec-dot {
+            width: 8px; height: 8px; background-color: var(--c-sec); border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+        .rec-text { color: var(--c-sec); font-family: monospace; font-size: 0.7rem; font-weight: bold; letter-spacing: 1px; }
+
+        .feed-id { 
+            font-family: monospace; color: var(--c-accent); font-size: 0.7rem; 
+            text-shadow: 0 0 5px var(--c-accent);
+            background: rgba(0,0,0,0.7);
+            padding: 4px 8px;
+        }
+
+        /* Scanlines */
+        .scanlines {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+            background-size: 100% 4px;
+            pointer-events: none; z-index: 6; opacity: 0.3;
+        }
+
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+
+        /* --- TRANSPARENT GALLERY IMAGES (HOLOGRAPHIC EFFECT) --- */
+        .tab-gallery {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 5px;
+            padding: 10px; background: rgba(0,0,0,0.2);
+        }
+        .tab-gallery img {
+            width: 100%; aspect-ratio: 16/9; object-fit: cover;
+            opacity: 0.8; transition: 0.3s; cursor: pointer;
+            mix-blend-mode: screen; /* Makes black transparent, blending with card */
+        }
+        .tab-gallery img:hover { opacity: 1; transform: scale(1.05); mix-blend-mode: normal; }
+
+        /* Voice Note Player */
+        .vn-player {
+            display: flex; align-items: center; gap: 1rem;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--c-accent);
+            padding: 0.8rem 1.5rem; border-radius: 8px;
+            margin-top: 1rem; cursor: pointer; transition: 0.3s;
+        }
+        .vn-player:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
+        .play-icon {
+            width: 24px; height: 24px; border-radius: 50%;
+            background: var(--c-accent); display: flex; align-items: center; justify-content: center;
+            color: #000; font-size: 0.7rem; flex-shrink: 0;
+        }
+        .vn-text { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+        
+        /* Project Cards */
+        .project-card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            padding: 2rem; border-radius: 12px; margin-bottom: 2rem;
+            transition: 0.3s;
+        }
+        .project-card:hover { border-color: var(--c-accent); }
+        .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;}
+        .project-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; }
+        .project-role { font-size: 0.8rem; color: var(--c-accent); text-transform: uppercase; border: 1px solid var(--c-accent); padding: 2px 8px; border-radius: 4px; }
+        
+        .project-media-toggle {
+            background: none; border: none; color: rgba(255,255,255,0.6);
+            font-size: 0.9rem; cursor: pointer; margin-top: 1rem; text-decoration: underline;
+        }
+        .project-media-content {
+            margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);
+            display: none; 
+        }
+        .project-media-content.open { display: block; animation: fadeIn 0.3s; }
+
+        /* Form */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-control {
+            width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--card-border);
+            padding: 1rem 0; color: #fff; font-family: var(--font-body); font-size: 1rem;
+            transition: 0.3s;
+        }
+        .form-control:focus { outline: none; border-bottom-color: var(--c-accent); }
+        .form-control::placeholder { color: rgba(255,255,255,0.3); }
+
+        /* Toast */
+        #toast {
+            position: fixed; bottom: 30px; right: 30px; background: var(--c-accent); color: #000;
+            padding: 1rem 2rem; border-radius: 8px; font-weight: 700;
+            transform: translateY(100px); opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 20000;
+        }
+        #toast.show { transform: translateY(0); opacity: 1; }
+
+        /* --- LOADER --- */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 30000;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+        }
+        .loader-bg {
+            position: absolute; top: 0; height: 100%; width: 50%;
+            background-size: cover; background-position: center;
+            background-attachment: fixed; 
+            transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+            filter: grayscale(100%) contrast(120%) brightness(0.4);
+        }
+        .loader-bg.left { 
+            left: 0; 
+            background-image: url('https://picsum.photos/seed/cyber_left_v2/800/1200.jpg'); 
+            transform: translateX(0); 
+        }
+        .loader-bg.right { 
+            right: 0; 
+            background-image: url('https://picsum.photos/seed/server_right_v2/800/1200.jpg'); 
+            transform: translateX(0); 
+        }
+        
+        .loader-bg.slide-out-left { transform: translateX(-100%); }
+        .loader-bg.slide-out-right { transform: translateX(100%); }
+
+        .loader-content {
+            position: relative; z-index: 2; text-align: center; width: 100%;
+        }
+        .loader-logo { font-family: var(--font-display); font-size: 3rem; margin-bottom: 20px; letter-spacing: 5px; color: #fff; }
+        .loader-bar { width: 300px; height: 2px; background: #333; margin: 20px auto; position: relative; overflow: hidden; }
+        .loader-progress { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--c-accent); }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .grid-2 { grid-template-columns: 1fr; gap: 2rem; }
+            .project-media-content .grid-2 { grid-template-columns: 1fr; }
+            section { padding: 10vh 5%; }
+            nav { padding: 1.5rem; }
+            .loader-bg { width: 100%; opacity: 0.5; }
+            .loader-bg.left { display: none; }
+            h1 { font-size: 2.5rem; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- FIXED BACKGROUND -->
-    <div id="main-bg"></div>
-
-    <!-- CURSOR -->
-    <div class="cursor-dot" id="cursor-dot"></div>
-    <div class="cursor-spot" id="cursor-spot"></div>
-
-    <!-- START OVERLAY -->
-    <div id="start-overlay">
-        <button class="init-btn scramble" data-text="INITIALIZE_SYSTEM" onclick="initSystem()">INITIALIZE_SYSTEM</button>
-        <div class="loader-text">Thabang Tony Ngoepe</div>
+    <!-- Initialization / Loader -->
+    <div id="loader">
+        <div class="loader-bg left"></div>
+        <div class="loader-bg right"></div>
+        <div class="loader-content">
+            <div class="loader-logo">HACK U</div>
+            <div style="font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.7);">Initializing Security Protocols</div>
+            <div class="loader-bar"><div class="loader-progress"></div></div>
+        </div>
     </div>
 
-    <!-- NAV -->
+    <!-- FX Layers -->
+    <div class="noise-overlay"></div>
+    <div class="cursor"></div>
+    
+    <!-- 3D Layer -->
+    <div id="webgl-container"></div>
+    
+    <!-- Gallery Layer -->
+    <div id="gallery-layer"></div>
+
+    <!-- Navigation -->
     <nav>
-        <div class="nav-logo scramble" data-text="HACK_U">HACK_U</div>
-        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-        <ul class="nav-links">
-            <li><a href="#intro" class="nav-link" onclick="toggleMenu()">Intro</a></li>
-            <li><a href="#education" class="nav-link" onclick="toggleMenu()">Archive</a></li>
-            <li><a href="#projects" class="nav-link" onclick="toggleMenu()">Operations</a></li>
-            <li><a href="#uplink" class="nav-link" onclick="toggleMenu()">Uplink</a></li>
-        </ul>
+        <div class="logo magnetic">HACK U</div>
+        <div class="menu-btn magnetic">Menu</div>
     </nav>
 
-    <!-- HERO -->
-    <header class="hero" id="hero">
-        <div id="three-canvas"></div>
-        <div class="hero-grid tilt-target">
-            <div class="hero-text">
-                <h1>SECURE_ARCHITECT</h1>
+    <!-- Main Content -->
+    <main>
+        
+        <!-- 01 HERO SECTION (3D TEXT) -->
+        <section id="hero">
+            <div class="grid-2">
+                <div class="hero-content" id="hero-content-3d">
+                    <span class="role-tag magnetic">Security-Focused Backend Engineer</span>
+                    <h1 class="glitch-text">
+                        <div class="line">Cloud</div>
+                        <div class="line">Systems</div>
+                        <div class="line">Developer</div>
+                    </h1>
+                    <p style="color: rgba(255,255,255,0.7); max-width: 500px;">
+                        Specializing in secure architecture, encryption research, and scalable backend infrastructure.
+                    </p>
+                    <div style="margin-top: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <a href="#deployments" class="btn btn-primary magnetic">View Projects</a>
+                        <button onclick="triggerExperience('intro')" class="btn btn-secondary magnetic">
+                            <span>▶</span> Intro
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="hero-image-wrapper" style="display: flex; justify-content: center;">
+                    <div class="profile-wrapper magnetic">
+                        <img src="https://picsum.photos/seed/security_engineer/800/800.jpg" alt="Profile">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 02 ENGINEER PROFILE -->
+        <section id="profile">
+            <div class="content-container grid-2">
+                <div>
+                    <h2>Profile <span class="highlight">Overview</span></h2>
+                    <div class="vn-player magnetic" onclick="triggerExperience('profile')">
+                        <div class="play-icon">▶</div>
+                        <div class="vn-text">Listen to Overview</div>
+                    </div>
+                    <p>
+                        I am a multidisciplinary engineer bridging the gap between rigorous backend architecture and cutting-edge security research. My approach combines the analytical mindset of an economist with the structural logic of a systems architect.
+                    </p>
+                    <p>
+                        I build systems that are not just functional, but resilient against modern threats. Whether it's designing distributed microservices or researching adaptive hashing algorithms, my focus remains on integrity, privacy, and performance.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 03 TECHNICAL ARSENAL -->
+        <section id="arsenal">
+            <div class="content-container">
+                <h2 style="text-align: center;">Technical <span class="enc-text">Arsenal</span></h2>
+                
+                <div class="tabs-container">
+                    <div class="tab-headers">
+                        <button class="tab-btn active" onclick="openTab(event, 'tab-backend')">Backend Engineering</button>
+                        <button class="tab-btn" onclick="openTab(event, 'tab-security')">Security</button>
+                        <button class="tab-btn" onclick="openTab(event, 'tab-cloud')">Cloud</button>
+                    </div>
+
+                    <!-- Backend Tab -->
+                    <div id="tab-backend" class="tab-content active">
+                        <div class="grid-2">
+                            <div class="glass-card">
+                                <h3>Scalable Architecture</h3>
+                                <p>Expertise in building high-performance REST APIs and distributed services using C# .NET and Node.js. Focus on microservice patterns.</p>
+                                <div class="vn-player" onclick="triggerTabExperience('backend')">
+                                    <div class="play-icon">▶</div>
+                                    <div class="vn-text">Backend Deep Dive</div>
+                                </div>
+                            </div>
+                            <div class="media-wrapper">
+                                <div class="video-container">
+                                    <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/matrixcode/800/450');"></div>
+                                    <!-- NO-COOKIE: Matrix Rain -->
+                                    <iframe src="https://www.youtube-nocookie.com/embed/L9znaPxsYbs?autoplay=1&mute=1&loop=1&playlist=L9znaPxsYbs&controls=0&showinfo=0&rel=0&modestbranding=1" title="Matrix Code" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                    <div class="scanlines"></div>
+                                    <div class="video-hud">
+                                        <div class="video-top">
+                                            <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
+                                            <div class="feed-id">CAM_01: TERMINAL_SESSION</div>
+                                        </div>
+                                        <div class="video-bottom">
+                                            <div class="feed-id">LIVE_FEED_01</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-gallery">
+                                    <img src="https://picsum.photos/seed/code1/300/200" onclick="expandImage(this)">
+                                    <img src="https://picsum.photos/seed/code2/300/200" onclick="expandImage(this)">
+                                    <img src="https://picsum.photos/seed/server1/300/200" onclick="expandImage(this)">
+                                    <img src="https://picsum.photos/seed/api/300/200" onclick="expandImage(this)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Tab -->
+                    <div id="tab-security" class="tab-content">
+                        <div class="grid-2">
+                            <div class="glass-card" style="border-color: var(--c-sec);">
+                                <h3 class="sec-text">Encryption & Defense</h3>
+                                <p>Designing encryption systems and anomaly detection protocols. Experienced in secure API design, hashing algorithms.</p>
+                                <div class="vn-player" onclick="triggerTabExperience('security')">
+                                    <div class="play-icon">▶</div>
+                                    <div class="vn-text">Security Protocols</div>
+                                </div>
+                            </div>
+                            <div class="media-wrapper">
+                                <div class="video-container">
+                                    <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/cybercity/800/450');"></div>
+                                    <!-- NO-COOKIE: Cyberpunk City -->
+                                    <iframe src="https://www.youtube-nocookie.com/embed/Gs_Q9oOBSxs?autoplay=1&mute=1&loop=1&playlist=Gs_Q9oOBSxs&controls=0&showinfo=0&rel=0&modestbranding=1" title="Cyberpunk" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                    <div class="scanlines"></div>
+                                    <div class="video-hud" style="border-color: rgba(255, 42, 42, 0.5);">
+                                        <div class="video-top">
+                                            <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
+                                            <div class="feed-id" style="color:var(--c-sec)">CAM_SEC: NETWORK_TRAFFIC</div>
+                                        </div>
+                                        <div class="video-bottom">
+                                            <div class="feed-id">ENCRYPTION_LAYER</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-gallery">
+                                    <img src="https://picsum.photos/seed/lock/300/200" onclick="expandImage(this)">
+                                    <img src="https://picsum.photos/seed/hack/300/200" onclick="expandImage(this)">
+                                    <img src="https://picsum.photos/seed/ssh/300/200" onclick="expandImage(this)">
+                                    <img src="https://picsum.photos/seed/vuln/300/200" onclick="expandImage(this)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cloud Tab -->
+                    <div id="tab-cloud" class="tab-content">
+                        <div class="grid-2">
+                            <div class="glass-card" style="border-color: var(--c-accent);">
+                                <h3 class="highlight">Cloud Infrastructure</h3>
+                                <p>Architecting resilient environments on AWS and Azure. Implementing CI/CD pipelines, container orchestration.</p>
+                                <div class="vn-player" onclick="triggerTabExperience('cloud')">
+                                    <div class="play-icon">▶</div>
+                                    <div class="vn-text">Cloud Architecture</div>
+                                </div>
+                            </div>
+                            <div class="media-wrapper">
+                                <div class="video-container">
+                                    <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/serverroom/800/450');"></div>
+                                    <!-- NO-COOKIE: Server Room -->
+                                    <iframe src="https://www.youtube-nocookie.com/embed/ScMzIvxBSi4?autoplay=1&mute=1&loop=1&playlist=ScMzIvxBSi4&controls=0&showinfo=0&rel=0&modestbranding=1" title="Server Room" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                    <div class="scanlines"></div>
+                                    <div class="video-hud">
+                                        <div class="video-top">
+                                            <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
+                                            <div class="feed-id">CAM_CLD: SERVER_FARM_04</div>
+                                        </div>
+                                        <div class="video-bottom">
+                                            <div class="feed-id">UPTIME: 99.99%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-gallery">
+                                    <img src="https://picsum.photos/seed/aws/300/200" onclick="expandImage(this)">
+                                    <img src="https://picsum.photos/seed/azure/300/200" onclick="expandImage(this)">
+                                    <img src="https://picsum.photos/seed/k8s/300/200" onclick="expandImage(this)">
+                                    <img src="https://picsum.photos/seed/docker/300/200" onclick="expandImage(this)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 04 SYSTEM DEPLOYMENTS (TRANSPARENT IMAGES) -->
+        <section id="deployments">
+            <div class="content-container">
+                <h2>System <span class="highlight">Deployments</span></h2>
+                
+                <div class="grid-2">
+                    
+                    <!-- Project 1 -->
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div>
+                                <div class="project-title">Helium Packet Enterprise</div>
+                                <span class="project-role">Enterprise Infrastructure</span>
+                            </div>
+                        </div>
+                        <p>A scalable networking platform designed for high-throughput data handling. Features automated failover.</p>
+                        <button class="project-media-toggle" onclick="toggleProjectMedia(this)">View Media & Notes</button>
+                        
+                        <div class="project-media-content">
+                            <div class="vn-player" onclick="triggerTabExperience('project1')">
+                                <div class="play-icon">▶</div>
+                                <div class="vn-text">Project Walkthrough</div>
+                            </div>
+                            <div class="video-container" style="margin-top:1rem;">
+                                <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/networkabstract/800/450');"></div>
+                                <!-- NO-COOKIE: Abstract Network -->
+                                <iframe src="https://www.youtube-nocookie.com/embed/M7fi_ibZt-Q?autoplay=1&mute=1&loop=1&playlist=M7fi_ibZt-Q&controls=0&showinfo=0&rel=0&modestbranding=1" title="Network" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                <div class="scanlines"></div>
+                                <div class="video-hud">
+                                    <div class="video-top">
+                                        <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
+                                        <div class="feed-id">SYS_CAM: HELIUM_NODE</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-gallery" style="margin-top:5px;">
+                                <img src="https://picsum.photos/seed/p1_1/300/200">
+                                <img src="https://picsum.photos/seed/p1_2/300/200">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div>
+                                <div class="project-title">HE SDK</div>
+                                <span class="project-role">Developer Tooling</span>
+                            </div>
+                        </div>
+                        <p>Comprehensive SDK allowing seamless integration with backend systems. Includes structured API clients.</p>
+                        <button class="project-media-toggle" onclick="toggleProjectMedia(this)">View Media & Notes</button>
+                        
+                        <div class="project-media-content">
+                            <div class="vn-player" onclick="triggerTabExperience('project2')">
+                                <div class="play-icon">▶</div>
+                                <div class="vn-text">SDK Usage Guide</div>
+                            </div>
+                            <div class="video-container" style="margin-top:1rem;">
+                                <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/codingscreen/800/450');"></div>
+                                <!-- NO-COOKIE: Coding Screen -->
+                                <iframe src="https://www.youtube-nocookie.com/embed/HEyI31YAG3s?autoplay=1&mute=1&loop=1&playlist=HEyI31YAG3s&controls=0&showinfo=0&rel=0&modestbranding=1" title="Coding" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                <div class="scanlines"></div>
+                                <div class="video-hud">
+                                    <div class="video-top">
+                                        <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
+                                        <div class="feed-id">DEV_CAM: SDK_BUILD</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-gallery" style="margin-top:5px;">
+                                <img src="https://picsum.photos/seed/sdk1/300/200">
+                                <img src="https://picsum.photos/seed/sdk2/300/200">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div>
+                                <div class="project-title">AHE (Adaptive Hashing)</div>
+                                <span class="project-role">Encryption Research</span>
+                            </div>
+                        </div>
+                        <p>Research into dynamic hashing algorithms that evolve based on data entropy to prevent rainbow table attacks.</p>
+                        <button class="project-media-toggle" onclick="toggleProjectMedia(this)">View Media & Notes</button>
+                        
+                        <div class="project-media-content">
+                            <div class="vn-player" onclick="triggerTabExperience('project3')">
+                                <div class="play-icon">▶</div>
+                                <div class="vn-text">Research Explanation</div>
+                            </div>
+                            <div class="video-container" style="margin-top:1rem;">
+                                <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/mathalgo/800/450');"></div>
+                                <!-- NO-COOKIE: Math/Algo -->
+                                <iframe src="https://www.youtube-nocookie.com/embed/r6MlUcmOul8?autoplay=1&mute=1&loop=1&playlist=r6MlUcmOul8&controls=0&showinfo=0&rel=0&modestbranding=1" title="Math" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                <div class="scanlines"></div>
+                                <div class="video-hud" style="border-color: rgba(189, 0, 255, 0.5);">
+                                    <div class="video-top">
+                                        <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
+                                        <div class="feed-id" style="color:var(--c-enc)">RES_CAM: ALGO_VISUALIZER</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-gallery" style="margin-top:5px;">
+                                <img src="https://picsum.photos/seed/hash1/300/200">
+                                <img src="https://picsum.photos/seed/hash2/300/200">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 4 -->
+                    <div class="project-card">
+                        <div class="project-header">
+                            <div>
+                                <div class="project-title">Project Burnout</div>
+                                <span class="project-role">Full Stack App</span>
+                            </div>
+                        </div>
+                        <p>Immersive portfolio platform demonstrating modular architecture, WebGL integration, and performance.</p>
+                        <button class="project-media-toggle" onclick="toggleProjectMedia(this)">View Media & Notes</button>
+                        
+                        <div class="project-media-content">
+                            <div class="vn-player" onclick="triggerTabExperience('project4')">
+                                <div class="play-icon">▶</div>
+                                <div class="vn-text">Design Philosophy</div>
+                            </div>
+                            <div class="video-container" style="margin-top:1rem;">
+                                <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/webglart/800/450');"></div>
+                                <!-- NO-COOKIE: WebGL Art -->
+                                <iframe src="https://www.youtube-nocookie.com/embed/RduLb1s49gA?autoplay=1&mute=1&loop=1&playlist=RduLb1s49gA&controls=0&showinfo=0&rel=0&modestbranding=1" title="WebGL" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                <div class="scanlines"></div>
+                                <div class="video-hud">
+                                    <div class="video-top">
+                                        <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
+                                        <div class="feed-id">UI_CAM: WEBGL_RENDER</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-gallery" style="margin-top:5px;">
+                                <img src="https://picsum.photos/seed/burnout1/300/200">
+                                <img src="https://picsum.photos/seed/burnout2/300/200">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 05 SYSTEM ARCHITECTURE -->
+        <section id="architecture">
+            <div class="content-container grid-2">
+                <div>
+                    <h2>System <span class="sec-text">Architecture</span></h2>
+                    <p>Visualizing the flow of data through secure systems. I prioritize diagrams that clarify complexity.</p>
+                    <div class="vn-player magnetic" onclick="triggerExperience('architecture')">
+                        <div class="play-icon">▶</div>
+                        <div class="vn-text">Listen to Design Philosophy</div>
+                    </div>
+                </div>
+                <div class="glass-card" style="display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.3);">
+                     <div style="text-align:center; color: rgba(255,255,255,0.4);">
+                        [Interactive System Diagram]
+                        <br><span style="font-size:0.8rem">Microservice Orchestration Visual</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 06 TECHNICAL PHILOSOPHY -->
+        <section id="philosophy">
+            <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+                <h2 style="font-size: 3vw;">Engineering <span class="enc-text">Philosophy</span></h2>
+                <p style="font-size: 1.3rem; color: #fff;">
+                    "Security is not a product, but a process."
+                </p>
                 <p>
-                    QUANTUM-SAFE ENCRYPTION // ZERO-KNOWLEDGE PROTOCOLS<br>
-                    <span style="color: var(--accent-glow);">[ SYSTEM STATUS: ONLINE ]</span>
+                    True engineering isn't about writing code; it's about solving problems within constraints. I believe in Security-First Development.
                 </p>
             </div>
-            <div class="hero-visual">
-                <div class="profile-ring"></div>
-                <img src="https://media.licdn.com/dms/image/v2/D4D03AQGLriDk_HYNnA/profile-displayphoto-scale_400_400/B4DZxOsC5PI8Ag-/0/1770846697445?e=1773878400&v=beta&t=7t1HAfFs6smb_ITZus_5Ck_xFn9IsAxPchmbIM1JwLw">
-            </div>
-        </div>
-    </header>
-
-    <main class="container">
-        <!-- NEW INTRO SECTION (VIDEO, PROFILE, WORDS) -->
-        <section id="intro">
-            <div class="section-header">
-                <span class="section-num">01</span>
-                <h2 class="section-title">Introduction</h2>
-            </div>
-            
-            <div class="intro-module tilt-target">
-                <div class="intro-visual">
-                    
-                    <!-- TAB 1: VIDEO (PAUSED BY DEFAULT) -->
-                    <div id="media-video" class="intro-media-item active">
-                        <div class="intro-video-container">
-                            <!-- UPDATED: autoplay=0, controls=1 -->
-                            <iframe src="https://www.youtube.com/embed/LXb3EKWsInQ?autoplay=0&controls=1&mute=1&loop=1&playlist=LXb3EKWsInQ&modestbranding=1&rel=0&playsinline=1&showinfo=0&enablejsapi=1" title="Intro Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- TAB 2: PROFILE -->
-                    <div id="media-profile" class="intro-media-item">
-                        <div class="intro-profile-img-wrap">
-                            <img src="https://media.licdn.com/dms/image/v2/D4D03AQGLriDk_HYNnA/profile-displayphoto-scale_400_400/B4DZxOsC5PI8Ag-/0/1770846697445?e=1773878400&v=beta&t=7t1HAfFs6smb_ITZus_5Ck_xFn9IsAxPchmbIM1JwLw">
-                        </div>
-                    </div>
-
-                    <!-- TAB 3: WORDS -->
-                    <div id="media-words" class="intro-media-item">
-                        <div class="intro-words-visual"></div>
-                    </div>
-                    
-                    <!-- TABS -->
-                    <div class="tab-dock">
-                        <button class="glass-btn active" onclick="switchTab(1, 'intro')">VIDEO</button>
-                        <button class="glass-btn" onclick="switchTab(2, 'intro')">PROFILE</button>
-                        <button class="glass-btn" onclick="switchTab(3, 'intro')">WORDS</button>
-                    </div>
-                </div>
-
-                <div class="intro-content">
-                    <div id="intro-text-container">
-                        <h3 style="font-family: var(--font-display); margin-bottom: 1rem;">INCOMING TRANSMISSION</h3>
-                        <div class="intro-body" id="intro-text">
-                            Analyzing surveillance systems and global data streams. The architecture is designed to be immutable and invisible.
-                        </div>
-                        <div class="tag-row">
-                            <span class="tag">Surveillance</span>
-                            <span class="tag">Encryption</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </section>
 
-        <!-- EDUCATION (UPDATED LOGS STYLE & VIDEO PAUSED) -->
+        <!-- 07 EDUCATION (ADDED WORDS) -->
         <section id="education">
-            <div class="section-header">
-                <span class="section-num">02</span>
-                <h2 class="section-title">Academic Archive</h2>
-            </div>
-
-            <div class="edu-grid">
-                <!-- SCHOOL 1: RHODES -->
-                <article class="edu-card tilt-target" id="edu-rhodes">
-                    <div class="edu-visual-area">
-                        <!-- UPDATED STYLE: Data Log instead of Terminal -->
-                        <div id="rhodes-logs" class="edu-content-wrapper active">
-                            <button class="play-log-btn" onclick="playAudio()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> PLAY LOG</button>
-                            
-                            <div class="data-log-window">
-                                <div class="log-header">
-                                    <span class="log-id">ID: RU-2017</span>
-                                    <span class="log-status">ARCHIVED</span>
-                                </div>
-                                <div class="log-title">Dual Discipline Approach</div>
-                                <div class="log-content-text">
-                                    <p><strong>Focus:</strong> Merged the analytical rigor of economics with the structural logic of law.</p>
-                                    <p><strong>Outcome:</strong> Established a foundational understanding of digital rights, liability, and the economic impact of security breaches.</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- VIDEO (PAUSED) -->
-                        <div id="rhodes-video" class="edu-content-wrapper">
-                            <div class="video-container">
-                                <!-- UPDATED: autoplay=0 -->
-                                <iframe id="if-rhodes" src="https://www.youtube.com/embed/LXb3EKWsInQ?autoplay=0&controls=1&mute=1&loop=1&playlist=LXb3EKWsInQ&modestbranding=1&rel=0&playsinline=1&showinfo=0&enablejsapi=1" title="Rhodes University Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-                            </div>
-                        </div>
-                        
-                        <div id="rhodes-visuals" class="edu-content-wrapper">
-                            <div class="visuals-grid">
-                                <img src="https://mg.co.za/wp-content/uploads/2019/03/2e1faf8c-rhodes-university-a-demand-for-transformation.jpeg" class="visual-img" alt="Campus">
-                                <img src="https://partners.24.com/ru120/virtual-tour-explore-the-rhodes-university-campus-as-we-take-you-through-120-years-of-excellence/assets/ALxLJnNdec/rhodes-building-walkthrough.00_00_02_04.still001-1920x1080.png" class="visual-img" alt="Library">
-                            </div>
-                        </div>
+            <div class="content-container">
+                <h2>Education <span class="highlight">& Certs</span></h2>
+                <div class="tabs-container">
+                    <div class="tab-headers">
+                        <button class="tab-btn active" onclick="openTab(event, 'edu-nmu')">Nelson Mandela Univ</button>
+                        <button class="tab-btn" onclick="openTab(event, 'edu-ru')">Rhodes University</button>
+                        <button class="tab-btn" onclick="openTab(event, 'edu-aws')">AWS Certified</button>
+                        <button class="tab-btn" onclick="openTab(event, 'edu-sec')">Sec+ Certification</button>
                     </div>
 
-                    <div class="edu-info">
-                        <div class="edu-year">2017 - 2019</div>
-                        <h3 class="edu-school">RHODES UNIVERSITY</h3>
-                        <p style="color:#aaa; line-height:1.6; margin-bottom: 2rem;">A rigorous dual-discipline approach. Combined the analytical frameworks of economics with the structural understanding of legal systems.</p>
-                        <div class="edu-tab-container">
-                            <button class="glass-btn active" onclick="switchEduTab('rhodes', 'logs', 'https://picsum.photos/seed/darkmatrix/1920/1080')">// LOGS</button>
-                            <button class="glass-btn" onclick="switchEduTab('rhodes', 'video', 'https://picsum.photos/seed/cinematicdark/1920/1080')">// VIDEO</button>
-                            <button class="glass-btn" onclick="switchEduTab('rhodes', 'visuals', 'https://picsum.photos/seed/rhodes1/1920/1080')">// VISUALS</button>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- SCHOOL 2: NMU -->
-                <article class="edu-card tilt-target" id="edu-nmu">
-                    <div class="edu-visual-area">
-                        <div id="nmu-logs" class="edu-content-wrapper active">
-                            <button class="play-log-btn" onclick="playAudio()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> PLAY LOG</button>
-                            
-                            <div class="data-log-window">
-                                <div class="log-header">
-                                    <span class="log-id">ID: NMU-2022</span>
-                                    <span class="log-status">ARCHIVED</span>
+                    <div id="edu-nmu" class="tab-content active">
+                        <div class="grid-2">
+                            <div class="glass-card">
+                                <h3>Nelson Mandela University</h3>
+                                <p class="highlight">Bachelor of Commerce General (2022)</p>
+                                <div class="vn-player" onclick="triggerTabExperience('edu_nmu')">
+                                    <div class="play-icon">▶</div>
+                                    <div class="vn-text">Uni Experience</div>
                                 </div>
-                                <div class="log-title">Commerce Systems & Digital Economy</div>
-                                <div class="log-content-text">
-                                    <p><strong>Focus:</strong> The intersection of business systems and digital commerce value chains.</p>
-                                    <p><strong>Insight:</strong> Security is not merely technical overhead; it is a tangible business asset and value driver.</p>
+                                <p style="margin-top:1rem; font-size: 0.95rem; line-height: 1.6;">
+                                    During my time at NMU, I focused on the intersection of business logic and information systems. The curriculum provided a robust foundation in economics, which I later applied to optimizing backend resource allocation and cost-management in cloud environments. My capstone project involved analyzing the economic impact of data breaches on SMEs.
+                                </p>
+                            </div>
+                            <div class="media-wrapper">
+                                <div class="video-container">
+                                    <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/campuslife/800/450');"></div>
+                                    <!-- NO-COOKIE: Campus generic -->
+                                    <iframe src="https://www.youtube-nocookie.com/embed/LXb3EKWsInQ?autoplay=1&mute=1&loop=1&playlist=LXb3EKWsInQ&controls=0&showinfo=0&rel=0&modestbranding=1" title="University" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                    <div class="scanlines"></div>
+                                    <div class="video-hud">
+                                        <div class="video-top">
+                                            <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
+                                            <div class="feed-id">ARCHIVE: NMU_GRAD</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-gallery">
+                                    <img src="https://picsum.photos/seed/grad1/300/200">
+                                    <img src="https://picsum.photos/seed/campus1/300/200">
                                 </div>
                             </div>
                         </div>
-                        
-                        <div id="nmu-video" class="edu-content-wrapper">
-                            <div class="video-container">
-                                <!-- UPDATED: autoplay=0 -->
-                                <iframe id="if-nmu" src="https://www.youtube.com/embed/ScMzIvxBSi4?autoplay=0&controls=1&mute=1&loop=1&playlist=ScMzIvxBSi4&controls=0&modestbranding=1&rel=0&playsinline=1&showinfo=0&enablejsapi=1" title="NMU Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-                            </div>
-                        </div>
-                        
-                        <div id="nmu-visuals" class="edu-content-wrapper">
-                            <div class="visuals-grid">
-                                <img src="https://picsum.photos/seed/nmu1/600/600" class="visual-img" alt="Campus">
-                                <img src="https://picsum.photos/seed/nmu2/600/600" class="visual-img" alt="Students">
-                            </div>
-                        </div>
                     </div>
-
-                    <div class="edu-info">
-                        <div class="edu-year">2022</div>
-                        <h3 class="edu-school">NELSON MANDELA UNIV</h3>
-                        <p style="color:#aaa; line-height:1.6; margin-bottom: 2rem;">Focused on the value chain in digital products. Provided the foundational understanding of how economic models function in a digital ecosystem.</p>
-                        <div class="edu-tab-container">
-                            <button class="glass-btn active" onclick="switchEduTab('nmu', 'logs', 'https://picsum.photos/seed/darkmatrix/1920/1080')">// LOGS</button>
-                            <button class="glass-btn" onclick="switchEduTab('nmu', 'video', 'https://picsum.photos/seed/techdark/1920/1080')">// VIDEO</button>
-                            <button class="glass-btn" onclick="switchEduTab('nmu', 'visuals', 'https://picsum.photos/seed/nmu1/1920/1080')">// VISUALS</button>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- SCHOOL 3: CYBER ACADEMY -->
-                <article class="edu-card tilt-target" id="edu-cyber">
-                    <div class="edu-visual-area">
-                        <div id="cyber-logs" class="edu-content-wrapper active">
-                            <button class="play-log-btn" onclick="playAudio()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> PLAY LOG</button>
-                            
-                            <div class="data-log-window">
-                                <div class="log-header">
-                                    <span class="log-id">ID: CA-2023</span>
-                                    <span class="log-status">ACTIVE</span>
+                    
+                    <div id="edu-ru" class="tab-content">
+                        <div class="grid-2">
+                            <div class="glass-card">
+                                <h3>Rhodes University</h3>
+                                <p class="enc-text">Bachelor of Economics and Law (2017 – 2019)</p>
+                                <div class="vn-player" onclick="triggerTabExperience('edu_ru')">
+                                    <div class="play-icon">▶</div>
+                                    <div class="vn-text">Law & Econ</div>
                                 </div>
-                                <div class="log-title">Continuous Evolution</div>
-                                <div class="log-content-text">
-                                    <p><strong>Pursuit:</strong> Ethical Hacking, AR/VR Development, and Post-Quantum Cryptography.</p>
-                                    <p><strong>Mission:</strong> Bridge the gap between theoretical security models and offensive capabilities to stay ahead of the quantum threat curve.</p>
+                                <p style="margin-top:1rem; font-size: 0.95rem; line-height: 1.6;">
+                                    My initial academic journey was rooted in the understanding of legal frameworks and economic models. This background is crucial in the modern security landscape, particularly regarding compliance (GDPR, POPIA), intellectual property rights in software, and the ethical implications of algorithmic decision making. I learned to argue complex logic, a skill directly transferable to debugging secure systems.
+                                </p>
+                            </div>
+                            <div class="media-wrapper">
+                                <div class="video-container">
+                                    <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/librarystudy/800/450');"></div>
+                                    <!-- NO-COOKIE: Lofi Girl (Study vibe) -->
+                                    <iframe src="https://www.youtube-nocookie.com/embed/5qap5aO4i9A?autoplay=1&mute=1&loop=1&playlist=5qap5aO4i9A&controls=0&showinfo=0&rel=0&modestbranding=1" title="Study" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                    <div class="scanlines"></div>
+                                    <div class="video-hud" style="border-color: rgba(189, 0, 255, 0.5);">
+                                        <div class="video-top">
+                                            <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
+                                            <div class="feed-id" style="color:var(--c-enc)">ARCHIVE: RU_LAW</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-gallery">
+                                    <img src="https://picsum.photos/seed/ru1/300/200">
+                                    <img src="https://picsum.photos/seed/ru2/300/200">
                                 </div>
                             </div>
                         </div>
-                        
-                        <div id="cyber-video" class="edu-content-wrapper">
-                            <div class="video-container">
-                                <!-- UPDATED: autoplay=0 -->
-                                <iframe id="if-cyber" src="https://www.youtube.com/embed/3kK0YLrO_pY?autoplay=0&controls=1&mute=1&loop=1&playlist=3kK0YLrO_pY&controls=0&modestbranding=1&rel=0&playsinline=1&showinfo=0&enablejsapi=1" title="Cyber Academy Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                    </div>
+
+                    <div id="edu-aws" class="tab-content">
+                        <div class="grid-2">
+                            <div class="glass-card">
+                                <h3>AWS Certified Solutions Architect</h3>
+                                <div class="vn-player" onclick="triggerTabExperience('edu_aws')">
+                                    <div class="play-icon">▶</div>
+                                    <div class="vn-text">Cert Journey</div>
+                                </div>
+                                <p style="margin-top:1rem; font-size: 0.95rem; line-height: 1.6;">
+                                    Achieving the Associate level certification validated my ability to design distributed systems on AWS. The certification process required deep study of VPC networking, IAM security best practices, and serverless architectures using Lambda and API Gateway. This knowledge is directly applied to my current role in deploying secure, scalable containerized applications.
+                                </p>
+                            </div>
+                            <div class="media-wrapper">
+                                <div class="video-container">
+                                    <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/awscert/800/450');"></div>
+                                    <!-- NO-COOKIE: Abstract Tech -->
+                                    <iframe src="https://www.youtube-nocookie.com/embed/xg4ev24N-aI?autoplay=1&mute=1&loop=1&playlist=xg4ev24N-aI&controls=0&showinfo=0&rel=0&modestbranding=1" title="AWS" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                    <div class="scanlines"></div>
+                                    <div class="video-hud">
+                                        <div class="video-top">
+                                            <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
+                                            <div class="feed-id">CERT: AWS_ASSOCIATE</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-gallery">
+                                    <img src="https://picsum.photos/seed/badge1/300/200">
+                                    <img src="https://picsum.photos/seed/cloud1/300/200">
+                                </div>
                             </div>
                         </div>
-                        
-                        <div id="cyber-visuals" class="edu-content-wrapper">
-                            <div class="visuals-grid">
-                                <img src="https://picsum.photos/seed/cyber1/600/600" class="visual-img" alt="Lab">
-                                <img src="https://picsum.photos/seed/cyber2/600/600" class="visual-img" alt="Quantum">
+                    </div>
+
+                    <div id="edu-sec" class="tab-content">
+                        <div class="grid-2">
+                            <div class="glass-card">
+                                <h3>CompTIA Security+</h3>
+                                <div class="vn-player" onclick="triggerTabExperience('edu_sec')">
+                                    <div class="play-icon">▶</div>
+                                    <div class="vn-text">Security Basics</div>
+                                </div>
+                                <p style="margin-top:1rem; font-size: 0.95rem; line-height: 1.6;">
+                                    The Security+ certification laid the groundwork for my cybersecurity career. It covers essential principles including network security, compliance, operational security, threats, and vulnerabilities. This baseline ensures that every system I architect is built with a fundamental understanding of risk management, access control, and cryptography from day one.
+                                </p>
+                            </div>
+                            <div class="media-wrapper">
+                                <div class="video-container">
+                                    <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/securityops/800/450');"></div>
+                                    <!-- NO-COOKIE: Hacking/Security -->
+                                    <iframe src="https://www.youtube-nocookie.com/embed/inWWhr5tnEA?autoplay=1&mute=1&loop=1&playlist=inWWhr5tnEA&controls=0&showinfo=0&rel=0&modestbranding=1" title="Security" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                    <div class="scanlines"></div>
+                                    <div class="video-hud" style="border-color: rgba(255, 42, 42, 0.5);">
+                                        <div class="video-top">
+                                            <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
+                                            <div class="feed-id" style="color:var(--c-sec)">CERT: SECURITY_PLUS</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-gallery">
+                                    <img src="https://picsum.photos/seed/secplus1/300/200">
+                                    <img src="https://picsum.photos/seed/secplus2/300/200">
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="edu-info">
-                        <div class="edu-year">2023 - Present</div>
-                        <h3 class="edu-school">CYBER ACADEMY</h3>
-                        <p style="color:#aaa; line-height:1.6; margin-bottom: 2rem;">Advanced certifications in Ethical Hacking, AR/VR Development, and Quantum-Safe Cryptography. Bridging the gap between theoretical security and offensive capabilities.</p>
-                        <div class="edu-tab-container">
-                            <button class="glass-btn active" onclick="switchEduTab('cyber', 'logs', 'https://picsum.photos/seed/darkmatrix/1920/1080')">// LOGS</button>
-                            <button class="glass-btn" onclick="switchEduTab('cyber', 'video', 'https://picsum.photos/seed/cyberdark/1920/1080')">// VIDEO</button>
-                            <button class="glass-btn" onclick="switchEduTab('cyber', 'visuals', 'https://picsum.photos/seed/cyber1/1920/1080')">// VISUALS</button>
-                        </div>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <!-- PROJECTS -->
-        <section id="projects">
-            <div class="section-header">
-                <span class="section-num">03</span>
-                <h2 class="section-title">Field Operations</h2>
-            </div>
-
-            <div class="project-list">
-                <!-- Project 1 -->
-                <article class="project-dossier tilt-target">
-                    <div class="project-img-wrap">
-                        <img src="https://picsum.photos/seed/quantum/800/800" alt="Project 1">
-                    </div>
-                    <div class="project-data">
-                        <h3 class="p-title">AHE SDK</h3>
-                        <div class="p-sub">ADAPTIVE HASHING ENCRYPTION</div>
-                        <p class="p-desc">
-                            A quantum-safe, anomaly-driven encryption API. Designed for future-proof data integrity using Homomorphic Encryption (HE) processes.
-                        </p>
-                        <div style="margin-top: auto; display: flex; gap: 1rem;">
-                            <a href="#" class="btn-link">View Schematic</a>
-                            <a href="#" class="btn-link" style="border-color: var(--accent); color: var(--accent-glow);">GitHub Repo</a>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- Project 2 -->
-                <article class="project-dossier tilt-target">
-                    <div class="project-img-wrap">
-                        <img src="https://picsum.photos/seed/burnout/800/800" alt="Project 2">
-                    </div>
-                    <div class="project-data">
-                        <h3 class="p-title">Project Burnout</h3>
-                        <div class="p-sub">VOGUE-TYPE EXPERIENCE</div>
-                        <p class="p-desc">
-                            High-fidelity web experience mimicking editorial layouts. Implemented complex parallax scrolling and modular content grids using React and GSAP.
-                        </p>
-                        <div style="margin-top: auto; display: flex; gap: 1rem;">
-                            <a href="#" class="btn-link">Live Demo</a>
-                        </div>
-                    </div>
-                </article>
+                </div>
             </div>
         </section>
 
-        <!-- CONTACT -->
-        <section id="uplink" style="padding: 10vh 0; text-align: center;">
-            <h2 style="font-family: var(--font-display); margin-bottom: 2rem;">INITIATE UPLINK</h2>
-            <a href="mailto:contact@hachu.com" style="font-size: clamp(1rem, 3vw, 2rem); color: white; border-bottom: 1px solid var(--accent-glow);">contact@hachu.com</a>
+        <!-- 08 FUTURE VISION -->
+        <section id="future">
+            <div class="content-container grid-2">
+                <div>
+                    <h2>Future <span class="highlight">Vision</span></h2>
+                    <div class="vn-player magnetic" onclick="triggerExperience('future')">
+                        <div class="play-icon">▶</div>
+                        <div class="vn-text">Vision Briefing</div>
+                    </div>
+                    <h3 style="color:var(--c-accent); margin-top:1rem;">01. Zero Trust Architecture</h3>
+                    <p>Moving beyond perimeter defense to identity-based security.</p>
+                    <h3 style="color:var(--c-enc); margin-top:1rem;">02. Post-Quantum Cryptography</h3>
+                    <p>Preparing backend systems for quantum computing.</p>
+                </div>
+                <div class="glass-card">
+                    <h3>Roadmap</h3>
+                    <ul style="list-style: none; margin-top: 1rem;">
+                        <li style="margin-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:0.5rem;">
+                            <strong>Q3 2024:</strong> Advanced React & WebGL
+                        </li>
+                        <li style="margin-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:0.5rem;">
+                            <strong>Q4 2024:</strong> Cloud Native Security
+                        </li>
+                        <li style="margin-bottom:1rem;">
+                            <strong>2025:</strong> Full Stack AI Engineering
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </section>
+
+        <!-- 09 CONTACT -->
+        <section id="contact" style="min-height: 80vh;">
+            <div style="max-width: 600px; margin: 0 auto;">
+                <h2 style="text-align: center;">Establish <span class="sec-text">Contact</span></h2>
+                <p style="text-align: center; margin-bottom: 3rem;">Open to opportunities in Cybersecurity, Cloud Architecture, and Distributed Systems.</p>
+                
+                <form onsubmit="handleFormSubmit(event)">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="form-control" placeholder="Email Address" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" rows="5" placeholder="Message / Project Proposal" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Send Encrypted Message</button>
+                </form>
+
+                <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 3rem;">
+                    <a href="#" class="magnetic" style="color: #fff; text-decoration: none; border-bottom: 1px solid var(--c-accent);">GitHub</a>
+                    <a href="#" class="magnetic" style="color: #fff; text-decoration: none; border-bottom: 1px solid var(--c-sec);">LinkedIn</a>
+                    <a href="#" class="magnetic" style="color: #fff; text-decoration: none; border-bottom: 1px solid var(--c-enc);">Email</a>
+                </div>
+            </div>
+        </section>
+
+        <footer style="padding: 2rem; text-align: center; font-size: 0.8rem; color: rgba(255,255,255,0.3);">
+            &copy; 2024 HACK U. All Systems Operational.
+        </footer>
+
     </main>
 
-    <!-- NAVIGATION WIDGET -->
-    <div class="nav-widget-svg-container" onclick="navigateToNextSection()">
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 114 173"
-            height="173"
-            width="114"
-            id="svg-container"
-        >
-            <g>
-                <path fill-opacity="0.3" fill="#414750" d="M6.5517 105.313L48.4827 129.435C52.4138 131.899 58.3103 133.531 65.1896 129.288L98.6034 110.029C108.103 104.741 109.414 104.089 109.82 101.543V108.969C109.82 110.693 109.227 112.007 108.17 112.622L98.6034 118.19L66.1724 136.795C59.6207 140.974 54.3793 140.974 48.4827 137.559L5.93929 113.1C4.68554 112.38 3.66895 110.625 3.66895 109.183V101.477C3.99512 103.22 4.62371 104.091 6.5517 105.313Z"></path>
-                <path stroke-opacity="0.5" stroke="white" fill-opacity="0.3" fill="#414750" d="M6.52505 98.1152L50.782 72.6548C54.0722 70.7616 59.4069 70.7616 62.6973 72.6548L106.954 98.1152C110.245 100.008 110.245 103.077 106.954 104.97L63.2646 130.104C59.661 132.177 53.8182 132.177 50.2145 130.104L6.52505 104.97C3.23473 103.077 3.23473 100.008 6.52505 98.1152Z"></path>
-                <path stroke="#DADADA" d="M51.4773 64.1132L14.4116 85.4366C11.4229 87.156 11.4229 89.9436 14.4116 91.663L51.4773 112.986C54.4661 114.706 59.3118 114.706 62.3005 112.986L99.3663 91.663C102.355 89.9436 102.355 87.156 99.3663 85.4366L62.3005 64.1132C59.3118 62.3938 54.4661 62.3938 51.4773 64.1132Z" id="line-animation-v1"></path>
-                <path stroke="#DADADA" d="M52.2674 78.5847L21.4931 96.2887C19.0116 97.7163 19.0116 100.031 21.4931 101.458L52.2674 119.162C54.7488 120.59 58.772 120.59 61.2535 119.162L92.0278 101.458C94.5092 100.031 94.5092 97.7163 92.0278 96.2887L61.2535 78.5847C58.772 77.1572 54.7488 77.1572 52.2674 78.5847Z" id="line-animation-v2"></path>
-                <path fill="url(#paint0_linear_54_145)" d="M6.5517 64.3775L48.4827 88.5C52.4138 90.9638 58.3103 92.5959 65.1896 88.3525L98.6034 69.094C108.5 63.5401 109.414 63.6133 109.82 61.0672V68.493C109.82 70.2178 109.227 71.5313 108.17 72.1462L98.6034 77.7142L66.1724 96.3199C59.6207 100.498 54.3793 100.498 48.4827 97.083L5.93929 72.6247C4.68554 71.904 3.66895 70.1499 3.66895 68.7078V61.002C3.99512 62.744 4.62371 63.1552 6.5517 64.3775Z"></path>
-                <path fill-opacity="0.3" fill="#414750" d="M6.5517 72.6711L48.4827 96.7938C52.4138 99.2576 58.3103 100.89 65.1896 96.6463L98.6034 77.3878C108.103 72.0998 109.414 71.447 109.82 68.901V76.3269C109.82 78.0517 109.227 79.3652 108.17 79.9802L98.6034 85.5482L66.1724 104.154C59.6207 108.332 54.3793 108.332 48.4827 104.917L5.93929 80.4587C4.68554 79.738 3.66895 77.9838 3.66895 76.5417V68.8357C3.99512 70.5781 4.62371 71.449 6.5517 72.6711Z"></path>
-                <path stroke="#3C4149" fill="url(#paint1_linear_54_145)" d="M6.67475 57.7257L50.9316 32.2653C54.1393 30.42 59.3399 30.42 62.5475 32.2653L106.804 57.7257C110.012 59.571 110.012 62.5628 106.804 64.4081L62.5475 89.8685C59.3399 91.7138 54.1393 91.7138 50.9316 89.8685L6.67475 64.4081C3.46711 62.5628 3.46711 59.571 6.67475 57.7257Z"></path>
-                <path stroke-width="0.5" stroke-opacity="0.3" stroke="white" d="M14.4148 58.4075L51.2752 37.1261C54.0265 35.5376 58.4873 35.5376 61.2387 37.1261L98.0991 58.4075C100.85 59.996 100.85 62.5714 98.0991 64.1599L61.2387 85.4413C58.4873 87.0298 54.0265 87.0298 51.2752 85.4413L14.4148 64.1599C11.6634 62.5714 11.6634 59.996 14.4148 58.4075Z"></path>
-            </g>
+    <!-- Toast Notification -->
+    <div id="toast">Message Transmitted Successfully</div>
 
-            <g id="id-repo-ghost-twich">
-                <g class="react-path-v2"><rect fill="#9146FF5e" transform="matrix(0.866025 -0.5 0.866025 0.5 37.1982 49.0967)" rx="4" height="22.0331" width="22.0331"></rect></g>
-                <g class="react-path-v1"><rect fill="#9146FF5e" transform="matrix(0.866025 -0.5 0.866025 0.5 37.1982 49.0967)" rx="4" height="22.0331" width="22.0331"></rect></g>
-                <g class="container-g-icons" id="id-02-twich">
-                    <rect fill="#383D45" transform="matrix(0.866025 -0.5 0.866025 0.5 37.1982 49.0967)" rx="4" height="22.0331" width="22.0331"></rect>
-                    <g clip-path="url(#clip2_54_145)">
-                        <path fill="white" d="M47.735 47.5298L47.735 49.8511L54.9727 54.0298L57.3855 52.6367L59.3959 53.7974L59.3959 51.4761L61.003 50.5482L61.0037 46.3691L55.3745 43.1191L47.735 47.5298ZM59.7976 46.6015L59.7976 48.4581L58.1891 49.3867L58.1891 51.0117L56.7818 50.1992L54.9727 51.2437L48.9418 47.7617L55.3745 44.0478L59.7976 46.6015Z"></path>
-                        <path fill="white" d="M55.5758 45.5567L54.7715 46.021L57.1829 47.4132L57.9872 46.9489L55.5758 45.5567ZM53.3642 46.8335L52.5599 47.2979L54.9713 48.6901L55.7756 48.2257L53.3642 46.8335Z"></path>
-                    </g>
-                </g>
-            </g>
-
-            <g id="id-repo-ghost-linkelind">
-                <g class="react-path-v2"><rect fill="#0A66C25e" transform="matrix(0.866025 -0.5 0.866025 0.5 58.0114 61.1133)" rx="4" height="22.0331" width="22.0331"></rect></g>
-                <g class="react-path-v1"><rect fill="#0A66C25e" transform="matrix(0.866025 -0.5 0.866025 0.5 58.0114 61.1133)" rx="4" height="22.0331" width="22.0331"></rect></g>
-                <g class="container-g-icons" id="id-04-linkelind">
-                    <rect fill="#383D45" transform="matrix(0.866025 -0.5 0.866025 0.5 58.0114 61.1133)" rx="4" height="22.0331" width="22.0331"></rect>
-                    <g clip-path="url(#clip3_54_145)">
-                        <path fill="white" d="M66.6407 61.5788C66.1953 61.3217 66.2044 60.8996 66.6611 60.6359L76.2658 55.0906C76.7225 54.827 77.4536 54.8217 77.899 55.0788L87.5446 60.6477C87.99 60.9049 87.9808 61.327 87.5242 61.5906L77.9194 67.1359C77.4627 67.3996 76.7316 67.4049 76.2862 67.1477L66.6407 61.5788ZM78.737 64.5465L73.6532 61.6113L71.9637 62.5868L77.0476 65.5219L78.737 64.5465ZM72.1143 61.6979C72.7033 61.3578 72.6801 60.9211 72.1917 60.6392C71.6823 60.3573 70.9477 60.3434 70.3693 60.6774C69.7909 61.0113 69.793 61.4488 70.2912 61.7365C70.7795 62.0184 71.5359 62.0318 72.1031 61.7044L72.1143 61.6979ZM81.3462 63.0401L78.5069 61.4009C78.355 61.3132 78.2142 61.2189 78.1509 61.1303C77.9694 60.885 77.9328 60.5429 78.4 60.2732C79.0115 59.9201 79.7214 60.0481 80.4054 60.443L83.125 62.0131L84.8144 61.0377L81.8985 59.3542C80.3364 58.4523 78.7771 58.5141 77.6654 59.156C76.7689 59.6735 76.8597 60.1899 76.9814 60.5202L76.999 60.5303L76.9878 60.5368L76.9814 60.5202L76.2623 60.105L74.5736 61.08C75.0717 61.3432 79.6574 64.0151 79.6574 64.0151L81.3462 63.0401Z"></path>
-                    </g>
-                </g>
-            </g>
-
-            <g id="id-repo-ghost-facebook">
-                <g class="react-path-v2"><rect fill="#1877F25e" transform="matrix(0.866025 -0.5 0.866025 0.5 16.4136 61.0967)" rx="4" height="22.0331" width="22.0331"></rect></g>
-                <g class="react-path-v1"><rect fill="#1877F25e" transform="matrix(0.866025 -0.5 0.866025 0.5 16.4136 61.0967)" rx="4" height="22.0331" width="22.0331"></rect></g>
-                <g class="container-g-icons" id="id-01-facebook">
-                    <rect fill="#383D45" transform="matrix(0.866025 -0.5 0.866025 0.5 24.2365 61.0967)" rx="4" height="22.0331" width="22.0331"></rect>
-                    <g clip-path="url(#clip0_54_145)">
-                        <path fill="white" d="M41.1579 57.8667C38.0295 56.0605 32.9731 56.0515 29.8644 57.8464C26.755 59.6424 26.7698 62.5613 29.8989 64.3679C32.7254 65.9998 37.1274 66.1639 40.2432 64.8558L36.2852 62.5706L34.8568 63.3953L33.2201 62.4504L34.6499 61.6249L33.4009 60.9038C31.9817 60.0844 32.0387 59.1464 33.3242 58.4041C33.9406 58.0483 34.6949 57.7403 34.6949 57.7403L36.0881 58.5447L35.3782 58.9546C34.6794 59.358 34.8983 59.7362 35.3465 59.995L36.409 60.6084L37.9697 59.7074L39.3573 60.7961L38.045 61.5538L42.003 63.8389C44.2687 62.0401 43.9845 59.4986 41.1579 57.8667Z"></path>
-                    </g>
-                </g>
-            </g>
-
-            <g id="id-repo-ghost-instagram">
-                <g class="react-path-v2"><rect fill="#E4405F5e" transform="matrix(0.866025 -0.5 0.866025 0.5 37.2268 73.1133)" rx="4" height="22.0331" width="22.0331" class="react"></rect></g>
-                <g class="react-path-v1"><rect fill="#E4405F5e" transform="matrix(0.866025 -0.5 0.866025 0.5 37.2268 73.1133)" rx="4" height="22.0331" width="22.0331" class="react"></rect></g>
-                <g class="container-g-icons" id="id-03-instagram">
-                    <rect fill="#383D45" transform="matrix(0.866025 -0.5 0.866025 0.5 45.0497 73.1133)" rx="4" height="22.0331" width="22.0331"></rect>
-                    <g clip-path="url(#clip1_54_145)">
-                        <path fill="white" d="M50.6788 69.8633C49.1512 70.7453 48.9662 70.8602 48.3927 71.2222C47.8206 71.585 47.5061 71.8754 47.2873 72.1627C47.0524 72.461 46.9337 72.7855 47.2873 74.0639C47.8206 71.585 49.1498 75.4805 50.6796 76.3637C52.2079 77.2461 52.4063 77.3525 53.0332 77.6836C53.6609 78.0135 54.164 78.1951 54.6615 78.3214C55.1758 78.4518 55.6818 78.5221 56.308 78.5221C56.9336 78.5225 57.4402 78.4526 57.9538 78.3218C57.4377 67.7695 56.8757 67.701 56.308 67.7045C55.7404 67.701 55.1783 67.7695 54.6615 67.9052C54.1633 68.0319 53.6588 68.2135 53.0325 68.5434C52.4049 68.8749 52.2072 68.9809 50.6774 69.8641C50.187 74.1131 50.016 74.801 50.6796 76.3633C63.4662 75.4805 63.6499 75.3663 64.224 75.004C64.7947 74.642 65.1106 74.3507 65.3295 74.0635C65.564 73.7652 65.6824 73.4409 65.3287 72.1627C65.1092 71.8758 65.5546 72.3361 65.3287 72.1627Z"></path>
-                    </g>
-                </g>
-            </g>
-
-            <defs>
-                <linearGradient gradientUnits="userSpaceOnUse" y2="66.329" x2="109.999" y1="65.9358" x1="3.93103" id="paint0_linear_54_145"><stop stop-color="#1F2127"></stop><stop stop-color="#414750" offset="1"></stop></linearGradient>
-                <linearGradient gradientUnits="userSpaceOnUse" y2="110.105" x2="84.4463" y1="61" x1="9.71059e-08" id="paint1_linear_54_145"><stop stop-color="#414750"></stop><stop stop-color="#414750" offset="1"></stop></linearGradient>
-                <clipPath id="clip0_54_145"><rect transform="matrix(0.866025 -0.5 0.866025 0.5 24.2365 61.0967)" fill="white" height="13" width="13"></rect></clipPath>
-                <clipPath id="clip1_54_145"><rect transform="matrix(0.866025 -0.5 0.866025 0.5 45.0497 73.1133)" fill="white" height="13" width="13"></rect></clipPath>
-                <clipPath id="clip2_54_145"><rect transform="matrix(0.866025 -0.5 0.866025 0.5 45.0211 49.0967)" fill="white" height="13" width="13"></rect></clipPath>
-                <clipPath id="clip3_54_145"><rect transform="matrix(0.866025 -0.5 0.866025 0.5 65.8343 61.1133)" fill="white" height="13" width="13"></rect></clipPath>
-            </defs>
-        </svg>
-        <div class="nav-label">NEXT SECTION</div>
-    </div>
-
-    <!-- TICKER -->
-    <div class="ticker-wrap">
-        <div class="ticker-content">
-            SYSTEM_ACTIVE /// QUANTUM_ENCRYPTION_READY /// THREAT_LEVEL_LOW /// ZK_PROTocols_ENABLED /// SECURE_CONNECTION_ESTABLISHED /// 
-            SYSTEM_ACTIVE /// QUANTUM_ENCRYPTION_READY /// THREAT_LEVEL_LOW /// ZK_PROTocols_ENABLED /// SECURE_CONNECTION_ESTABLISHED ///
-        </div>
-    </div>
-
-    <footer>
-        <p>&copy; 2023 HACK_U. ALL SYSTEMS NOMINAL.</p>
-    </footer>
-
-    <!-- LOGIC -->
-    <script type="module">
-        import * as THREE from 'three';
-
-        const initThree = () => {
-            const container = document.getElementById('three-canvas');
-            if(!container) return;
-
-            const scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x030303, 0.02);
-
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 30;
-
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            container.appendChild(renderer.domElement);
-
-            const geometry = new THREE.IcosahedronGeometry(15, 2);
-            const count = geometry.attributes.position.count;
-            
-            const material = new THREE.PointsMaterial({
-                size: 0.15,
-                vertexColors: false,
-                color: 0x6366f1,
-                transparent: true,
-                opacity: 0.8,
-            });
-
-            const particles = new THREE.Points(geometry, material);
-            scene.add(particles);
-
-            let mouseX = 0; 
-            let mouseY = 0;
-            let targetX = 0; 
-            let targetY = 0;
-
-            const windowHalfX = window.innerWidth / 2;
-            const windowHalfY = window.innerHeight / 2;
-
-            document.addEventListener('mousemove', (e) => {
-                mouseX = (e.clientX - windowHalfX);
-                mouseY = (e.clientY - windowHalfY);
-            });
-
-            const clock = new THREE.Clock();
-
-            const animate = () => {
-                requestAnimationFrame(animate);
-                const elapsedTime = clock.getElapsedTime();
-
-                targetX = mouseX * 0.001;
-                targetY = mouseY * 0.001;
-
-                particles.rotation.y += 0.002;
-                particles.rotation.x += 0.001;
-
-                particles.rotation.y += 0.05 * (targetX - particles.rotation.y);
-                particles.rotation.x += 0.05 * (targetY - particles.rotation.x);
-
-                renderer.render(scene, camera);
-            };
-
-            animate();
-
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
-        };
-
-        window.initThree = initThree;
-    </script>
+    <!-- Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
 
     <script>
-        // --- 2. SYSTEM CONTROLLER ---
-        let systemActive = false;
+        // --- 1. CONFIG & ASSETS ---
+        const config = {
+            colors: { bg: 0x030305, primary: 0x00f3ff, secondary: 0xbd00ff, danger: 0xff2a2a }
+        };
 
-        function initSystem() {
-            if(systemActive) return;
-            systemActive = true;
-            
-            document.getElementById('start-overlay').classList.add('hidden');
-            
-            if(window.initThree) window.initThree();
-            initTritonePhysics();
-            startAutoRotate();
-        }
+        const galleryAssets = {
+            intro: ['network', 'server', 'cyber', 'code'],
+            profile: ['developer', 'meeting', 'tech'],
+            architecture: ['blueprint', 'structure', 'chip'],
+            future: ['space', 'ai', 'quantum'],
+            backend: ['backend1', 'backend2', 'backend3', 'server'],
+            security: ['security1', 'lock', 'hacker', 'cybersec'],
+            cloud: ['cloud1', 'aws', 'azure', 'docker'],
+            project1: ['enterprise1', 'networking', 'data'],
+            project2: ['coding1', 'sdk', 'tools'],
+            project3: ['crypto', 'math', 'algo'],
+            project4: ['webgl', 'design', 'react'],
+            edu_nmu: ['university', 'grad', 'study'],
+            edu_ru: ['library', 'law', 'econ'],
+            edu_aws: ['cert', 'cloud', 'exam'],
+            edu_sec: ['security', 'comptia', 'badge']
+        };
 
-        // --- 3. AUTO-ROTATING BACKGROUND (6.18s) ---
-        const defaultBackgrounds = [
-            'https://picsum.photos/seed/nebula/1920/1080',
-            'https://picsum.photos/seed/stars/1920/1080',
-            'https://picsum.photos/seed/matrix/1920/1080',
-            'https://picsum.photos/seed/cyber/1920/1080'
-        ];
-        let bgIndex = 0;
-        let autoRotateInterval;
-        let isEducationActive = false;
+        const getImages = (key, count = 4) => {
+            const seeds = galleryAssets[key] || ['tech'];
+            return Array.from({length: count}, (_, i) => 
+                `https://picsum.photos/seed/${seeds[i % seeds.length]}${i}/1920/1080.jpg`
+            );
+        };
 
-        function setBg(url) {
-            document.getElementById('main-bg').style.backgroundImage = `url('${url}')`;
-        }
-
-        function startAutoRotate() {
-            if(autoRotateInterval) clearInterval(autoRotateInterval);
-            autoRotateInterval = setInterval(() => {
-                if(!isEducationActive) {
-                    bgIndex = (bgIndex + 1) % defaultBackgrounds.length;
-                    setBg(defaultBackgrounds[bgIndex]);
-                }
-            }, 6180); 
-        }
-
-        const educationObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                isEducationActive = entry.isIntersecting;
-            });
-        }, { threshold: 0.1 });
-
-        // --- 4. INTRO TABS LOGIC (UPDATED: VIDEO, PROFILE, WORDS) ---
-        function switchTab(index, sectionId) {
-            // Update buttons
-            const btns = document.querySelectorAll('.tab-dock .glass-btn');
-            btns.forEach((btn, i) => {
-                if(i === index - 1) btn.classList.add('active');
-                else btn.classList.remove('active');
-            });
-
-            // Update Media
-            const medias = ['media-video', 'media-profile', 'media-words'];
-            medias.forEach((id, i) => {
-                const el = document.getElementById(id);
-                if(el) {
-                    if(i === index - 1) el.classList.add('active');
-                    else el.classList.remove('active');
-                }
-            });
-
-            // Update Text Content
-            const titleEl = document.querySelector('#intro-text-container h3');
-            const bodyEl = document.getElementById('intro-text');
-            const tagsEl = document.querySelector('.tag-row');
-
-            if (index === 1) { // VIDEO
-                titleEl.innerText = "INCOMING TRANSMISSION";
-                bodyEl.innerHTML = "Analyzing surveillance systems and global data streams. The architecture is designed to be immutable and invisible.";
-                tagsEl.innerHTML = '<span class="tag">Surveillance</span><span class="tag">Encryption</span>';
-            } else if (index === 2) { // PROFILE
-                titleEl.innerText = "IDENTITY CONFIRMED";
-                
-                const bioHtml = `
-                    <ul class="bio-list">
-                        <li><span class="bio-label">CODENAME</span> <span>HACK_U</span></li>
-                        <li><span class="bio-label">ROLE</span> <span>SECURE ARCHITECT</span></li>
-                        <li><span class="bio-label">LOCATION</span> <span>THE GRID</span></li>
-                        <li><span class="bio-label">STATUS</span> <span>CLASSIFIED</span></li>
-                    </ul>
-                `;
-                
-                bodyEl.innerHTML = bioHtml;
-                tagsEl.innerHTML = '<span class="tag">Python</span><span class="tag">Cryptography</span><span class="tag">React</span>';
-            } else if (index === 3) { // WORDS
-                titleEl.innerText = "THE ARCHITECTURE";
-                bodyEl.innerHTML = "I build digital fortresses. My philosophy is rooted in the <strong>Pythagorean pursuit of harmony</strong>—balancing aesthetic perfection with cryptographic rigidity. Every system is designed to be immutable, scalable, and quantum-resistant.";
-                tagsEl.innerHTML = '<span class="tag">React</span><span class="tag">Web3</span><span class="tag">Zero-Knowledge</span>';
-            }
-        }
-
-        // --- 5. EDUCATION TABS LOGIC -->
-        function stopVideo(id) {
-            const iframe = document.getElementById(id);
-            if (iframe) {
-                iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-            }
-        }
-
-        function switchEduTab(schoolId, tabName, bgUrl) {
-            const videoId = `if-${schoolId}`;
-            // Only pause if we are LEAVING the video tab, to save resources
-            if(tabName !== 'video') stopVideo(videoId);
-
-            const wrappers = ['logs', 'video', 'visuals'];
-            wrappers.forEach(w => {
-                const el = document.getElementById(`${schoolId}-${w}`);
-                if(el) {
-                    el.classList.remove('active');
-                }
-            });
-            const selected = document.getElementById(`${schoolId}-${tabName}`);
-            if(selected) selected.classList.add('active');
-
-            const parentCard = document.getElementById(`edu-${schoolId}`);
-            const btns = parentCard.querySelectorAll('.glass-btn');
-            btns.forEach(btn => btn.classList.remove('active'));
-            btns.forEach(btn => {
-                if(btn.getAttribute('onclick').includes(tabName)) {
-                    btn.classList.add('active');
-                }
-            });
-
-            if(bgUrl) {
-                setBg(bgUrl);
-            }
-        }
-
-        function playAudio() {
-            console.log("Playing Audio Log...");
-        }
-
-        // --- 6. SCRAMBLE TEXT EFFECT (ONLY ON LOGO) ---
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+        // --- 2. THREE.JS SETUP (FIXED CLIPPING) ---
+        const container = document.getElementById('webgl-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(config.colors.bg, 0.02);
+        scene.background = new THREE.Color(config.colors.bg);
         
-        document.querySelectorAll('.scramble').forEach(el => {
-            const original = el.dataset.text || el.innerText;
-            el.dataset.value = original;
-            el.onmouseover = (e) => {
-                let iteration = 0;
-                const interval = setInterval(() => {
-                    e.target.innerText = e.target.innerText
-                        .split("")
-                        .map((letter, index) => {
-                            if(index < iteration) return original[index];
-                            return letters[Math.floor(Math.random() * letters.length)];
-                        })
-                        .join("");
-                    
-                    if(iteration >= original.length) clearInterval(interval);
-                    iteration += 1/3;
-                }, 30);
-            }
+        // FIX: Increased 'near' plane to 1.0 to prevent clipping when object gets close
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1.0, 1000);
+        camera.position.z = 6; 
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ReinhardToneMapping;
+        container.appendChild(renderer.domElement);
+
+        // Objects
+        const geometry = new THREE.TorusKnotGeometry(1.2, 0.3, 150, 20);
+        const material = new THREE.MeshPhysicalMaterial({
+            color: 0x111111, metalness: 0.9, roughness: 0.2, clearcoat: 1.0,
+            clearcoatRoughness: 0.1, emissive: config.colors.primary, emissiveIntensity: 0.5, wireframe: true
+        });
+        const coreGeo = new THREE.IcosahedronGeometry(0.7, 1);
+        const coreMat = new THREE.MeshBasicMaterial({ color: config.colors.primary, wireframe: false });
+        const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+        const heroMesh = new THREE.Mesh(geometry, material);
+        heroMesh.add(coreMesh);
+        scene.add(heroMesh);
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 1000;
+        const posArray = new Float32Array(particlesCount * 3);
+        for(let i = 0; i < particlesCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 25;
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMesh = new THREE.Points(particlesGeometry, new THREE.PointsMaterial({ size: 0.02, color: 0xffffff, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending }));
+        scene.add(particlesMesh);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(config.colors.primary, 2, 20);
+        pointLight.position.set(2, 3, 4);
+        scene.add(pointLight);
+
+        const renderScene = new THREE.RenderPass(scene, camera);
+        const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        bloomPass.strength = 1.2; bloomPass.radius = 0.5; bloomPass.threshold = 0;
+        const composer = new THREE.EffectComposer(renderer);
+        composer.addPass(renderScene);
+        composer.addPass(bloomPass);
+
+        // --- 3. HERO 3D TEXT EFFECT ---
+        const heroContent = document.getElementById('hero-content-3d');
+        document.addEventListener('mousemove', (e) => {
+            if(!heroContent) return;
+            const x = (window.innerWidth / 2 - e.pageX) / 25;
+            const y = (window.innerHeight / 2 - e.pageY) / 25;
+            heroContent.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
         });
 
-        // --- 7. NAVIGATION WIDGET LOGIC ---
-        function navigateToNextSection() {
-            const sectionIds = ['hero', 'intro', 'education', 'projects', 'uplink'];
-            const scrollPos = window.scrollY + (window.innerHeight / 2);
-            let currentIndex = -1;
+        // --- 4. GALLERY & INTERACTION LOGIC (TRANSPARENCY FIX) ---
+        let activeGalleryTween = null;
+        let activeAudioTimeout = null;
+
+        function stopGallery() {
+            const layer = document.getElementById('gallery-layer');
+            layer.style.opacity = '0';
+            if(activeGalleryTween) activeGalleryTween.kill();
+            if(activeAudioTimeout) clearTimeout(activeAudioTimeout);
+            document.querySelectorAll('.play-icon').forEach(el => el.innerText = '▶');
             
-            for(let i = 0; i < sectionIds.length; i++) {
-                const section = document.getElementById(sectionIds[i]);
-                if(section) {
-                    const offsetTop = section.offsetTop;
-                    const offsetBottom = offsetTop + section.offsetHeight;
-                    if(scrollPos >= offsetTop && scrollPos < offsetBottom) {
-                        currentIndex = i;
-                        break;
-                    }
+            // REMOVE TRANSPARENCY
+            document.body.classList.remove('vn-active');
+        }
+
+        function triggerExperience(sectionKey) {
+            stopGallery();
+            const images = getImages(sectionKey, 5);
+            const layer = document.getElementById('gallery-layer');
+            layer.innerHTML = images.map(src => `<img src="${src}" class="gallery-img">`).join('');
+            layer.style.opacity = '1';
+
+            // ADD TRANSPARENCY
+            document.body.classList.add('vn-active');
+
+            const clickedBtn = event.currentTarget;
+            if(clickedBtn) {
+                const icon = clickedBtn.querySelector('.play-icon');
+                if(icon) icon.innerText = '■';
+            }
+
+            let currentImg = 0;
+            const imgElements = document.querySelectorAll('.gallery-img');
+            if(imgElements.length > 0) gsap.set(imgElements[0], { opacity: 1 });
+
+            activeGalleryTween = gsap.to({}, {
+                duration: 2.5, repeat: -1,
+                onRepeat: () => {
+                    gsap.to(imgElements[currentImg], { opacity: 0, duration: 1.5 });
+                    currentImg = (currentImg + 1) % imgElements.length;
+                    gsap.to(imgElements[currentImg], { opacity: 1, duration: 1.5 });
                 }
-            }
-
-            let nextIndex = currentIndex + 1;
-            if(nextIndex >= sectionIds.length) nextIndex = 0; 
-
-            playSectionAudio(nextIndex);
-
-            const nextSection = document.getElementById(sectionIds[nextIndex]);
-            if(nextSection) {
-                nextSection.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        function playSectionAudio(index) {
-            // Audio placeholder logic
-            console.log(`Navigating to section index: ${index} (Play Audio here)`);
-        }
-
-        // --- 8. OPTIMIZED PHYSICS (NO LAG) ---
-        function initTritonePhysics() {
-            const tritone = 1.414; 
-            let mouseX = 0, mouseY = 0;
-            let floatX = 0, floatY = 0;
-            let cursorX = 0, cursorY = 0;
-
-            document.addEventListener('mousemove', (e) => {
-                cursorX = e.clientX;
-                cursorY = e.clientY;
-                mouseX = (e.clientX - window.innerWidth / 2);
-                mouseY = (e.clientY - window.innerHeight / 2);
             });
 
-            const targets = document.querySelectorAll('.tilt-target');
-            const dot = document.getElementById('cursor-dot');
-            const spot = document.getElementById('cursor-spot');
-            
-            const physicsEase = 0.2; 
+            activeAudioTimeout = setTimeout(stopGallery, 10000);
+        }
 
-            function animate() {
-                requestAnimationFrame(animate);
+        window.triggerTabExperience = function(key) {
+            triggerExperience(key);
+        }
 
-                floatX += (mouseX - floatX) * physicsEase;
-                floatY += (mouseY - floatY) * physicsEase;
+        window.expandImage = function(img) {
+            const modal = document.createElement('div');
+            modal.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:99999;display:flex;align-items:center;justify-content:center;cursor:pointer; backdrop-filter: blur(10px);";
+            const expanded = document.createElement('img');
+            expanded.src = img.src;
+            expanded.style.cssText = "max-width: 90%; max-height: 90vh; height: 60vh; object-fit: contain; box-shadow:0 0 30px rgba(0,243,255,0.3); border: 1px solid var(--c-accent); border-radius: 4px;";
+            modal.appendChild(expanded);
+            modal.onclick = () => modal.remove();
+            document.body.appendChild(modal);
+        }
 
-                targets.forEach(el => {
-                    const xPct = (floatX / window.innerWidth) * tritone; 
-                    const yPct = (floatY / window.innerHeight) * tritone;
+        window.toggleProjectMedia = function(btn) {
+            const content = btn.nextElementSibling;
+            content.classList.toggle('open');
+            btn.innerText = content.classList.contains('open') ? "Hide Media" : "View Media & Notes";
+        }
 
-                    const rotateY = xPct * 10; 
-                    const rotateX = -yPct * 10; 
-
-                    el.style.transform = `
-                        perspective(1000px)
-                        rotateX(${rotateX}deg)
-                        rotateY(${rotateY}deg)
-                        translateZ(0)
-                    `;
-                });
-
-                if(dot && spot) {
-                    dot.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
-                    spot.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
-                    dot.style.left = '0px'; dot.style.top = '0px';
-                    spot.style.left = '0px'; spot.style.top = '0px';
-                }
+        // --- 5. UI LOGIC ---
+        window.openTab = function(evt, tabName) {
+            const tabContent = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContent.length; i++) {
+                tabContent[i].style.display = "none";
+                tabContent[i].classList.remove('active');
             }
-            animate();
+            const tabLinks = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabLinks.length; i++) {
+                tabLinks[i].className = tabLinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+            stopGallery(); 
         }
 
-        // --- 9. MOBILE MENU ---
-        function toggleMenu() {
-            const nav = document.querySelector('.nav-links');
-            nav.classList.toggle('active');
+        window.handleFormSubmit = function(e) {
+            e.preventDefault();
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+            e.target.reset();
         }
 
-        // --- 10. INITIALIZATION ---
-        window.addEventListener('DOMContentLoaded', () => {
-            const eduSection = document.getElementById('education');
-            if(eduSection) educationObserver.observe(eduSection);
-            setBg(defaultBackgrounds[0]);
+        // --- 6. ANIMATIONS (SCROLL TRIGGERS) ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Loader Animation
+        const tlLoader = gsap.timeline();
+        tlLoader.to(".loader-progress", { width: "100%", duration: 1.5, ease: "power2.inOut" })
+        .to(".loader-bg.left", { className: "loader-bg left slide-out-left", duration: 1.5, ease: "power4.inOut" })
+        .to(".loader-bg.right", { className: "loader-bg right slide-out-right", duration: 1.5, ease: "power4.inOut" }, "<")
+        .to("#loader", { display: "none", duration: 0.1 })
+        .from(".line", { y: 100, opacity: 0, duration: 1, stagger: 0.1 }, "-=0.5")
+        .from(".hero-content > p, .hero-content > div", { y: 20, opacity: 0, duration: 0.8 }, "-=0.5")
+        .from(".profile-wrapper", { scale: 0.8, opacity: 0, duration: 1 }, "-=0.8");
+
+        // Scroll Triggers
+        gsap.to(heroMesh.position, { 
+            x: 3, 
+            scrollTrigger: { 
+                trigger: "#profile", 
+                start: "top bottom", 
+                end: "top top", 
+                scrub: 1.5,
+                invalidateOnRefresh: true 
+            } 
+        });
+        
+        gsap.to(heroMesh.position, { 
+            x: -3, 
+            scrollTrigger: { 
+                trigger: "#arsenal", 
+                start: "top bottom", 
+                end: "top top", 
+                scrub: 1.5,
+                invalidateOnRefresh: true
+            } 
         });
 
+        // FIX: 3D GLITCH PREVENTION
+        // Move Z to 2 (safe distance) instead of forward, and rotate
+        gsap.to(heroMesh.position, { 
+            x: 0, 
+            z: 2, 
+            scrollTrigger: { 
+                trigger: "#contact", 
+                start: "top bottom", 
+                end: "center center", 
+                scrub: 1.5,
+                invalidateOnRefresh: true
+            } 
+        });
+        
+        gsap.to(heroMesh.rotation, {
+            z: Math.PI, 
+            scrollTrigger: {
+                trigger: "#contact",
+                start: "top bottom",
+                end: "center center",
+                scrub: 1.5
+            }
+        });
+
+        // Color Shifts
+        ScrollTrigger.create({ 
+            trigger: "#arsenal", 
+            start: "top center", 
+            onEnter: () => gsap.to([heroMesh.material.emissive, coreMesh.material.color, pointLight.color], { r:0.74, g:0, b:1, duration: 1 }),
+            invalidateOnRefresh: true
+        });
+        
+        ScrollTrigger.create({ 
+            trigger: "#deployments", 
+            start: "top center", 
+            onEnter: () => gsap.to([heroMesh.material.emissive, coreMesh.material.color, pointLight.color], { r:1, g:0.16, b:0.16, duration: 1 }),
+            invalidateOnRefresh: true
+        });
+
+        // Reveal Elements
+        gsap.utils.toArray('section h2').forEach(h2 => gsap.from(h2, { y: 50, opacity: 0, duration: 1, scrollTrigger: { trigger: h2, start: "top 80%" }}));
+        gsap.utils.toArray('.glass-card, .project-card').forEach(card => gsap.from(card, { y: 50, opacity: 0, duration: 0.8, scrollTrigger: { trigger: card, start: "top 85%" }}));
+
+        // --- 7. RENDER LOOP ---
+        const clock = new THREE.Clock();
+        let mouseX = 0, mouseY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - window.innerWidth/2) * 0.001;
+            mouseY = (e.clientY - window.innerHeight/2) * 0.001;
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+            heroMesh.rotation.y += 0.05 * (mouseX - heroMesh.rotation.y);
+            heroMesh.rotation.x += 0.05 * (mouseY - heroMesh.rotation.x);
+            heroMesh.rotation.z += 0.0005; 
+            coreMesh.rotation.y -= 0.01;
+            particlesMesh.rotation.y = elapsedTime * 0.02;
+            composer.render();
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+            ScrollTrigger.refresh();
+        });
+
+        // Cursor
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        document.querySelectorAll('.magnetic').forEach((el) => {
+            el.addEventListener('mousemove', (e) => {
+                const rect = el.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                gsap.to(el, { x: x * 0.2, y: y * 0.2, duration: 0.3 });
+                cursor.classList.add('active');
+            });
+            el.addEventListener('mouseleave', () => {
+                gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
+                cursor.classList.remove('active');
+            });
+        });
+
+        // Lenis
+        const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
     </script>
 </body>
 </html>

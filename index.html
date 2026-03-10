@@ -12,16 +12,31 @@
 
     <style>
         :root {
-            --c-bg: #030305;
+            /* DARK THEME */
+            --c-bg: #050505;
             --c-text: #e0e0e0;
             --c-accent: #00f3ff; /* Cyan */
-            --c-sec: #ff2a2a;    /* Red */
-            --c-enc: #bd00ff;    /* Purple */
+            --c-sec: #ff2a2a;
+            --c-enc: #bd00ff;
             --font-display: 'Syne', sans-serif;
             --font-body: 'Space Grotesk', sans-serif;
             --card-bg: rgba(20, 20, 25, 0.6);
             --card-border: rgba(255, 255, 255, 0.1);
-            --glass-highlight: rgba(255, 255, 255, 0.05);
+            --nav-bg: rgba(5, 5, 5, 0.85);
+            --nav-text: #fff;
+        }
+
+        /* LIGHT THEME */
+        body.light-mode {
+            --c-bg: #f0f2f5;
+            --c-text: #1a1a1a;
+            --c-accent: #0066cc;
+            --c-sec: #cc0000;
+            --c-enc: #660099;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-border: rgba(0, 0, 0, 0.1);
+            --nav-bg: rgba(240, 242, 245, 0.9);
+            --nav-text: #1a1a1a;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,985 +46,438 @@
             color: var(--c-text);
             font-family: var(--font-body);
             overflow-x: hidden;
-            scrollbar-width: none;
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        body::-webkit-scrollbar { display: none; }
+        body::-webkit-scrollbar { width: 8px; }
+        body::-webkit-scrollbar-track { background: transparent; }
+        body::-webkit-scrollbar-thumb { background: var(--c-accent); border-radius: 4px; }
 
-        /* --- VN ACTIVE STATE (Transparency Effect) --- */
-        body.vn-active main {
-            filter: blur(15px) brightness(0.3);
-            pointer-events: none;
-            transition: filter 0.5s ease, opacity 0.5s ease;
-            opacity: 0.3;
+        /* --- BREACH MODE --- */
+        body.breach-active { animation: bgShake 0.2s infinite; }
+        body.breach-active .cursor { border-color: var(--c-sec); mix-blend-mode: normal; }
+        @keyframes bgShake {
+            0% { transform: translate(1px, 1px); } 25% { transform: translate(-1px, -2px); }
+            50% { transform: translate(-3px, 0px); } 75% { transform: translate(3px, 2px); } 100% { transform: translate(1px, -1px); }
         }
+
+        #breach-overlay {
+            position: fixed; inset: 0; pointer-events: none; z-index: 99999;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
+            display: none; opacity: 0.5;
+        }
+        body.breach-active #breach-overlay { display: block; }
+
+        /* --- LAYERS --- */
+        #webgl-container { position: fixed; inset: 0; z-index: -2; pointer-events: none; }
         
-        body.vn-active #gallery-layer {
-            opacity: 1; /* Ensure gallery is visible */
-            pointer-events: auto;
-        }
-        
-        body.vn-active .cursor {
-            display: none;
-        }
-
-        /* --- Background Layers --- */
-        #webgl-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            z-index: -2; pointer-events: none;
-        }
-
+        /* Gallery Layer: Behind content */
         #gallery-layer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 9998; pointer-events: none;
+            position: fixed; inset: 0; z-index: 1; pointer-events: none;
             opacity: 0; transition: opacity 0.5s ease;
-            background: rgba(0,0,0,0.85); 
             display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0);
         }
-        
-        .gallery-img {
-            position: absolute; width: 100%; height: 100%; object-fit: cover;
-            opacity: 0; transition: opacity 1.5s ease-in-out;
-            filter: grayscale(80%) contrast(120%) brightness(0.5);
-        }
+        body.vn-active #gallery-layer { opacity: 0.4; }
+        .gallery-img { position: absolute; inset: 0; object-fit: cover; opacity: 0; transition: opacity 1.5s ease-in-out; }
 
         .noise-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 50; opacity: 0.03;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: 0.03; mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
 
         /* --- Cursor --- */
         .cursor {
             position: fixed; width: 20px; height: 20px;
             border: 1px solid var(--c-accent); border-radius: 50%;
-            pointer-events: none; z-index: 10000;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
-            mix-blend-mode: difference;
+            pointer-events: none; z-index: 10000; mix-blend-mode: difference;
+            transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s;
         }
-        .cursor.active { width: 50px; height: 50px; background-color: rgba(255,255,255,0.1); border-color: transparent; }
-        .cursor.sec-mode { border-color: var(--c-sec); }
-        .cursor.enc-mode { border-color: var(--c-enc); }
+        .cursor.active { width: 50px; height: 50px; background: rgba(255,255,255,0.1); border-color: transparent; }
 
-        /* --- Navigation --- */
+        /* --- NAVBAR --- */
         nav {
-            position: fixed; top: 0; width: 100%; padding: 2rem 4rem;
+            position: fixed; top: 0; width: 100%; padding: 1rem 2rem;
             display: flex; justify-content: space-between; align-items: center;
-            z-index: 100; mix-blend-mode: difference;
+            z-index: 100; background: var(--nav-bg); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
-        .logo { font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; letter-spacing: 2px; }
-        .menu-btn { cursor: pointer; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+        nav.nav-hidden { transform: translateY(-100%); }
+        .logo { font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; letter-spacing: 2px; color: var(--nav-text); text-decoration: none;}
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: var(--nav-text); text-decoration: none; font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--c-accent); }
+        .theme-toggle { background: none; border: 1px solid var(--card-border); color: var(--nav-text); padding: 0.5rem; border-radius: 50%; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
+        .theme-toggle:hover { background: var(--c-accent); color: #000; border-color: var(--c-accent); }
 
-        /* --- Layout & Typography --- */
-        main { position: relative; width: 100%; z-index: 10; padding-bottom: 5rem; transition: filter 0.5s, opacity 0.5s; }
-        
-        section {
-            min-height: 100vh; width: 100%;
-            display: flex; flex-direction: column;
-            justify-content: center;
-            padding: 10vh 5%; 
-            position: relative;
-        }
+        /* --- Layout --- */
+        main { position: relative; z-index: 10; padding-bottom: 5rem; }
+        section { min-height: 100vh; width: 100%; display: flex; flex-direction: column; justify-content: center; padding: 10vh 5%; position: relative; }
 
-        /* --- 3D HERO TEXT STYLES --- */
-        #hero {
-            perspective: 1000px; /* Adds depth */
-        }
-        
-        .hero-content {
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out; /* Smooth follow */
-        }
+        /* --- HERO --- */
+        .hero-ui-overlay { position: absolute; bottom: 15%; left: 5%; max-width: 600px; z-index: 20; pointer-events: none; }
+        .hero-ui-overlay .btn, .hero-ui-overlay .vn-player { pointer-events: auto; }
+        .hero-explainer { margin-top: 1rem; font-family: monospace; font-size: 0.9rem; line-height: 1.5; border-left: 2px solid var(--c-accent); padding-left: 1rem; margin-bottom: 2rem; color: var(--c-text); opacity: 0.8; background: linear-gradient(90deg, rgba(0,243,255,0.05), transparent); }
 
-        h1 { 
-            font-family: var(--font-display); 
-            font-size: clamp(3rem, 6vw, 5rem); 
-            line-height: 1.1; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            margin-bottom: 1.5rem;
-            text-shadow: 2px 2px 0px rgba(0, 243, 255, 0.2),
-                         -2px -2px 0px rgba(189, 0, 255, 0.2);
-            transform: translateZ(50px); /* Initial 3D pop */
-        }
-        
-        .hero-content p {
-            transform: translateZ(20px);
-        }
+        /* --- PROFILE PIC --- */
+        .hero-profile-wrapper { position: absolute; right: 5%; top: 50%; transform: translateY(-50%); width: 350px; z-index: 5; display: flex; flex-direction: column; align-items: center; }
+        .profile-holo-frame { width: 280px; height: 280px; border-radius: 50%; position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.5); overflow: hidden; transition: transform 0.5s ease; }
+        .profile-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; filter: grayscale(100%); transition: filter 0.5s ease, transform 0.5s ease; transform: scale(1.05); }
+        .hero-profile-wrapper:hover .profile-img { filter: grayscale(0%); transform: scale(1.1); }
+        .hero-profile-wrapper:hover .profile-holo-frame { transform: scale(1.05); }
+        .profile-data-tag { background: rgba(0,0,0,0.6); border: 1px solid var(--c-accent); padding: 0.5rem 1rem; font-family: monospace; font-size: 0.8rem; color: var(--c-accent); text-transform: uppercase; backdrop-filter: blur(4px); margin-top: 1rem; }
 
+        /* --- Typography --- */
         h2 { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 2rem; text-transform: uppercase; }
-        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: #fff; font-weight: 700; }
-        p { line-height: 1.6; color: rgba(255,255,255,0.8); margin-bottom: 1.5rem; font-size: 1.1rem; }
-        
-        .highlight { color: var(--c-accent); }
-        .sec-text { color: var(--c-sec); }
-        .enc-text { color: var(--c-enc); }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--c-text); font-weight: 700; }
+        p { line-height: 1.6; margin-bottom: 1.5rem; font-size: 1.1rem; }
+        .highlight { color: var(--c-accent); } .sec-text { color: var(--c-sec); } .enc-text { color: var(--c-enc); }
 
         /* --- Components --- */
-        .role-tag {
-            display: inline-block; padding: 0.5rem 1.2rem;
-            border: 1px solid rgba(255,255,255,0.3); border-radius: 50px;
-            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;
-            margin-bottom: 2rem; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
-            color: var(--c-accent);
-            transform: translateZ(30px); /* 3D pop */
-        }
-
+        .role-tag { display: inline-block; padding: 0.5rem 1.2rem; border: 1px solid var(--c-card-border); border-radius: 50px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2rem; background: var(--card-bg); backdrop-filter: blur(5px); color: var(--c-accent); }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
         .content-container { max-width: 1200px; margin: 0 auto; width: 100%; }
 
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--card-border);
-            padding: 2rem; border-radius: 12px;
-            transition: transform 0.3s, border-color 0.3s;
-            height: 100%; display: flex; flex-direction: column;
-        }
+        .glass-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--card-border); padding: 2rem; border-radius: 12px; transition: transform 0.3s, border-color 0.3s; height: 100%; }
         .glass-card:hover { transform: translateY(-5px); border-color: var(--c-accent); }
 
-        .btn {
-            display: inline-flex; align-items: center; gap: 10px;
-            padding: 1rem 2.5rem; border-radius: 50px;
-            font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-            cursor: pointer; transition: all 0.3s ease; text-decoration: none;
-            font-size: 0.9rem;
-        }
-        .btn-primary {
-            background: transparent; border: 1px solid var(--c-accent); color: var(--c-accent);
-        }
+        .btn { display: inline-flex; align-items: center; gap: 10px; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; text-decoration: none; font-size: 0.9rem; }
+        .btn-primary { background: transparent; border: 1px solid var(--c-accent); color: var(--c-accent); }
         .btn-primary:hover { background: var(--c-accent); color: #000; box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
-        .btn-secondary {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff;
-        }
-        .btn-secondary:hover { background: #fff; color: #000; }
+        .btn-secondary { background: var(--card-border); border: 1px solid var(--c-accent); color: var(--c-text); }
+        .btn-secondary:hover { background: var(--c-accent); color: #000; }
+        .btn-danger { background: rgba(255, 42, 42, 0.1); border: 1px solid var(--c-sec); color: var(--c-sec); }
+        .btn-danger:hover { background: var(--c-sec); color: #000; }
 
-        .profile-wrapper {
-            position: relative; width: 100%; max-width: 350px; aspect-ratio: 1;
-            border-radius: 50%; overflow: hidden; border: 2px solid var(--c-accent);
-            margin: 0 auto; box-shadow: 0 0 30px rgba(0, 243, 255, 0.15);
-        }
-        .profile-wrapper img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: 0.5s; }
-        .profile-wrapper:hover img { filter: grayscale(0%); transform: scale(1.05); }
-
-        /* --- Tabs --- */
+        /* --- TABS --- */
         .tabs-container { width: 100%; margin-top: 2rem; }
-        .tab-headers { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--card-border); overflow-x: auto; padding-bottom: 5px;}
-        .tab-btn {
-            background: none; border: none; color: rgba(255,255,255,0.5);
-            padding: 1rem; font-family: var(--font-body); font-size: 1rem; text-transform: uppercase;
-            cursor: pointer; position: relative; white-space: nowrap; transition: 0.3s;
-        }
-        .tab-btn.active { color: #fff; font-weight: 700; }
-        .tab-btn.active::after {
-            content: ''; position: absolute; bottom: -6px; left: 0; width: 100%; height: 2px;
-            background: var(--c-accent); box-shadow: 0 -2px 10px var(--c-accent);
-        }
+        .tab-headers { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; margin-bottom: 2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 1rem; }
+        .tab-btn { background: transparent; border: 1px solid var(--card-border); color: var(--c-text); padding: 0.6rem 1.2rem; font-family: var(--font-body); font-size: 0.9rem; text-transform: uppercase; cursor: pointer; transition: 0.3s; border-radius: 4px; }
+        .tab-btn:hover { background: var(--card-bg); }
+        .tab-btn.active { color: #000; background: var(--c-accent); border-color: var(--c-accent); font-weight: 700; }
+
         .tab-content { display: none; animation: fadeIn 0.5s ease; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- YOUTUBE VIDEO COMPONENT --- */
-        .media-wrapper {
-            margin-top: 2rem;
-            background: rgba(0,0,0,0.5);
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--card-border);
-            position: relative;
-        }
-
-        .video-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-            background: #000;
-        }
-
-        /* FALLBACK IMAGE: Shown if YT fails */
-        .video-fallback {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover; background-position: center;
-            z-index: 0; opacity: 0.6;
-            transition: opacity 0.5s;
-        }
+        /* --- MEDIA WRAPPER --- */
+        .media-wrapper { margin-top: 2rem; background: rgba(0,0,0,0.5); border-radius: 8px; overflow: hidden; border: 1px solid var(--card-border); position: relative; }
+        .video-container { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; }
+        .video-fallback { position: absolute; inset: 0; background-size: cover; opacity: 0.6; transition: opacity 0.5s; }
+        .video-container iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; pointer-events: auto; }
+        .scanlines { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1)); background-size: 100% 4px; pointer-events: none; opacity: 0.3; }
         
-        .video-container iframe {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            border: 0;
-            pointer-events: auto;
-            z-index: 1;
-        }
+        .tab-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 5px; padding: 10px; background: rgba(0,0,0,0.2); }
+        .tab-gallery img { width: 100%; aspect-ratio: 16/9; object-fit: cover; opacity: 0.6; cursor: pointer; transition: 0.3s; }
+        .tab-gallery img:hover { opacity: 1; }
 
-        /* Video Overlay/HUD */
-        .video-hud {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; 
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            display: flex; flex-direction: column; justify-content: space-between;
-            padding: 15px;
-            z-index: 5;
-            background: linear-gradient(rgba(0,0,0,0.3), transparent 20%, transparent 80%, rgba(0,0,0,0.3));
-        }
-
-        .video-top { display: flex; justify-content: space-between; align-items: center; }
-        .video-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
-
-        .rec-indicator {
-            display: flex; align-items: center; gap: 6px;
-            background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 2px;
-            border: 1px solid var(--c-sec);
-            backdrop-filter: blur(4px);
-        }
-        .rec-dot {
-            width: 8px; height: 8px; background-color: var(--c-sec); border-radius: 50%;
-            animation: blink 1s infinite;
-        }
-        .rec-text { color: var(--c-sec); font-family: monospace; font-size: 0.7rem; font-weight: bold; letter-spacing: 1px; }
-
-        .feed-id { 
-            font-family: monospace; color: var(--c-accent); font-size: 0.7rem; 
-            text-shadow: 0 0 5px var(--c-accent);
-            background: rgba(0,0,0,0.7);
-            padding: 4px 8px;
-        }
-
-        /* Scanlines */
-        .scanlines {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
-            background-size: 100% 4px;
-            pointer-events: none; z-index: 6; opacity: 0.3;
-        }
-
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
-
-        /* --- TRANSPARENT GALLERY IMAGES (HOLOGRAPHIC EFFECT) --- */
-        .tab-gallery {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 5px;
-            padding: 10px; background: rgba(0,0,0,0.2);
-        }
-        .tab-gallery img {
-            width: 100%; aspect-ratio: 16/9; object-fit: cover;
-            opacity: 0.8; transition: 0.3s; cursor: pointer;
-            mix-blend-mode: screen; /* Makes black transparent, blending with card */
-        }
-        .tab-gallery img:hover { opacity: 1; transform: scale(1.05); mix-blend-mode: normal; }
-
-        /* Voice Note Player */
-        .vn-player {
-            display: flex; align-items: center; gap: 1rem;
-            background: rgba(255,255,255,0.05); border: 1px solid var(--c-accent);
-            padding: 0.8rem 1.5rem; border-radius: 8px;
-            margin-top: 1rem; cursor: pointer; transition: 0.3s;
-        }
-        .vn-player:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
-        .play-icon {
-            width: 24px; height: 24px; border-radius: 50%;
-            background: var(--c-accent); display: flex; align-items: center; justify-content: center;
-            color: #000; font-size: 0.7rem; flex-shrink: 0;
-        }
-        .vn-text { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+        /* --- VN PLAYER --- */
+        .vn-player { display: flex; align-items: center; gap: 1rem; background: var(--card-bg); border: 1px solid var(--c-accent); padding: 0.8rem 1.5rem; border-radius: 8px; margin: 1.5rem 0; cursor: pointer; transition: 0.3s; width: fit-content; }
+        .vn-player:hover { background: rgba(0, 243, 255, 0.1); }
+        .play-icon { width: 24px; height: 24px; border-radius: 50%; background: var(--c-accent); display: flex; align-items: center; justify-content: center; color: #000; font-size: 0.7rem; }
         
-        /* Project Cards */
-        .project-card {
-            background: var(--card-bg); border: 1px solid var(--card-border);
-            padding: 2rem; border-radius: 12px; margin-bottom: 2rem;
-            transition: 0.3s;
-        }
+        /* --- PROJECT CARDS --- */
+        .project-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 2rem; border-radius: 12px; margin-bottom: 2rem; transition: 0.3s; }
         .project-card:hover { border-color: var(--c-accent); }
-        .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;}
-        .project-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; }
-        .project-role { font-size: 0.8rem; color: var(--c-accent); text-transform: uppercase; border: 1px solid var(--c-accent); padding: 2px 8px; border-radius: 4px; }
-        
-        .project-media-toggle {
-            background: none; border: none; color: rgba(255,255,255,0.6);
-            font-size: 0.9rem; cursor: pointer; margin-top: 1rem; text-decoration: underline;
-        }
-        .project-media-content {
-            margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);
-            display: none; 
-        }
+        .project-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .project-role { font-size: 0.8rem; color: var(--c-accent); text-transform: uppercase; border: 1px solid var(--c-accent); padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 1rem; }
+        .project-media-toggle { background: none; border: none; color: var(--c-text); opacity: 0.7; font-size: 0.9rem; cursor: pointer; margin-top: 1rem; text-decoration: underline; }
+        .project-media-content { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--card-border); display: none; }
         .project-media-content.open { display: block; animation: fadeIn 0.3s; }
 
-        /* Form */
-        .form-group { margin-bottom: 1.5rem; }
-        .form-control {
-            width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--card-border);
-            padding: 1rem 0; color: #fff; font-family: var(--font-body); font-size: 1rem;
-            transition: 0.3s;
-        }
-        .form-control:focus { outline: none; border-bottom-color: var(--c-accent); }
-        .form-control::placeholder { color: rgba(255,255,255,0.3); }
-
-        /* Toast */
-        #toast {
-            position: fixed; bottom: 30px; right: 30px; background: var(--c-accent); color: #000;
-            padding: 1rem 2rem; border-radius: 8px; font-weight: 700;
-            transform: translateY(100px); opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 20000;
-        }
-        #toast.show { transform: translateY(0); opacity: 1; }
-
-        /* --- LOADER --- */
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 30000;
-            display: flex; justify-content: center; align-items: center;
-            overflow: hidden;
-        }
-        .loader-bg {
-            position: absolute; top: 0; height: 100%; width: 50%;
-            background-size: cover; background-position: center;
-            background-attachment: fixed; 
-            transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
-            filter: grayscale(100%) contrast(120%) brightness(0.4);
-        }
-        .loader-bg.left { 
-            left: 0; 
-            background-image: url('https://picsum.photos/seed/cyber_left_v2/800/1200.jpg'); 
-            transform: translateX(0); 
-        }
-        .loader-bg.right { 
-            right: 0; 
-            background-image: url('https://picsum.photos/seed/server_right_v2/800/1200.jpg'); 
-            transform: translateX(0); 
-        }
+        /* --- EDUCATION EDITORIAL --- */
+        .parallax-bg { position: absolute; inset: 0; background-size: cover; background-position: fixed; z-index: 0; opacity: 0.3; }
+        .ghost-video { position: absolute; inset: 0; object-fit: cover; pointer-events: none; z-index: 1; opacity: 0.2; mix-blend-mode: screen; }
+        .education-overlay { position: absolute; inset: 0; background: linear-gradient(to right, var(--c-bg) 0%, rgba(var(--c-bg),0.8) 50%, var(--c-bg) 100%); z-index: 2; pointer-events: none; }
         
-        .loader-bg.slide-out-left { transform: translateX(-100%); }
-        .loader-bg.slide-out-right { transform: translateX(100%); }
+        .split-section { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; position: relative; z-index: 10; width: 100%; max-width: 1400px; margin: 0 auto; }
+        
+        .media-frame { width: 100%; height: 60vh; background-size: cover; background-position: center; border-radius: 12px; border: 1px solid var(--card-border); position: relative; overflow: hidden; transition: opacity 0.5s ease; }
+        .media-frame.loading { opacity: 0.5; } 
+        
+        .media-frame::before { content: ''; position: absolute; top: 0; left: 0; width: 20px; height: 20px; border-top: 2px solid var(--c-accent); border-left: 2px solid var(--c-accent); }
+        .editorial-card { background: var(--card-bg); backdrop-filter: blur(15px); padding: 3rem; border: 1px solid var(--card-border); border-left: 3px solid var(--c-accent); box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; }
+        .cyber-drop-cap { float: left; font-family: var(--font-display); font-size: 4.5rem; line-height: 0.8; margin-right: 15px; margin-top: 5px; color: var(--c-accent); }
+        .editorial-tabs { display: flex; gap: 2rem; margin-bottom: 2.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0; }
+        .editorial-tab-btn { background: none; border: none; color: var(--c-text); font-family: var(--font-body); font-size: 1rem; font-weight: 700; cursor: pointer; padding-bottom: 0.8rem; position: relative; transition: 0.3s; letter-spacing: 1px; text-transform: uppercase; }
+        .editorial-tab-btn.active { color: var(--c-accent); }
+        .editorial-tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: var(--c-accent); }
+        .edu-tab-pane { display: none; opacity: 0; transform: translateY(10px); transition: 0.5s; }
+        .edu-tab-pane.active { display: block; opacity: 1; transform: translateY(0); }
+        .edu-subtitle { color: var(--c-accent); font-family: monospace; font-size: 0.9rem; margin-bottom: 1.5rem; display: block; }
 
-        .loader-content {
-            position: relative; z-index: 2; text-align: center; width: 100%;
+        /* --- FORM & CONTACT --- */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-control { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--card-border); padding: 1rem 0; color: var(--c-text); font-family: var(--font-body); font-size: 1rem; transition: 0.3s; }
+        .form-control:focus { outline: none; border-bottom-color: var(--c-accent); }
+        
+        .social-links { display: flex; justify-content: center; gap: 2rem; margin-top: 3rem; }
+        .social-icon { width: 50px; height: 50px; border-radius: 50%; background: var(--card-bg); display: flex; align-items: center; justify-content: center; border: 1px solid var(--card-border); transition: 0.3s; cursor: pointer; }
+        .social-icon svg { width: 24px; height: 24px; fill: var(--c-text); transition: 0.3s; }
+        .social-icon:hover { background: var(--c-accent); border-color: var(--c-accent); transform: translateY(-5px); }
+        .social-icon:hover svg { fill: #000; }
+
+        /* --- LOADER (BLENDED IMAGES) --- */
+        #loader { position: fixed; inset: 0; background: #000; z-index: 30000; display: flex; justify-content: center; align-items: center; flex-direction: column; overflow: hidden; }
+        
+        /* Background Images for Loader */
+        .loader-bg-img {
+            position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+            z-index: 1; transition: opacity 1.5s ease-in-out;
         }
-        .loader-logo { font-family: var(--font-display); font-size: 3rem; margin-bottom: 20px; letter-spacing: 5px; color: #fff; }
-        .loader-bar { width: 300px; height: 2px; background: #333; margin: 20px auto; position: relative; overflow: hidden; }
+        .loader-bg-1 { opacity: 1; z-index: 1; }
+        .loader-bg-2 { opacity: 0; z-index: 2; } /* Starts hidden, fades in */
+        
+        .loader-content { position: relative; z-index: 10; text-align: center; width: 100%; margin-bottom: 2rem; }
+        .loader-logo { font-family: var(--font-display); font-size: 3rem; margin-bottom: 20px; letter-spacing: 5px; color: #fff; text-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        .loader-bar { width: 300px; height: 2px; background: rgba(255,255,255,0.2); margin: 20px auto; position: relative; overflow: hidden; }
         .loader-progress { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: var(--c-accent); }
 
-        /* Responsive */
+        /* --- STATUS --- */
+        #system-status { position: fixed; bottom: 20px; left: 20px; font-family: monospace; font-size: 0.7rem; color: var(--c-accent); z-index: 100; pointer-events: none; }
+
+        /* Mobile */
         @media (max-width: 900px) {
-            .grid-2 { grid-template-columns: 1fr; gap: 2rem; }
-            .project-media-content .grid-2 { grid-template-columns: 1fr; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .nav-links { display: none; } 
             section { padding: 10vh 5%; }
-            nav { padding: 1.5rem; }
-            .loader-bg { width: 100%; opacity: 0.5; }
-            .loader-bg.left { display: none; }
-            h1 { font-size: 2.5rem; }
+            .hero-profile-wrapper { position: relative; width: 100%; margin-top: 2rem; right: auto; transform: none; top: auto; }
+            .profile-holo-frame { width: 150px; height: 150px; }
+            .split-section { grid-template-columns: 1fr; gap: 3rem; }
+            .media-frame { height: 30vh; order: -1; }
+            .parallax-bg { background-attachment: scroll; }
+            .ghost-video { display: none; } 
         }
     </style>
 </head>
 <body>
 
-    <!-- Initialization / Loader -->
+    <!-- LOADER WITH BLENDED IMAGES -->
     <div id="loader">
-        <div class="loader-bg left"></div>
-        <div class="loader-bg right"></div>
+        <!-- Image 1 (Starts Visible) -->
+        <img src="https://picsum.photos/seed/cyber_init_1/1920/1080" class="loader-bg-img loader-bg-1" alt="Init 1">
+        <!-- Image 2 (Starts Hidden, Fades In) -->
+        <img src="https://picsum.photos/seed/cyber_init_2/1920/1080" class="loader-bg-img loader-bg-2" alt="Init 2">
+        
         <div class="loader-content">
             <div class="loader-logo">HACK U</div>
-            <div style="font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.7);">Initializing Security Protocols</div>
             <div class="loader-bar"><div class="loader-progress"></div></div>
         </div>
     </div>
 
-    <!-- FX Layers -->
     <div class="noise-overlay"></div>
+    <div id="breach-overlay"></div>
     <div class="cursor"></div>
-    
-    <!-- 3D Layer -->
     <div id="webgl-container"></div>
-    
-    <!-- Gallery Layer -->
     <div id="gallery-layer"></div>
+    <div id="system-status">SYSTEM INTEGRITY: 100%</div>
 
-    <!-- Navigation -->
-    <nav>
-        <div class="logo magnetic">HACK U</div>
-        <div class="menu-btn magnetic">Menu</div>
+    <nav id="main-nav">
+        <a href="#hero" class="logo magnetic">HACK U</a>
+        <ul class="nav-links">
+            <li><a href="#profile">Profile</a></li>
+            <li><a href="#arsenal">Arsenal</a></li>
+            <li><a href="#deployments">Projects</a></li>
+            <li><a href="#education">Education</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="theme-toggle magnetic" id="theme-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
     </nav>
 
-    <!-- Main Content -->
     <main>
-        
-        <!-- 01 HERO SECTION (3D TEXT) -->
         <section id="hero">
-            <div class="grid-2">
-                <div class="hero-content" id="hero-content-3d">
+            <div class="hero-ui-overlay">
+                <div class="hero-content">
                     <span class="role-tag magnetic">Security-Focused Backend Engineer</span>
-                    <h1 class="glitch-text">
+                    <h1>
                         <div class="line">Cloud</div>
                         <div class="line">Systems</div>
                         <div class="line">Developer</div>
                     </h1>
-                    <p style="color: rgba(255,255,255,0.7); max-width: 500px;">
-                        Specializing in secure architecture, encryption research, and scalable backend infrastructure.
-                    </p>
+                    <div class="hero-explainer fade-in-element">
+                        > SPECIALIZATION: Distributed Systems & Cryptography<br>
+                        > STATUS: Available for Contract<br>
+                        > ENVIRONMENT: Clean Void
+                    </div>
                     <div style="margin-top: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
                         <a href="#deployments" class="btn btn-primary magnetic">View Projects</a>
-                        <button onclick="triggerExperience('intro')" class="btn btn-secondary magnetic">
-                            <span>▶</span> Intro
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="hero-image-wrapper" style="display: flex; justify-content: center;">
-                    <div class="profile-wrapper magnetic">
-                        <img src="https://picsum.photos/seed/security_engineer/800/800.jpg" alt="Profile">
+                        <button onclick="triggerExperience('intro')" class="btn btn-secondary magnetic"><span>▶</span> Intro</button>
                     </div>
                 </div>
             </div>
+            <div class="hero-profile-wrapper">
+                <div class="profile-holo-frame">
+                    <img src="https://picsum.photos/seed/security_engineer/800/800.jpg" alt="Profile" class="profile-img">
+                </div>
+                <div class="profile-data-tag">ID: 0X99-SEC <span style="color:var(--c-sec)">●</span> ONLINE</div>
+            </div>
         </section>
 
-        <!-- 02 ENGINEER PROFILE -->
         <section id="profile">
             <div class="content-container grid-2">
                 <div>
                     <h2>Profile <span class="highlight">Overview</span></h2>
-                    <div class="vn-player magnetic" onclick="triggerExperience('profile')">
-                        <div class="play-icon">▶</div>
-                        <div class="vn-text">Listen to Overview</div>
-                    </div>
-                    <p>
-                        I am a multidisciplinary engineer bridging the gap between rigorous backend architecture and cutting-edge security research. My approach combines the analytical mindset of an economist with the structural logic of a systems architect.
-                    </p>
-                    <p>
-                        I build systems that are not just functional, but resilient against modern threats. Whether it's designing distributed microservices or researching adaptive hashing algorithms, my focus remains on integrity, privacy, and performance.
-                    </p>
+                    <div class="vn-player magnetic" onclick="triggerExperience('profile')"><div class="play-icon">▶</div><div class="vn-text">Listen to Overview</div></div>
+                    <p>I am a multidisciplinary engineer bridging the gap between rigorous backend architecture and cutting-edge security research. My approach combines the analytical mindset of an economist with the structural logic of a systems architect.</p>
+                    <p>I build systems that are not just functional, but resilient against modern threats. Whether it's designing distributed microservices or researching adaptive hashing algorithms, my focus remains on integrity, privacy, and performance.</p>
                 </div>
             </div>
         </section>
 
-        <!-- 03 TECHNICAL ARSENAL -->
         <section id="arsenal">
             <div class="content-container">
                 <h2 style="text-align: center;">Technical <span class="enc-text">Arsenal</span></h2>
-                
                 <div class="tabs-container">
                     <div class="tab-headers">
                         <button class="tab-btn active" onclick="openTab(event, 'tab-backend')">Backend Engineering</button>
                         <button class="tab-btn" onclick="openTab(event, 'tab-security')">Security</button>
                         <button class="tab-btn" onclick="openTab(event, 'tab-cloud')">Cloud</button>
                     </div>
-
-                    <!-- Backend Tab -->
+                    <!-- Backend -->
                     <div id="tab-backend" class="tab-content active">
                         <div class="grid-2">
                             <div class="glass-card">
                                 <h3>Scalable Architecture</h3>
                                 <p>Expertise in building high-performance REST APIs and distributed services using C# .NET and Node.js. Focus on microservice patterns.</p>
-                                <div class="vn-player" onclick="triggerTabExperience('backend')">
-                                    <div class="play-icon">▶</div>
-                                    <div class="vn-text">Backend Deep Dive</div>
-                                </div>
+                                <div class="vn-player" onclick="triggerTabExperience('backend')"><div class="play-icon">▶</div><div class="vn-text">Backend Deep Dive</div></div>
                             </div>
-                            <div class="media-wrapper">
-                                <div class="video-container">
-                                    <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/matrixcode/800/450');"></div>
-                                    <!-- NO-COOKIE: Matrix Rain -->
-                                    <iframe src="https://www.youtube-nocookie.com/embed/L9znaPxsYbs?autoplay=1&mute=1&loop=1&playlist=L9znaPxsYbs&controls=0&showinfo=0&rel=0&modestbranding=1" title="Matrix Code" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                                    <div class="scanlines"></div>
-                                    <div class="video-hud">
-                                        <div class="video-top">
-                                            <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
-                                            <div class="feed-id">CAM_01: TERMINAL_SESSION</div>
-                                        </div>
-                                        <div class="video-bottom">
-                                            <div class="feed-id">LIVE_FEED_01</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-gallery">
-                                    <img src="https://picsum.photos/seed/code1/300/200" onclick="expandImage(this)">
-                                    <img src="https://picsum.photos/seed/code2/300/200" onclick="expandImage(this)">
-                                    <img src="https://picsum.photos/seed/server1/300/200" onclick="expandImage(this)">
-                                    <img src="https://picsum.photos/seed/api/300/200" onclick="expandImage(this)">
-                                </div>
-                            </div>
+                            <div class="media-wrapper"><div class="video-container"><div class="video-fallback" style="background-image: url('https://picsum.photos/seed/matrixcode/800/450');"></div><iframe src="https://www.youtube-nocookie.com/embed/L9znaPxsYbs?loop=1&playlist=L9znaPxsYbs&controls=0&showinfo=0&rel=0&modestbranding=1" allow="encrypted-media" allowfullscreen></iframe><div class="scanlines"></div></div></div>
                         </div>
                     </div>
-
-                    <!-- Security Tab -->
+                    <!-- Security -->
                     <div id="tab-security" class="tab-content">
                         <div class="grid-2">
                             <div class="glass-card" style="border-color: var(--c-sec);">
                                 <h3 class="sec-text">Encryption & Defense</h3>
                                 <p>Designing encryption systems and anomaly detection protocols. Experienced in secure API design, hashing algorithms.</p>
-                                <div class="vn-player" onclick="triggerTabExperience('security')">
-                                    <div class="play-icon">▶</div>
-                                    <div class="vn-text">Security Protocols</div>
+                                <div class="vn-player" onclick="triggerTabExperience('security')"><div class="play-icon">▶</div><div class="vn-text">Security Protocols</div></div>
+                                <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--card-border);">
+                                    <p style="font-size: 0.8rem; color: var(--c-sec); margin-bottom: 0.5rem;">WARNING: SIMULATION MODULE</p>
+                                    <button onclick="triggerSecurityBreach()" class="btn btn-danger magnetic" style="width: 100%; justify-content: center;"><span>⚠ SIMULATE INTRUSION</span></button>
                                 </div>
                             </div>
-                            <div class="media-wrapper">
-                                <div class="video-container">
-                                    <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/cybercity/800/450');"></div>
-                                    <!-- NO-COOKIE: Cyberpunk City -->
-                                    <iframe src="https://www.youtube-nocookie.com/embed/Gs_Q9oOBSxs?autoplay=1&mute=1&loop=1&playlist=Gs_Q9oOBSxs&controls=0&showinfo=0&rel=0&modestbranding=1" title="Cyberpunk" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                                    <div class="scanlines"></div>
-                                    <div class="video-hud" style="border-color: rgba(255, 42, 42, 0.5);">
-                                        <div class="video-top">
-                                            <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
-                                            <div class="feed-id" style="color:var(--c-sec)">CAM_SEC: NETWORK_TRAFFIC</div>
-                                        </div>
-                                        <div class="video-bottom">
-                                            <div class="feed-id">ENCRYPTION_LAYER</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-gallery">
-                                    <img src="https://picsum.photos/seed/lock/300/200" onclick="expandImage(this)">
-                                    <img src="https://picsum.photos/seed/hack/300/200" onclick="expandImage(this)">
-                                    <img src="https://picsum.photos/seed/ssh/300/200" onclick="expandImage(this)">
-                                    <img src="https://picsum.photos/seed/vuln/300/200" onclick="expandImage(this)">
-                                </div>
-                            </div>
+                            <div class="media-wrapper"><div class="video-container"><div class="video-fallback" style="background-image: url('https://picsum.photos/seed/cybercity/800/450');"></div><iframe src="https://www.youtube-nocookie.com/embed/Gs_Q9oOBSxs?loop=1&playlist=Gs_Q9oOBSxs&controls=0&showinfo=0&rel=0&modestbranding=1" allow="encrypted-media" allowfullscreen></iframe><div class="scanlines"></div></div></div>
                         </div>
                     </div>
-
-                    <!-- Cloud Tab -->
+                    <!-- Cloud -->
                     <div id="tab-cloud" class="tab-content">
                         <div class="grid-2">
-                            <div class="glass-card" style="border-color: var(--c-accent);">
+                            <div class="glass-card">
                                 <h3 class="highlight">Cloud Infrastructure</h3>
                                 <p>Architecting resilient environments on AWS and Azure. Implementing CI/CD pipelines, container orchestration.</p>
-                                <div class="vn-player" onclick="triggerTabExperience('cloud')">
-                                    <div class="play-icon">▶</div>
-                                    <div class="vn-text">Cloud Architecture</div>
-                                </div>
+                                <div class="vn-player" onclick="triggerTabExperience('cloud')"><div class="play-icon">▶</div><div class="vn-text">Cloud Architecture</div></div>
                             </div>
-                            <div class="media-wrapper">
-                                <div class="video-container">
-                                    <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/serverroom/800/450');"></div>
-                                    <!-- NO-COOKIE: Server Room -->
-                                    <iframe src="https://www.youtube-nocookie.com/embed/ScMzIvxBSi4?autoplay=1&mute=1&loop=1&playlist=ScMzIvxBSi4&controls=0&showinfo=0&rel=0&modestbranding=1" title="Server Room" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                                    <div class="scanlines"></div>
-                                    <div class="video-hud">
-                                        <div class="video-top">
-                                            <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
-                                            <div class="feed-id">CAM_CLD: SERVER_FARM_04</div>
-                                        </div>
-                                        <div class="video-bottom">
-                                            <div class="feed-id">UPTIME: 99.99%</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-gallery">
-                                    <img src="https://picsum.photos/seed/aws/300/200" onclick="expandImage(this)">
-                                    <img src="https://picsum.photos/seed/azure/300/200" onclick="expandImage(this)">
-                                    <img src="https://picsum.photos/seed/k8s/300/200" onclick="expandImage(this)">
-                                    <img src="https://picsum.photos/seed/docker/300/200" onclick="expandImage(this)">
-                                </div>
-                            </div>
+                            <div class="media-wrapper"><div class="video-container"><div class="video-fallback" style="background-image: url('https://picsum.photos/seed/serverroom/800/450');"></div><iframe src="https://www.youtube-nocookie.com/embed/ScMzIvxBSi4?loop=1&playlist=ScMzIvxBSi4&controls=0&showinfo=0&rel=0&modestbranding=1" allow="encrypted-media" allowfullscreen></iframe><div class="scanlines"></div></div></div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 04 SYSTEM DEPLOYMENTS (TRANSPARENT IMAGES) -->
         <section id="deployments">
             <div class="content-container">
                 <h2>System <span class="highlight">Deployments</span></h2>
-                
-                <div class="grid-2">
-                    
-                    <!-- Project 1 -->
-                    <div class="project-card">
-                        <div class="project-header">
-                            <div>
-                                <div class="project-title">Helium Packet Enterprise</div>
-                                <span class="project-role">Enterprise Infrastructure</span>
-                            </div>
-                        </div>
-                        <p>A scalable networking platform designed for high-throughput data handling. Features automated failover.</p>
-                        <button class="project-media-toggle" onclick="toggleProjectMedia(this)">View Media & Notes</button>
-                        
-                        <div class="project-media-content">
-                            <div class="vn-player" onclick="triggerTabExperience('project1')">
-                                <div class="play-icon">▶</div>
-                                <div class="vn-text">Project Walkthrough</div>
-                            </div>
-                            <div class="video-container" style="margin-top:1rem;">
-                                <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/networkabstract/800/450');"></div>
-                                <!-- NO-COOKIE: Abstract Network -->
-                                <iframe src="https://www.youtube-nocookie.com/embed/M7fi_ibZt-Q?autoplay=1&mute=1&loop=1&playlist=M7fi_ibZt-Q&controls=0&showinfo=0&rel=0&modestbranding=1" title="Network" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                                <div class="scanlines"></div>
-                                <div class="video-hud">
-                                    <div class="video-top">
-                                        <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
-                                        <div class="feed-id">SYS_CAM: HELIUM_NODE</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-gallery" style="margin-top:5px;">
-                                <img src="https://picsum.photos/seed/p1_1/300/200">
-                                <img src="https://picsum.photos/seed/p1_2/300/200">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Project 2 -->
-                    <div class="project-card">
-                        <div class="project-header">
-                            <div>
-                                <div class="project-title">HE SDK</div>
-                                <span class="project-role">Developer Tooling</span>
-                            </div>
-                        </div>
-                        <p>Comprehensive SDK allowing seamless integration with backend systems. Includes structured API clients.</p>
-                        <button class="project-media-toggle" onclick="toggleProjectMedia(this)">View Media & Notes</button>
-                        
-                        <div class="project-media-content">
-                            <div class="vn-player" onclick="triggerTabExperience('project2')">
-                                <div class="play-icon">▶</div>
-                                <div class="vn-text">SDK Usage Guide</div>
-                            </div>
-                            <div class="video-container" style="margin-top:1rem;">
-                                <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/codingscreen/800/450');"></div>
-                                <!-- NO-COOKIE: Coding Screen -->
-                                <iframe src="https://www.youtube-nocookie.com/embed/HEyI31YAG3s?autoplay=1&mute=1&loop=1&playlist=HEyI31YAG3s&controls=0&showinfo=0&rel=0&modestbranding=1" title="Coding" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                                <div class="scanlines"></div>
-                                <div class="video-hud">
-                                    <div class="video-top">
-                                        <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
-                                        <div class="feed-id">DEV_CAM: SDK_BUILD</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-gallery" style="margin-top:5px;">
-                                <img src="https://picsum.photos/seed/sdk1/300/200">
-                                <img src="https://picsum.photos/seed/sdk2/300/200">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Project 3 -->
-                    <div class="project-card">
-                        <div class="project-header">
-                            <div>
-                                <div class="project-title">AHE (Adaptive Hashing)</div>
-                                <span class="project-role">Encryption Research</span>
-                            </div>
-                        </div>
-                        <p>Research into dynamic hashing algorithms that evolve based on data entropy to prevent rainbow table attacks.</p>
-                        <button class="project-media-toggle" onclick="toggleProjectMedia(this)">View Media & Notes</button>
-                        
-                        <div class="project-media-content">
-                            <div class="vn-player" onclick="triggerTabExperience('project3')">
-                                <div class="play-icon">▶</div>
-                                <div class="vn-text">Research Explanation</div>
-                            </div>
-                            <div class="video-container" style="margin-top:1rem;">
-                                <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/mathalgo/800/450');"></div>
-                                <!-- NO-COOKIE: Math/Algo -->
-                                <iframe src="https://www.youtube-nocookie.com/embed/r6MlUcmOul8?autoplay=1&mute=1&loop=1&playlist=r6MlUcmOul8&controls=0&showinfo=0&rel=0&modestbranding=1" title="Math" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                                <div class="scanlines"></div>
-                                <div class="video-hud" style="border-color: rgba(189, 0, 255, 0.5);">
-                                    <div class="video-top">
-                                        <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
-                                        <div class="feed-id" style="color:var(--c-enc)">RES_CAM: ALGO_VISUALIZER</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-gallery" style="margin-top:5px;">
-                                <img src="https://picsum.photos/seed/hash1/300/200">
-                                <img src="https://picsum.photos/seed/hash2/300/200">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Project 4 -->
-                    <div class="project-card">
-                        <div class="project-header">
-                            <div>
-                                <div class="project-title">Project Burnout</div>
-                                <span class="project-role">Full Stack App</span>
-                            </div>
-                        </div>
-                        <p>Immersive portfolio platform demonstrating modular architecture, WebGL integration, and performance.</p>
-                        <button class="project-media-toggle" onclick="toggleProjectMedia(this)">View Media & Notes</button>
-                        
-                        <div class="project-media-content">
-                            <div class="vn-player" onclick="triggerTabExperience('project4')">
-                                <div class="play-icon">▶</div>
-                                <div class="vn-text">Design Philosophy</div>
-                            </div>
-                            <div class="video-container" style="margin-top:1rem;">
-                                <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/webglart/800/450');"></div>
-                                <!-- NO-COOKIE: WebGL Art -->
-                                <iframe src="https://www.youtube-nocookie.com/embed/RduLb1s49gA?autoplay=1&mute=1&loop=1&playlist=RduLb1s49gA&controls=0&showinfo=0&rel=0&modestbranding=1" title="WebGL" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                                <div class="scanlines"></div>
-                                <div class="video-hud">
-                                    <div class="video-top">
-                                        <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
-                                        <div class="feed-id">UI_CAM: WEBGL_RENDER</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-gallery" style="margin-top:5px;">
-                                <img src="https://picsum.photos/seed/burnout1/300/200">
-                                <img src="https://picsum.photos/seed/burnout2/300/200">
-                            </div>
-                        </div>
-                    </div>
-
+                <div class="grid-3">
+                    <div class="project-card"><div class="project-title">Helium Packet</div><span class="project-role">Enterprise Infrastructure</span><p>Scalable networking platform for high-throughput data handling.</p><button class="project-media-toggle" onclick="toggleProjectMedia(this)">View Media & Notes</button><div class="project-media-content"><div class="vn-player" onclick="triggerTabExperience('project1')"><div class="play-icon">▶</div><div class="vn-text">Walkthrough</div></div><div class="video-container" style="margin-top:1rem;"><iframe src="https://www.youtube-nocookie.com/embed/M7fi_ibZt-Q?controls=0" allowfullscreen></iframe><div class="scanlines"></div></div></div></div>
+                    <div class="project-card"><div class="project-title">HE SDK</div><span class="project-role">Developer Tooling</span><p>Comprehensive SDK for seamless backend system integration.</p><button class="project-media-toggle" onclick="toggleProjectMedia(this)">View Media & Notes</button><div class="project-media-content"><div class="vn-player" onclick="triggerTabExperience('project2')"><div class="play-icon">▶</div><div class="vn-text">Usage Guide</div></div><div class="video-container" style="margin-top:1rem;"><iframe src="https://www.youtube-nocookie.com/embed/HEyI31YAG3s?controls=0" allowfullscreen></iframe><div class="scanlines"></div></div></div></div>
+                    <div class="project-card"><div class="project-title">Eleanor Apparel</div><span class="project-role">E-Commerce</span><p>Headless e-commerce solution with custom filtering and Stripe payments.</p><button class="project-media-toggle" onclick="toggleProjectMedia(this)">View Media & Notes</button><div class="project-media-content"><div class="vn-player" onclick="triggerTabExperience('eleanor')"><div class="play-icon">▶</div><div class="vn-text">Architecture</div></div><div class="video-container" style="margin-top:1rem;"><iframe src="https://www.youtube-nocookie.com/embed/5qap5aO4i9A?controls=0" allowfullscreen></iframe><div class="scanlines"></div></div></div></div>
+                    <div class="project-card"><div class="project-title">Project Burnout</div><span class="project-role">Interactive Web</span><p>Interactive magazine-style web experience combining storytelling and dynamic architecture.</p><button class="project-media-toggle" onclick="toggleProjectMedia(this)">View Media & Notes</button><div class="project-media-content"><div class="vn-player" onclick="triggerTabExperience('burnout')"><div class="play-icon">▶</div><div class="vn-text">Design Talk</div></div><div class="video-container" style="margin-top:1rem;"><iframe src="https://www.youtube-nocookie.com/embed/LXb3EKWsInQ?controls=0" allowfullscreen></iframe><div class="scanlines"></div></div></div></div>
+                    <div class="project-card"><div class="project-title">SecAudit Tool</div><span class="project-role">Security Utility</span><p>Automated vulnerability scanner that parses logs and identifies injection points.</p><button class="project-media-toggle" onclick="toggleProjectMedia(this)">View Media & Notes</button><div class="project-media-content"><div class="vn-player" onclick="triggerTabExperience('secaudit')"><div class="play-icon">▶</div><div class="vn-text">Demo</div></div><div class="video-container" style="margin-top:1rem;"><iframe src="https://www.youtube-nocookie.com/embed/2k5SMvlQm0w?controls=0" allowfullscreen></iframe><div class="scanlines"></div></div></div></div>
+                    <div class="project-card"><div class="project-title">Orbital API</div><span class="project-role">Backend Service</span><p>High-frequency data aggregation service serving real-time satellite telemetry via WebSockets.</p><button class="project-media-toggle" onclick="toggleProjectMedia(this)">View Media & Notes</button><div class="project-media-content"><div class="vn-player" onclick="triggerTabExperience('orbital')"><div class="play-icon">▶</div><div class="vn-text">System Flow</div></div><div class="video-container" style="margin-top:1rem;"><iframe src="https://www.youtube-nocookie.com/embed/5qap5aO4i9A?controls=0" allowfullscreen></iframe><div class="scanlines"></div></div></div></div>
                 </div>
             </div>
         </section>
 
-        <!-- 05 SYSTEM ARCHITECTURE -->
         <section id="architecture">
             <div class="content-container grid-2">
                 <div>
                     <h2>System <span class="sec-text">Architecture</span></h2>
                     <p>Visualizing the flow of data through secure systems. I prioritize diagrams that clarify complexity.</p>
-                    <div class="vn-player magnetic" onclick="triggerExperience('architecture')">
-                        <div class="play-icon">▶</div>
-                        <div class="vn-text">Listen to Design Philosophy</div>
-                    </div>
+                    <div class="vn-player magnetic" onclick="triggerExperience('architecture')"><div class="play-icon">▶</div><div class="vn-text">Listen to Design Philosophy</div></div>
                 </div>
-                <div class="glass-card" style="display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.3);">
-                     <div style="text-align:center; color: rgba(255,255,255,0.4);">
-                        [Interactive System Diagram]
-                        <br><span style="font-size:0.8rem">Microservice Orchestration Visual</span>
-                    </div>
-                </div>
+                <div class="glass-card" style="display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.3);"><div style="text-align:center; opacity: 0.5;">[Interactive System Diagram]<br>Microservice Orchestration</div></div>
             </div>
         </section>
 
-        <!-- 06 TECHNICAL PHILOSOPHY -->
         <section id="philosophy">
             <div style="max-width: 800px; margin: 0 auto; text-align: center;">
                 <h2 style="font-size: 3vw;">Engineering <span class="enc-text">Philosophy</span></h2>
-                <p style="font-size: 1.3rem; color: #fff;">
-                    "Security is not a product, but a process."
-                </p>
-                <p>
-                    True engineering isn't about writing code; it's about solving problems within constraints. I believe in Security-First Development.
-                </p>
+                <p style="font-size: 1.3rem;">"Security is not a product, but a process."</p>
+                <p>True engineering isn't about writing code; it's about solving problems within constraints. I believe in Security-First Development.</p>
+                <div class="vn-player magnetic" onclick="triggerExperience('philosophy')" style="margin: 2rem auto;"><div class="play-icon">▶</div><div class="vn-text">Listen: Core Principles</div></div>
             </div>
         </section>
 
-        <!-- 07 EDUCATION (ADDED WORDS) -->
         <section id="education">
-            <div class="content-container">
-                <h2>Education <span class="highlight">& Certs</span></h2>
-                <div class="tabs-container">
-                    <div class="tab-headers">
-                        <button class="tab-btn active" onclick="openTab(event, 'edu-nmu')">Nelson Mandela Univ</button>
-                        <button class="tab-btn" onclick="openTab(event, 'edu-ru')">Rhodes University</button>
-                        <button class="tab-btn" onclick="openTab(event, 'edu-aws')">AWS Certified</button>
-                        <button class="tab-btn" onclick="openTab(event, 'edu-sec')">Sec+ Certification</button>
+            <div class="parallax-bg" style="background-image: url('https://picsum.photos/seed/library_old/1920/1080');"></div>
+            <video class="ghost-video" autoplay muted loop playsinline><source src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-blue-circuit-board-98-large.mp4" type="video/mp4"></video>
+            <div class="education-overlay"></div>
+            <div class="split-section">
+                <div class="media-frame" id="edu-media-frame" style="background-image: url('https://picsum.photos/seed/university/800/800');"></div>
+                <div class="editorial-card">
+                    <h2>Education <span class="highlight">& Certs</span></h2>
+                    <div class="editorial-tabs">
+                        <button class="editorial-tab-btn active" onclick="openEduTab(event, 'edu-nmu', 'https://picsum.photos/seed/university/800/800')">Nelson Mandela</button>
+                        <button class="editorial-tab-btn" onclick="openEduTab(event, 'edu-ru', 'https://picsum.photos/seed/law_library/800/800')">Rhodes Univ</button>
+                        <button class="editorial-tab-btn" onclick="openEduTab(event, 'edu-aws', 'https://picsum.photos/seed/aws_cloud/800/800')">AWS Certified</button>
                     </div>
-
-                    <div id="edu-nmu" class="tab-content active">
-                        <div class="grid-2">
-                            <div class="glass-card">
-                                <h3>Nelson Mandela University</h3>
-                                <p class="highlight">Bachelor of Commerce General (2022)</p>
-                                <div class="vn-player" onclick="triggerTabExperience('edu_nmu')">
-                                    <div class="play-icon">▶</div>
-                                    <div class="vn-text">Uni Experience</div>
-                                </div>
-                                <p style="margin-top:1rem; font-size: 0.95rem; line-height: 1.6;">
-                                    During my time at NMU, I focused on the intersection of business logic and information systems. The curriculum provided a robust foundation in economics, which I later applied to optimizing backend resource allocation and cost-management in cloud environments. My capstone project involved analyzing the economic impact of data breaches on SMEs.
-                                </p>
-                            </div>
-                            <div class="media-wrapper">
-                                <div class="video-container">
-                                    <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/campuslife/800/450');"></div>
-                                    <!-- NO-COOKIE: Campus generic -->
-                                    <iframe src="https://www.youtube-nocookie.com/embed/LXb3EKWsInQ?autoplay=1&mute=1&loop=1&playlist=LXb3EKWsInQ&controls=0&showinfo=0&rel=0&modestbranding=1" title="University" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                                    <div class="scanlines"></div>
-                                    <div class="video-hud">
-                                        <div class="video-top">
-                                            <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
-                                            <div class="feed-id">ARCHIVE: NMU_GRAD</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-gallery">
-                                    <img src="https://picsum.photos/seed/grad1/300/200">
-                                    <img src="https://picsum.photos/seed/campus1/300/200">
-                                </div>
-                            </div>
+                    <div class="edu-tab-content-container">
+                        <div id="edu-nmu" class="edu-tab-pane active">
+                            <h3>Nelson Mandela University</h3><span class="edu-subtitle">Bachelor of Commerce General (2022)</span>
+                            <div class="vn-player magnetic" onclick="triggerTabExperience('edu_nmu')"><div class="play-icon">▶</div><div class="vn-text">Listen: Academic Journey</div></div>
+                            <p><span class="cyber-drop-cap">D</span>uring my time at NMU, I focused on the intersection of business logic and information systems.</p>
                         </div>
-                    </div>
-                    
-                    <div id="edu-ru" class="tab-content">
-                        <div class="grid-2">
-                            <div class="glass-card">
-                                <h3>Rhodes University</h3>
-                                <p class="enc-text">Bachelor of Economics and Law (2017 – 2019)</p>
-                                <div class="vn-player" onclick="triggerTabExperience('edu_ru')">
-                                    <div class="play-icon">▶</div>
-                                    <div class="vn-text">Law & Econ</div>
-                                </div>
-                                <p style="margin-top:1rem; font-size: 0.95rem; line-height: 1.6;">
-                                    My initial academic journey was rooted in the understanding of legal frameworks and economic models. This background is crucial in the modern security landscape, particularly regarding compliance (GDPR, POPIA), intellectual property rights in software, and the ethical implications of algorithmic decision making. I learned to argue complex logic, a skill directly transferable to debugging secure systems.
-                                </p>
-                            </div>
-                            <div class="media-wrapper">
-                                <div class="video-container">
-                                    <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/librarystudy/800/450');"></div>
-                                    <!-- NO-COOKIE: Lofi Girl (Study vibe) -->
-                                    <iframe src="https://www.youtube-nocookie.com/embed/5qap5aO4i9A?autoplay=1&mute=1&loop=1&playlist=5qap5aO4i9A&controls=0&showinfo=0&rel=0&modestbranding=1" title="Study" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                                    <div class="scanlines"></div>
-                                    <div class="video-hud" style="border-color: rgba(189, 0, 255, 0.5);">
-                                        <div class="video-top">
-                                            <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
-                                            <div class="feed-id" style="color:var(--c-enc)">ARCHIVE: RU_LAW</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-gallery">
-                                    <img src="https://picsum.photos/seed/ru1/300/200">
-                                    <img src="https://picsum.photos/seed/ru2/300/200">
-                                </div>
-                            </div>
+                        <div id="edu-ru" class="edu-tab-pane">
+                            <h3>Rhodes University</h3><span class="edu-subtitle" style="color:var(--c-enc)">Bachelor of Economics and Law (2017 – 2019)</span>
+                            <div class="vn-player magnetic" onclick="triggerTabExperience('edu_ru')"><div class="play-icon">▶</div><div class="vn-text">Listen: Logic & Law</div></div>
+                            <p><span class="cyber-drop-cap">M</span>y initial academic journey was rooted in the understanding of legal frameworks and economic models.</p>
                         </div>
-                    </div>
-
-                    <div id="edu-aws" class="tab-content">
-                        <div class="grid-2">
-                            <div class="glass-card">
-                                <h3>AWS Certified Solutions Architect</h3>
-                                <div class="vn-player" onclick="triggerTabExperience('edu_aws')">
-                                    <div class="play-icon">▶</div>
-                                    <div class="vn-text">Cert Journey</div>
-                                </div>
-                                <p style="margin-top:1rem; font-size: 0.95rem; line-height: 1.6;">
-                                    Achieving the Associate level certification validated my ability to design distributed systems on AWS. The certification process required deep study of VPC networking, IAM security best practices, and serverless architectures using Lambda and API Gateway. This knowledge is directly applied to my current role in deploying secure, scalable containerized applications.
-                                </p>
-                            </div>
-                            <div class="media-wrapper">
-                                <div class="video-container">
-                                    <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/awscert/800/450');"></div>
-                                    <!-- NO-COOKIE: Abstract Tech -->
-                                    <iframe src="https://www.youtube-nocookie.com/embed/xg4ev24N-aI?autoplay=1&mute=1&loop=1&playlist=xg4ev24N-aI&controls=0&showinfo=0&rel=0&modestbranding=1" title="AWS" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                                    <div class="scanlines"></div>
-                                    <div class="video-hud">
-                                        <div class="video-top">
-                                            <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
-                                            <div class="feed-id">CERT: AWS_ASSOCIATE</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-gallery">
-                                    <img src="https://picsum.photos/seed/badge1/300/200">
-                                    <img src="https://picsum.photos/seed/cloud1/300/200">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="edu-sec" class="tab-content">
-                        <div class="grid-2">
-                            <div class="glass-card">
-                                <h3>CompTIA Security+</h3>
-                                <div class="vn-player" onclick="triggerTabExperience('edu_sec')">
-                                    <div class="play-icon">▶</div>
-                                    <div class="vn-text">Security Basics</div>
-                                </div>
-                                <p style="margin-top:1rem; font-size: 0.95rem; line-height: 1.6;">
-                                    The Security+ certification laid the groundwork for my cybersecurity career. It covers essential principles including network security, compliance, operational security, threats, and vulnerabilities. This baseline ensures that every system I architect is built with a fundamental understanding of risk management, access control, and cryptography from day one.
-                                </p>
-                            </div>
-                            <div class="media-wrapper">
-                                <div class="video-container">
-                                    <div class="video-fallback" style="background-image: url('https://picsum.photos/seed/securityops/800/450');"></div>
-                                    <!-- NO-COOKIE: Hacking/Security -->
-                                    <iframe src="https://www.youtube-nocookie.com/embed/inWWhr5tnEA?autoplay=1&mute=1&loop=1&playlist=inWWhr5tnEA&controls=0&showinfo=0&rel=0&modestbranding=1" title="Security" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                                    <div class="scanlines"></div>
-                                    <div class="video-hud" style="border-color: rgba(255, 42, 42, 0.5);">
-                                        <div class="video-top">
-                                            <div class="rec-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
-                                            <div class="feed-id" style="color:var(--c-sec)">CERT: SECURITY_PLUS</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-gallery">
-                                    <img src="https://picsum.photos/seed/secplus1/300/200">
-                                    <img src="https://picsum.photos/seed/secplus2/300/200">
-                                </div>
-                            </div>
+                        <div id="edu-aws" class="edu-tab-pane">
+                            <h3>AWS Certified Solutions Architect</h3><span class="edu-subtitle">Associate Level Certification</span>
+                            <div class="vn-player magnetic" onclick="triggerTabExperience('edu_aws')"><div class="play-icon">▶</div><div class="vn-text">Listen: Cloud Architecture</div></div>
+                            <p><span class="cyber-drop-cap">A</span>chieving the Associate level certification validated my ability to design distributed systems on AWS.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 08 FUTURE VISION -->
         <section id="future">
             <div class="content-container grid-2">
                 <div>
                     <h2>Future <span class="highlight">Vision</span></h2>
-                    <div class="vn-player magnetic" onclick="triggerExperience('future')">
-                        <div class="play-icon">▶</div>
-                        <div class="vn-text">Vision Briefing</div>
-                    </div>
-                    <h3 style="color:var(--c-accent); margin-top:1rem;">01. Zero Trust Architecture</h3>
-                    <p>Moving beyond perimeter defense to identity-based security.</p>
-                    <h3 style="color:var(--c-enc); margin-top:1rem;">02. Post-Quantum Cryptography</h3>
-                    <p>Preparing backend systems for quantum computing.</p>
+                    <div class="vn-player magnetic" onclick="triggerExperience('future')"><div class="play-icon">▶</div><div class="vn-text">Vision Briefing</div></div>
+                    <h3 style="color:var(--c-accent); margin-top:1rem;">01. Zero Trust Architecture</h3><p>Moving beyond perimeter defense to identity-based security.</p>
+                    <h3 style="color:var(--c-enc); margin-top:1rem;">02. Post-Quantum Cryptography</h3><p>Preparing backend systems for quantum computing.</p>
                 </div>
-                <div class="glass-card">
-                    <h3>Roadmap</h3>
-                    <ul style="list-style: none; margin-top: 1rem;">
-                        <li style="margin-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:0.5rem;">
-                            <strong>Q3 2024:</strong> Advanced React & WebGL
-                        </li>
-                        <li style="margin-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:0.5rem;">
-                            <strong>Q4 2024:</strong> Cloud Native Security
-                        </li>
-                        <li style="margin-bottom:1rem;">
-                            <strong>2025:</strong> Full Stack AI Engineering
-                        </li>
-                    </ul>
-                </div>
+                <div class="glass-card"><h3>Roadmap</h3><ul style="list-style: none; margin-top: 1rem;"><li style="margin-bottom:1rem; border-bottom:1px solid var(--card-border); padding-bottom:0.5rem;"><strong>Q3 2024:</strong> Advanced React & WebGL</li><li style="margin-bottom:1rem; border-bottom:1px solid var(--card-border); padding-bottom:0.5rem;"><strong>Q4 2024:</strong> Cloud Native Security</li><li><strong>2025:</strong> Full Stack AI Engineering</li></ul></div>
             </div>
         </section>
 
-        <!-- 09 CONTACT -->
         <section id="contact" style="min-height: 80vh;">
             <div style="max-width: 600px; margin: 0 auto;">
                 <h2 style="text-align: center;">Establish <span class="sec-text">Contact</span></h2>
                 <p style="text-align: center; margin-bottom: 3rem;">Open to opportunities in Cybersecurity, Cloud Architecture, and Distributed Systems.</p>
-                
-                <form onsubmit="handleFormSubmit(event)">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Name" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" class="form-control" placeholder="Email Address" required>
-                    </div>
-                    <div class="form-group">
-                        <textarea class="form-control" rows="5" placeholder="Message / Project Proposal" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Send Encrypted Message</button>
-                </form>
-
-                <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 3rem;">
-                    <a href="#" class="magnetic" style="color: #fff; text-decoration: none; border-bottom: 1px solid var(--c-accent);">GitHub</a>
-                    <a href="#" class="magnetic" style="color: #fff; text-decoration: none; border-bottom: 1px solid var(--c-sec);">LinkedIn</a>
-                    <a href="#" class="magnetic" style="color: #fff; text-decoration: none; border-bottom: 1px solid var(--c-enc);">Email</a>
+                <form onsubmit="handleFormSubmit(event)"><div class="form-group"><input type="text" class="form-control" placeholder="Name" required></div><div class="form-group"><input type="email" class="form-control" placeholder="Email Address" required></div><div class="form-group"><textarea class="form-control" rows="5" placeholder="Message / Project Proposal" required></textarea></div><button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Send Encrypted Message</button></form>
+                <div class="social-links">
+                    <a href="#" class="social-icon magnetic" title="GitHub"><svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+                    <a href="#" class="social-icon magnetic" title="LinkedIn"><svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+                    <a href="mailto:email@example.com" class="social-icon magnetic" title="Email"><svg viewBox="0 0 24 24"><path d="M0 3v18h24v-18h-24zm21.518 2l-9.518 7.713-9.518-7.713h19.036zm-19.518 14v-11.817l10 8.104 10-8.104v11.817h-20z"/></svg></a>
                 </div>
             </div>
         </section>
-
-        <footer style="padding: 2rem; text-align: center; font-size: 0.8rem; color: rgba(255,255,255,0.3);">
-            &copy; 2024 HACK U. All Systems Operational.
-        </footer>
-
+        <footer style="padding: 2rem; text-align: center; font-size: 0.8rem; opacity: 0.5;">&copy; 2024 HACK U. All Systems Operational.</footer>
     </main>
 
-    <!-- Toast Notification -->
-    <div id="toast">Message Transmitted Successfully</div>
-
-    <!-- Dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
@@ -1019,107 +487,128 @@
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
 
     <script>
-        // --- 1. CONFIG & ASSETS ---
-        const config = {
-            colors: { bg: 0x030305, primary: 0x00f3ff, secondary: 0xbd00ff, danger: 0xff2a2a }
-        };
+        const config = { colors: { bg: 0x050505, primary: 0x00f3ff, secondary: 0xbd00ff, danger: 0xff2a2a, light: 0xf0f2f5, darkText: 0x1a1a1a } };
+        let breachActive = false; let isLightMode = false;
 
-        const galleryAssets = {
-            intro: ['network', 'server', 'cyber', 'code'],
-            profile: ['developer', 'meeting', 'tech'],
-            architecture: ['blueprint', 'structure', 'chip'],
-            future: ['space', 'ai', 'quantum'],
-            backend: ['backend1', 'backend2', 'backend3', 'server'],
-            security: ['security1', 'lock', 'hacker', 'cybersec'],
-            cloud: ['cloud1', 'aws', 'azure', 'docker'],
-            project1: ['enterprise1', 'networking', 'data'],
-            project2: ['coding1', 'sdk', 'tools'],
-            project3: ['crypto', 'math', 'algo'],
-            project4: ['webgl', 'design', 'react'],
-            edu_nmu: ['university', 'grad', 'study'],
-            edu_ru: ['library', 'law', 'econ'],
-            edu_aws: ['cert', 'cloud', 'exam'],
-            edu_sec: ['security', 'comptia', 'badge']
-        };
+        const galleryAssets = { intro: ['network', 'server', 'cyber', 'code'], profile: ['developer', 'meeting', 'tech'], architecture: ['blueprint', 'structure', 'chip', 'server'], philosophy: ['abstract', 'code', 'mind', 'logic'], future: ['space', 'ai', 'quantum', 'robot'], backend: ['backend1', 'backend2', 'backend3', 'server'], security: ['security1', 'lock', 'hacker', 'cybersec'], cloud: ['cloud1', 'aws', 'azure', 'docker'], project1: ['enterprise1', 'networking', 'data'], project2: ['coding1', 'sdk', 'tools'], eleanor: ['fashion', 'clothing', 'shop', 'design'], burnout: ['magazine', 'art', 'design', 'fire'], secaudit: ['lock', 'terminal', 'code', 'alert'], orbital: ['space', 'satellite', 'data', 'orbit'], edu_nmu: ['university', 'grad', 'study'], edu_ru: ['library', 'law', 'econ'], edu_aws: ['cert', 'cloud', 'exam'] };
+        const getImages = (key, count = 4) => { const seeds = galleryAssets[key] || ['tech']; return Array.from({length: count}, (_, i) => `https://picsum.photos/seed/${seeds[i % seeds.length]}${i}/1920/1080.jpg`); };
 
-        const getImages = (key, count = 4) => {
-            const seeds = galleryAssets[key] || ['tech'];
-            return Array.from({length: count}, (_, i) => 
-                `https://picsum.photos/seed/${seeds[i % seeds.length]}${i}/1920/1080.jpg`
-            );
-        };
-
-        // --- 2. THREE.JS SETUP (FIXED CLIPPING) ---
         const container = document.getElementById('webgl-container');
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(config.colors.bg, 0.02);
         scene.background = new THREE.Color(config.colors.bg);
-        
-        // FIX: Increased 'near' plane to 1.0 to prevent clipping when object gets close
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1.0, 1000);
-        camera.position.z = 6; 
-        
+        scene.fog = new THREE.FogExp2(config.colors.bg, 0.02);
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.z = 12; 
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.toneMapping = THREE.ReinhardToneMapping;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
         container.appendChild(renderer.domElement);
 
-        // Objects
-        const geometry = new THREE.TorusKnotGeometry(1.2, 0.3, 150, 20);
-        const material = new THREE.MeshPhysicalMaterial({
-            color: 0x111111, metalness: 0.9, roughness: 0.2, clearcoat: 1.0,
-            clearcoatRoughness: 0.1, emissive: config.colors.primary, emissiveIntensity: 0.5, wireframe: true
-        });
-        const coreGeo = new THREE.IcosahedronGeometry(0.7, 1);
-        const coreMat = new THREE.MeshBasicMaterial({ color: config.colors.primary, wireframe: false });
-        const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-        const heroMesh = new THREE.Mesh(geometry, material);
-        heroMesh.add(coreMesh);
-        scene.add(heroMesh);
+        // --- LIGHTING ---
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(config.colors.primary, 2, 50);
+        pointLight.position.set(5, 5, 5);
+        scene.add(pointLight);
+        const redLight = new THREE.PointLight(config.colors.danger, 0, 50);
+        redLight.position.set(-5, -5, 5);
+        scene.add(redLight);
 
-        const particlesGeometry = new THREE.BufferGeometry();
-        const particlesCount = 1000;
-        const posArray = new Float32Array(particlesCount * 3);
-        for(let i = 0; i < particlesCount * 3; i++) posArray[i] = (Math.random() - 0.5) * 25;
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const particlesMesh = new THREE.Points(particlesGeometry, new THREE.PointsMaterial({ size: 0.02, color: 0xffffff, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending }));
+        // --- BACKGROUND: NO GRID. ONLY PARTICLES. ---
+        // Grid removed as requested.
+        const particleGeo = new THREE.BufferGeometry();
+        const particleCount = 200;
+        const posArray = new Float32Array(particleCount * 3);
+        for(let i=0; i<particleCount*3; i++) { posArray[i] = (Math.random() - 0.5) * 40; }
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particleMat = new THREE.PointsMaterial({ size: 0.05, color: 0x00f3ff, transparent: true, opacity: 0.5 });
+        const particlesMesh = new THREE.Points(particleGeo, particleMat);
         scene.add(particlesMesh);
 
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(ambientLight);
-        const pointLight = new THREE.PointLight(config.colors.primary, 2, 20);
-        pointLight.position.set(2, 3, 4);
-        scene.add(pointLight);
-
-        const renderScene = new THREE.RenderPass(scene, camera);
-        const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-        bloomPass.strength = 1.2; bloomPass.radius = 0.5; bloomPass.threshold = 0;
-        const composer = new THREE.EffectComposer(renderer);
-        composer.addPass(renderScene);
-        composer.addPass(bloomPass);
-
-        // --- 3. HERO 3D TEXT EFFECT ---
-        const heroContent = document.getElementById('hero-content-3d');
-        document.addEventListener('mousemove', (e) => {
-            if(!heroContent) return;
-            const x = (window.innerWidth / 2 - e.pageX) / 25;
-            const y = (window.innerHeight / 2 - e.pageY) / 25;
-            heroContent.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+        // --- 3D TEXT: SOLID, NO WIREFRAME ---
+        const fontLoader = new THREE.FontLoader();
+        // High gloss solid material
+        const textMatBody = new THREE.MeshPhysicalMaterial({ 
+            color: 0x222222, 
+            roughness: 0.2, 
+            metalness: 0.9,
+            clearcoat: 1.0,
+            clearcoatRoughness: 0.1
         });
 
-        // --- 4. GALLERY & INTERACTION LOGIC (TRANSPARENCY FIX) ---
-        let activeGalleryTween = null;
-        let activeAudioTimeout = null;
+        const textGroupHero = new THREE.Group(); 
+        const textGroupArsenal = new THREE.Group(); 
+        const textGroupEdu = new THREE.Group();
+        scene.add(textGroupHero); scene.add(textGroupArsenal); scene.add(textGroupEdu);
+        textGroupArsenal.scale.set(0,0,0); textGroupEdu.scale.set(0,0,0);
 
+        fontLoader.load('https://unpkg.com/three@0.128.0/examples/fonts/helvetiker_bold.typeface.json', function (font) {
+            const create3DTextLine = (textString, yPos, group) => {
+                const geometry = new THREE.TextGeometry(textString, { font: font, size: 0.8, height: 0.2, curveSegments: 12, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.02, bevelOffset: 0, bevelSegments: 5 });
+                geometry.center();
+                const meshBody = new THREE.Mesh(geometry, textMatBody);
+                // Wireframe REMOVED
+                const lineGroup = new THREE.Group();
+                lineGroup.add(meshBody);
+                lineGroup.position.y = yPos;
+                group.add(lineGroup);
+            };
+            create3DTextLine("CLOUD", 0.8, textGroupHero); create3DTextLine("SYSTEMS", 0, textGroupHero); create3DTextLine("DEVELOPER", -0.8, textGroupHero);
+            textGroupHero.position.x = -2;
+            create3DTextLine("SECURITY", 0.8, textGroupArsenal); create3DTextLine("&", 0, textGroupArsenal); create3DTextLine("INFRASTRUCTURE", -0.8, textGroupArsenal);
+            textGroupArsenal.position.x = 0;
+            create3DTextLine("ACADEMIC", 0.8, textGroupEdu); create3DTextLine("ROOTS", 0, textGroupEdu); create3DTextLine("& CERTS", -0.8, textGroupEdu);
+            textGroupEdu.position.x = 2;
+            gsap.from(textGroupHero.scale, { x:0, y:0, z:0, duration: 1.5, ease: "elastic.out(1, 0.5)", delay: 0.5 });
+        });
+
+        // --- POST PROCESSING ---
+        const renderScene = new THREE.RenderPass(scene, camera);
+        const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        bloomPass.strength = 0.5; bloomPass.radius = 0.4; bloomPass.threshold = 0;
+        const composer = new THREE.EffectComposer(renderer);
+        composer.addPass(renderScene); composer.addPass(bloomPass);
+
+        // --- SCROLL LOGIC (No wireframe coloring) ---
+        gsap.registerPlugin(ScrollTrigger);
+        const masterTl = gsap.timeline({ scrollTrigger: { trigger: "body", start: "top top", end: "bottom bottom", scrub: 1 } });
+        masterTl.to(textGroupHero.scale, { x:0, y:0, z:0, duration: 1.5 }, "hero-out")
+                 .to(textGroupArsenal.scale, { x:1, y:1, z:1, duration: 1.5 }, "hero-out+=0.5")
+                 .to(textGroupArsenal.position, { x: -2, duration: 2 }, "hero-out+=0.5")
+                 // Only lighting changes, no text material color changes since wireframe is gone
+                 .to([pointLight.color], { r:0.74, g:0, b:1, duration: 1.5 }, "arsenal-move")
+                 .to(textGroupArsenal.scale, { x:0, y:0, z:0, duration: 1.5 }, "edu-in")
+                 .to(textGroupEdu.scale, { x:1, y:1, z:1, duration: 1.5 }, "edu-in+=0.5")
+                 .to(textGroupEdu.position, { x: 2, duration: 2 }, "edu-in+=0.5")
+                 .to([pointLight.color], { r:1, g:1, b:1, duration: 1.5 }, "edu-in")
+                 .to(textGroupEdu.scale, { x:0, y:0, z:0, duration: 1.5 }, "contact");
+
+        // --- THEME TOGGLE (No wireframe coloring) ---
+        const themeBtn = document.getElementById('theme-btn');
+        themeBtn.addEventListener('click', () => {
+            isLightMode = !isLightMode;
+            document.body.classList.toggle('light-mode');
+            const targetBg = isLightMode ? config.colors.light : config.colors.bg;
+            const targetText = isLightMode ? config.colors.darkText : config.colors.primary;
+            
+            gsap.to(scene.background, { r: new THREE.Color(targetBg).r, g: new THREE.Color(targetBg).g, b: new THREE.Color(targetBg).b, duration: 0.5 });
+            gsap.to(scene.fog.color, { r: new THREE.Color(targetBg).r, g: new THREE.Color(targetBg).g, b: new THREE.Color(targetBg).b, duration: 0.5 });
+            // Light affects solid body
+            gsap.to(textMatBody.color, { r: new THREE.Color(targetText).r, g: new THREE.Color(targetText).g, b: new THREE.Color(targetText).b, duration: 0.5 });
+            
+            themeBtn.innerHTML = isLightMode 
+                ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>' 
+                : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+        });
+
+        // --- UI LOGIC ---
+        let activeGalleryTween = null;
         function stopGallery() {
             const layer = document.getElementById('gallery-layer');
             layer.style.opacity = '0';
             if(activeGalleryTween) activeGalleryTween.kill();
-            if(activeAudioTimeout) clearTimeout(activeAudioTimeout);
             document.querySelectorAll('.play-icon').forEach(el => el.innerText = '▶');
-            
-            // REMOVE TRANSPARENCY
             document.body.classList.remove('vn-active');
         }
 
@@ -1129,16 +618,12 @@
             const layer = document.getElementById('gallery-layer');
             layer.innerHTML = images.map(src => `<img src="${src}" class="gallery-img">`).join('');
             layer.style.opacity = '1';
-
-            // ADD TRANSPARENCY
             document.body.classList.add('vn-active');
 
-            const clickedBtn = event.currentTarget;
-            if(clickedBtn) {
-                const icon = clickedBtn.querySelector('.play-icon');
+            if(event && event.currentTarget) {
+                const icon = event.currentTarget.querySelector('.play-icon');
                 if(icon) icon.innerText = '■';
             }
-
             let currentImg = 0;
             const imgElements = document.querySelectorAll('.gallery-img');
             if(imgElements.length > 0) gsap.set(imgElements[0], { opacity: 1 });
@@ -1146,191 +631,81 @@
             activeGalleryTween = gsap.to({}, {
                 duration: 2.5, repeat: -1,
                 onRepeat: () => {
-                    gsap.to(imgElements[currentImg], { opacity: 0, duration: 1.5 });
+                    gsap.to(imgElements[currentImg], { opacity: 0, duration: 2 });
                     currentImg = (currentImg + 1) % imgElements.length;
-                    gsap.to(imgElements[currentImg], { opacity: 1, duration: 1.5 });
+                    gsap.to(imgElements[currentImg], { opacity: 1, duration: 2 });
                 }
             });
-
-            activeAudioTimeout = setTimeout(stopGallery, 10000);
+            setTimeout(stopGallery, 15000);
         }
 
-        window.triggerTabExperience = function(key) {
-            triggerExperience(key);
-        }
-
-        window.expandImage = function(img) {
-            const modal = document.createElement('div');
-            modal.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:99999;display:flex;align-items:center;justify-content:center;cursor:pointer; backdrop-filter: blur(10px);";
-            const expanded = document.createElement('img');
-            expanded.src = img.src;
-            expanded.style.cssText = "max-width: 90%; max-height: 90vh; height: 60vh; object-fit: contain; box-shadow:0 0 30px rgba(0,243,255,0.3); border: 1px solid var(--c-accent); border-radius: 4px;";
-            modal.appendChild(expanded);
-            modal.onclick = () => modal.remove();
-            document.body.appendChild(modal);
-        }
-
-        window.toggleProjectMedia = function(btn) {
-            const content = btn.nextElementSibling;
-            content.classList.toggle('open');
-            btn.innerText = content.classList.contains('open') ? "Hide Media" : "View Media & Notes";
-        }
-
-        // --- 5. UI LOGIC ---
+        window.triggerTabExperience = function(key) { triggerExperience(key); }
+        window.toggleProjectMedia = function(btn) { const content = btn.nextElementSibling; content.classList.toggle('open'); btn.innerText = content.classList.contains('open') ? "Hide Media" : "View Media & Notes"; }
         window.openTab = function(evt, tabName) {
-            const tabContent = document.getElementsByClassName("tab-content");
-            for (let i = 0; i < tabContent.length; i++) {
-                tabContent[i].style.display = "none";
-                tabContent[i].classList.remove('active');
-            }
-            const tabLinks = document.getElementsByClassName("tab-btn");
-            for (let i = 0; i < tabLinks.length; i++) {
-                tabLinks[i].className = tabLinks[i].className.replace(" active", "");
-            }
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
-            stopGallery(); 
+            const tabContent = document.getElementsByClassName("tab-content"); for (let i = 0; i < tabContent.length; i++) { tabContent[i].style.display = "none"; }
+            const tabLinks = document.getElementsByClassName("tab-btn"); for (let i = 0; i < tabLinks.length; i++) { tabLinks[i].className = tabLinks[i].className.replace(" active", ""); }
+            document.getElementById(tabName).style.display = "block"; evt.currentTarget.className += " active"; stopGallery(); 
         }
-
+        window.openEduTab = function(evt, tabName, imgUrl) {
+            const panes = document.querySelectorAll('.edu-tab-pane'); panes.forEach(p => p.classList.remove('active'));
+            const btns = document.querySelectorAll('.editorial-tab-btn'); btns.forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active'); evt.currentTarget.classList.add('active');
+            const frame = document.getElementById('edu-media-frame'); frame.classList.add('loading');
+            const imgPreload = new Image(); imgPreload.src = imgUrl; imgPreload.onload = () => { frame.style.backgroundImage = `url('${imgUrl}')`; frame.classList.remove('loading'); };
+            stopGallery();
+        }
         window.handleFormSubmit = function(e) {
             e.preventDefault();
-            const toast = document.getElementById('toast');
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-            e.target.reset();
+            const toast = document.getElementById('toast') || (()=>{ const t = document.createElement('div'); t.id = 'toast'; t.style.cssText = "position:fixed;bottom:30px;right:30px;background:var(--c-accent);color:#000;padding:1rem 2rem;border-radius:8px;font-weight:700;z-index:20000;transform:translateY(100px);opacity:0;transition:0.4s;"; document.body.appendChild(t); return t; })();
+            toast.classList.add('show'); toast.style.transform = "translateY(0)"; toast.style.opacity = "1";
+            setTimeout(() => { toast.style.transform = "translateY(100px)"; toast.style.opacity = "0"; }, 3000); e.target.reset();
         }
+        window.triggerSecurityBreach = function() {
+            if(breachActive) return; breachActive = true; document.body.classList.add('breach-active'); document.getElementById('system-status').innerText = "SYSTEM INTEGRITY: CRITICAL"; document.getElementById('system-status').style.color = "var(--c-sec)";
+            gsap.to(redLight, { intensity: 10, duration: 0.1, yoyo: true, repeat: 10 }); gsap.to(pointLight, { intensity: 0, duration: 0.5 });
+            gsap.to(textMatBody.color, { r:1, g:0, b:0, duration: 0.5 }); // Body turns red
+            if(textGroupArsenal.scale.x > 0.1) gsap.to(textGroupArsenal.position, { x:"+=0.5", yoyo:true, repeat:20, duration:0.05 });
+            setTimeout(() => {
+                document.body.classList.remove('breach-active'); document.getElementById('system-status').innerText = "SYSTEM INTEGRITY: 100%"; document.getElementById('system-status').style.color = "var(--c-accent)";
+                gsap.to(redLight, { intensity: 0, duration: 1 }); gsap.to(pointLight, { intensity: 2, duration: 1 });
+                gsap.to(textMatBody.color, { r:isLightMode?0.1:0.13, g:isLightMode?0.1:0.13, b:isLightMode?0.1:0.13, duration: 2 }); // Reset color
+                if(textGroupArsenal.scale.x > 0.1) gsap.to(textGroupArsenal.position, { x:-2, duration:0.5 }); breachActive = false;
+            }, 5000);
+        };
 
-        // --- 6. ANIMATIONS (SCROLL TRIGGERS) ---
-        gsap.registerPlugin(ScrollTrigger);
+        // --- ANIMATION LOOP & BLENDED LOADER ---
+        const clock = new THREE.Clock(); let mouseX = 0, mouseY = 0;
+        document.addEventListener('mousemove', (e) => { mouseX = (e.clientX - window.innerWidth/2) * 0.001; mouseY = (e.clientY - window.innerHeight/2) * 0.001; });
 
-        // Loader Animation
-        const tlLoader = gsap.timeline();
+        const tlLoader = gsap.timeline({ paused: true });
         tlLoader.to(".loader-progress", { width: "100%", duration: 1.5, ease: "power2.inOut" })
-        .to(".loader-bg.left", { className: "loader-bg left slide-out-left", duration: 1.5, ease: "power4.inOut" })
-        .to(".loader-bg.right", { className: "loader-bg right slide-out-right", duration: 1.5, ease: "power4.inOut" }, "<")
-        .to("#loader", { display: "none", duration: 0.1 })
-        .from(".line", { y: 100, opacity: 0, duration: 1, stagger: 0.1 }, "-=0.5")
-        .from(".hero-content > p, .hero-content > div", { y: 20, opacity: 0, duration: 0.8 }, "-=0.5")
-        .from(".profile-wrapper", { scale: 0.8, opacity: 0, duration: 1 }, "-=0.8");
-
-        // Scroll Triggers
-        gsap.to(heroMesh.position, { 
-            x: 3, 
-            scrollTrigger: { 
-                trigger: "#profile", 
-                start: "top bottom", 
-                end: "top top", 
-                scrub: 1.5,
-                invalidateOnRefresh: true 
-            } 
-        });
-        
-        gsap.to(heroMesh.position, { 
-            x: -3, 
-            scrollTrigger: { 
-                trigger: "#arsenal", 
-                start: "top bottom", 
-                end: "top top", 
-                scrub: 1.5,
-                invalidateOnRefresh: true
-            } 
-        });
-
-        // FIX: 3D GLITCH PREVENTION
-        // Move Z to 2 (safe distance) instead of forward, and rotate
-        gsap.to(heroMesh.position, { 
-            x: 0, 
-            z: 2, 
-            scrollTrigger: { 
-                trigger: "#contact", 
-                start: "top bottom", 
-                end: "center center", 
-                scrub: 1.5,
-                invalidateOnRefresh: true
-            } 
-        });
-        
-        gsap.to(heroMesh.rotation, {
-            z: Math.PI, 
-            scrollTrigger: {
-                trigger: "#contact",
-                start: "top bottom",
-                end: "center center",
-                scrub: 1.5
-            }
-        });
-
-        // Color Shifts
-        ScrollTrigger.create({ 
-            trigger: "#arsenal", 
-            start: "top center", 
-            onEnter: () => gsap.to([heroMesh.material.emissive, coreMesh.material.color, pointLight.color], { r:0.74, g:0, b:1, duration: 1 }),
-            invalidateOnRefresh: true
-        });
-        
-        ScrollTrigger.create({ 
-            trigger: "#deployments", 
-            start: "top center", 
-            onEnter: () => gsap.to([heroMesh.material.emissive, coreMesh.material.color, pointLight.color], { r:1, g:0.16, b:0.16, duration: 1 }),
-            invalidateOnRefresh: true
-        });
-
-        // Reveal Elements
-        gsap.utils.toArray('section h2').forEach(h2 => gsap.from(h2, { y: 50, opacity: 0, duration: 1, scrollTrigger: { trigger: h2, start: "top 80%" }}));
-        gsap.utils.toArray('.glass-card, .project-card').forEach(card => gsap.from(card, { y: 50, opacity: 0, duration: 0.8, scrollTrigger: { trigger: card, start: "top 85%" }}));
-
-        // --- 7. RENDER LOOP ---
-        const clock = new THREE.Clock();
-        let mouseX = 0, mouseY = 0;
-        document.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX - window.innerWidth/2) * 0.001;
-            mouseY = (e.clientY - window.innerHeight/2) * 0.001;
-        });
+                // BLEND IMAGES: Crossfade Img 1 to Img 2
+                .to(".loader-bg-1", { opacity: 0, duration: 1.5 }, "<") // Fade out 1
+                .to(".loader-bg-2", { opacity: 1, duration: 1.5 }, "<") // Fade in 2
+                // REVEAL SITE
+                .call(() => { 
+                    const tlEnter = gsap.timeline(); 
+                    tlEnter.to("#loader", { opacity: 0, duration: 0.8, onComplete: () => document.getElementById('loader').style.display='none' })
+                          .from(".hero-ui-overlay", { y: 20, opacity: 0, duration: 1 }, "-=0.5")
+                          .from(".hero-profile-wrapper", { x: 50, opacity: 0, duration: 1 }, "-=0.8")
+                          .from(textGroupHero.scale, {x:0, y:0, z:0, duration: 1.5, ease: "elastic.out(1, 0.5)"}, "-=0.5");
+                });
+        tlLoader.play();
 
         function animate() {
-            requestAnimationFrame(animate);
-            const elapsedTime = clock.getElapsedTime();
-            heroMesh.rotation.y += 0.05 * (mouseX - heroMesh.rotation.y);
-            heroMesh.rotation.x += 0.05 * (mouseY - heroMesh.rotation.x);
-            heroMesh.rotation.z += 0.0005; 
-            coreMesh.rotation.y -= 0.01;
-            particlesMesh.rotation.y = elapsedTime * 0.02;
+            requestAnimationFrame(animate); const elapsedTime = clock.getElapsedTime();
+            if(textGroupHero.scale.x > 0.1) { textGroupHero.rotation.x += 0.05 * (mouseY - textGroupHero.rotation.x); textGroupHero.rotation.y += 0.05 * (mouseX - textGroupHero.rotation.y); }
+            if(textGroupArsenal.scale.x > 0.1 && !breachActive) { textGroupArsenal.rotation.x += 0.05 * (mouseY - textGroupArsenal.rotation.x); textGroupArsenal.rotation.y += 0.05 * (mouseX - textGroupArsenal.rotation.y); }
+            if(textGroupEdu.scale.x > 0.1) { textGroupEdu.rotation.x += 0.05 * (mouseY - textGroupEdu.rotation.x); textGroupEdu.rotation.y += 0.05 * (mouseX - textGroupEdu.rotation.y); }
+            particlesMesh.rotation.y = elapsedTime * 0.05;
             composer.render();
-        }
-        animate();
+        } animate();
 
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            composer.setSize(window.innerWidth, window.innerHeight);
-            ScrollTrigger.refresh();
-        });
-
-        // Cursor
-        const cursor = document.querySelector('.cursor');
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-        document.querySelectorAll('.magnetic').forEach((el) => {
-            el.addEventListener('mousemove', (e) => {
-                const rect = el.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                gsap.to(el, { x: x * 0.2, y: y * 0.2, duration: 0.3 });
-                cursor.classList.add('active');
-            });
-            el.addEventListener('mouseleave', () => {
-                gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
-                cursor.classList.remove('active');
-            });
-        });
-
-        // Lenis
-        const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
-        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-        requestAnimationFrame(raf);
+        window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); composer.setSize(window.innerWidth, window.innerHeight); ScrollTrigger.refresh(); });
+        let lastScroll = 0; const nav = document.getElementById('main-nav'); window.addEventListener('scroll', () => { const current = window.scrollY; if (current > lastScroll && current > 100) { nav.classList.add('nav-hidden'); } else { nav.classList.remove('nav-hidden'); } lastScroll = current; });
+        const cursor = document.querySelector('.cursor'); document.addEventListener('mousemove', (e) => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; });
+        document.querySelectorAll('.magnetic').forEach((el) => { el.addEventListener('mousemove', (e) => { const rect = el.getBoundingClientRect(); const x = e.clientX - rect.left - rect.width / 2; const y = e.clientY - rect.top - rect.height / 2; gsap.to(el, { x: x * 0.2, y: y * 0.2, duration: 0.3 }); cursor.classList.add('active'); }); el.addEventListener('mouseleave', () => { gsap.to(el, { x: 0, y: 0, duration: 0.5 }); cursor.classList.remove('active'); }); });
+        const lenis = new Lenis({ duration: 1.2, smooth: true }); function raf(time) { lenis.raf(time); requestAnimationFrame(raf); } requestAnimationFrame(raf);
     </script>
-</body>
+</body> 
 </html>

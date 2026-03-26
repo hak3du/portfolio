@@ -3,858 +3,1003 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Quantum Vault | Hyper-Visor</title>
+    <title>Full Stack Systems | Live Data Integration</title>
     
-    <!-- Premium Fonts -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     
-    <!-- External Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            --cyan: #00f3ff;
-            --magenta: #ff0055;
-            --deep-space: #030305;
-            --glass: rgba(10, 15, 30, 0.85);
-            --border: rgba(0, 243, 255, 0.4);
-            --text-gold: #ffd700;
+            --primary-gold: #c5a059;
+            --primary-gold-dim: #8a6e3d;
+            --deep-blue: #0f172a;
+            --snow-white: #f8fafc;
+            --ice-blue: #a5f3fc;
+            --magic-glow: rgba(197, 160, 89, 0.6);
+            --glass-bg: rgba(15, 23, 42, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-blur: 16px;
+            --font-heading: 'Cinzel', serif;
+            --font-body: 'Lato', sans-serif;
+            
+            /* API Colors */
+            --color-up: #4ade80; /* Green */
+            --color-down: #f87171; /* Red */
+            --color-neutral: #94a3b8;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; 
+        }
 
         body {
-            background-color: var(--deep-space);
-            color: white;
-            font-family: 'Montserrat', sans-serif;
+            background-color: var(--deep-blue);
+            color: var(--snow-white);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            background: url('https://picsum.photos/seed/techcyber/1920/1080') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 10, 20, 0.85);
+            z-index: -1;
+            pointer-events: none;
+            transition: background 2s ease;
+        }
+
+        body.system-active::before {
+            background: rgba(5, 10, 20, 0.7);
+        }
+
+        /* --- Scrollbar --- */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+        ::-webkit-scrollbar-thumb { background: var(--primary-gold); border-radius: 4px; }
+
+        /* --- Canvas --- */
+        #tech-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* --- UI Utilities --- */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-heading);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .text-gold {
+            color: var(--primary-gold);
+            text-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: 1px solid var(--primary-gold);
+            background: rgba(197, 160, 89, 0.1);
+            color: var(--primary-gold);
+            font-family: var(--font-heading);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
             overflow: hidden;
-            height: 100vh;
-            user-select: none;
-        }
-
-        /* --- VISUAL FX OVERLAYS --- */
-        .vignette {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 30%, #000000 120%);
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .scanlines {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-            z-index: 3;
-            opacity: 0.4;
+            z-index: 1;
         }
         
-        /* --- 3D CANVAS --- */
-        #canvas-container {
+        .btn:active { transform: scale(0.95); }
+
+        /* --- Navigation --- */
+        nav {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1;
-            cursor: grab;
-        }
-        #canvas-container:active { cursor: grabbing; }
-
-        /* --- UI LAYER --- */
-        #ui-layer {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10;
-            pointer-events: none;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 2.5rem;
-        }
-
-        .header h1 {
-            font-family: 'Cinzel', serif;
-            color: var(--cyan);
-            font-size: 2.5rem;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            text-shadow: 0 0 20px rgba(0, 243, 255, 0.6), 0 0 40px rgba(0, 243, 255, 0.3);
-            border-left: 5px solid var(--magenta);
-            padding-left: 20px;
-        }
-
-        .instruction {
-            align-self: center;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid var(--cyan);
-            color: var(--cyan);
-            padding: 12px 30px;
-            font-family: 'Share Tech Mono', monospace;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            font-size: 0.9rem;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
-            backdrop-filter: blur(5px);
-        }
-
-        /* --- MODAL --- */
-        #content-modal {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            width: 90%; max-width: 1200px;
-            height: 85vh;
-            background: var(--glass);
-            backdrop-filter: blur(30px);
-            border: 1px solid var(--border);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: auto;
-            box-shadow: 0 0 100px rgba(0, 243, 255, 0.15), inset 0 0 50px rgba(0, 0, 0, 0.5);
-            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-
-        #content-modal.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        .modal-header {
-            padding: 1.5rem 2.5rem;
-            border-bottom: 1px solid var(--border);
+            top: 0;
+            width: 100%;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0, 0, 0, 0.6);
+            z-index: 100;
+            transition: all 0.5s ease;
+            opacity: 0;
+            transform: translateY(-20px);
         }
 
-        .modal-title {
-            font-family: 'Cinzel', serif;
-            color: var(--cyan);
-            font-size: 1.6rem;
-            letter-spacing: 4px;
-            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        nav.visible {
+            opacity: 1;
+            transform: translateY(0);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .close-btn {
-            background: transparent;
-            border: 1px solid var(--magenta);
-            color: var(--magenta);
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.5rem;
-            transition: 0.3s;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 10px rgba(255, 0, 85, 0.2);
+        .logo { font-size: 1.2rem; font-weight: 900; color: var(--snow-white); letter-spacing: 1px; }
+        .nav-links { display: none; }
+        
+        @media (min-width: 769px) {
+            .nav-links { display: block; }
+            .nav-links a {
+                color: var(--snow-white);
+                text-decoration: none;
+                margin-left: 20px;
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                transition: color 0.3s;
+            }
+            .nav-links a:hover { color: var(--primary-gold); }
         }
-        .close-btn:hover { background: var(--magenta); color: white; box-shadow: 0 0 20px var(--magenta); }
 
-        .carousel-viewport {
-            flex: 1;
-            position: relative;
-            background: rgba(0,0,0,0.8);
-            overflow: hidden;
+        /* --- INTRO (DOOR) --- */
+        #intro-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #000;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 2rem;
+            perspective: 1000px;
+            overflow: hidden;
+            transition: opacity 1s ease 1.5s;
         }
 
-        .slide-content {
+        .frame {
             position: absolute;
             width: 100%;
             height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
+            border: 20px solid #0f1115;
+            box-shadow: inset 0 0 50px #000;
             pointer-events: none;
-        }
-        .slide-content.active { pointer-events: auto; }
-
-        .slide-content img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            box-shadow: 0 0 40px rgba(0,0,0,0.8);
-            border: 1px solid #333;
-        }
-
-        .video-wrapper {
-            width: 100%;
-            max-width: 1000px;
-            aspect-ratio: 16/9;
-            background: #000;
-            border: 1px solid var(--cyan);
-            box-shadow: 0 0 50px rgba(0, 243, 255, 0.2);
-        }
-        .video-wrapper iframe { width: 100%; height: 100%; border: none; }
-
-        .text-slide {
-            width: 80%;
-            max-width: 800px;
-            background: linear-gradient(135deg, rgba(0, 20, 40, 0.95), rgba(0, 0, 0, 0.98));
-            border: 1px solid var(--cyan);
-            padding: 3rem;
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
-        }
-        .text-slide h2 {
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--cyan);
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 1rem;
-        }
-        .text-slide p {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: #ccc;
-            text-align: justify;
-        }
-        .data-label {
-            display: block;
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--magenta);
-            font-size: 0.8rem;
-            margin-bottom: 1rem;
-            letter-spacing: 2px;
-        }
-
-        .nav-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid var(--cyan);
-            color: var(--cyan);
-            padding: 1rem;
-            cursor: pointer;
-            font-size: 1.5rem;
-            transition: 0.3s;
             z-index: 20;
-            width: 50px; height: 50px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .nav-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
-        .nav-prev { left: 1rem; border-radius: 0 8px 8px 0; }
-        .nav-next { right: 1rem; border-radius: 8px 0 0 8px; }
-
-        .carousel-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 1.5rem 2rem;
-            background: linear-gradient(to top, rgba(0,0,0,1), transparent);
-            text-align: center;
-            pointer-events: none;
-        }
-        .carousel-caption h3 {
-            font-family: 'Cinzel', serif;
-            color: #fff;
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 4px;
         }
 
-        #loader {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            z-index: 9999;
+        .doors-container { position: relative; width: 100%; height: 100%; display: flex; }
+
+        .door {
+            width: 50%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1.5s ease-in-out;
+            background-color: #151515;
+            background-image: 
+                linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, .05) 25%, rgba(255, 255, 255, .05) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, .05) 75%, rgba(255, 255, 255, .05) 76%, transparent 77%, transparent);
+            background-size: 30px 30px;
+            border: 2px solid #000;
             display: flex;
-            justify-content: center;
             align-items: center;
-            flex-direction: column;
-            transition: opacity 1s ease;
+            justify-content: center;
         }
-        .loader-text {
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--cyan);
-            letter-spacing: 5px;
-            font-size: 1.5rem;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; text-shadow: 0 0 20px var(--cyan); } }
 
+        .door::before {
+            content: ''; position: absolute; top: 20%; bottom: 20%; width: 70%;
+            border: 2px solid #333; background: rgba(0,0,0,0.5);
+        }
+
+        .door-left { transform-origin: left center; }
+        .door-right { transform-origin: right center; }
+
+        .handle {
+            position: absolute; width: 10px; height: 50px;
+            background: linear-gradient(to bottom, #555, #222);
+            border-radius: 4px; top: 50%; transform: translateY(-50%);
+        }
+        .door-left .handle { right: 15px; }
+        .door-right .handle { left: 15px; }
+
+        #intro-overlay.open .door-left { transform: rotateY(-110deg); }
+        #intro-overlay.open .door-right { transform: rotateY(110deg); }
+
+        .door-light {
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at center, rgba(197, 160, 89, 0.2) 0%, rgba(15, 23, 42, 0) 70%);
+            opacity: 0; transition: opacity 1s ease; z-index: 1; pointer-events: none;
+        }
+        #intro-overlay.open .door-light { opacity: 1; }
+
+        .start-cta {
+            position: absolute; z-index: 50; text-align: center; transition: all 0.5s ease;
+        }
+        .start-cta h1 { font-size: 2.5rem; margin-bottom: 10px; color: var(--snow-white); text-shadow: 0 5px 15px rgba(0,0,0,0.8); }
+        .start-cta p { font-size: 1rem; margin-bottom: 30px; color: #888; letter-spacing: 3px; }
+        
+        #intro-overlay.open .start-cta { opacity: 0; transform: scale(1.2); pointer-events: none; }
+        #intro-overlay.hidden { opacity: 0; pointer-events: none; }
+
+        /* --- Hero --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 20px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease 1.5s;
+        }
+        .hero.active { opacity: 1; transform: translateY(0); }
+        .hero-content { max-width: 100%; }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 20px; line-height: 1.2; }
+        .hero p { font-size: 1.1rem; margin-bottom: 40px; color: #cbd5e1; font-weight: 300; }
+
+        /* --- Sections --- */
+        .section { padding: 80px 5%; position: relative; z-index: 10; }
+
+        /* Core Section */
+        .grid-split {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .card-wrapper { height: 300px; perspective: 1000px; margin-bottom: 20px; }
+
+        .tilt-card {
+            width: 100%;
+            height: 100%;
+            background: url('https://picsum.photos/seed/coding/600/800') center/cover;
+            border-radius: 12px;
+            transform-style: preserve-3d;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            position: relative;
+        }
+        .tilt-card::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(15,23,42,0.95), rgba(15,23,42,0.4));
+            border-radius: 12px;
+        }
+
+        /* Systems Section */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .tech-card {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tech-visual { height: 150px; background: #1a1a1a; }
+        .tech-visual img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+        .tech-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .tech-content h3 { color: var(--primary-gold); font-size: 1.1rem; margin-bottom: 10px; }
+        .tech-list { list-style: none; margin-bottom: 10px; font-size: 0.9rem; }
+        
+        /* --- API WIDGETS --- */
+        .api-widget {
+            margin-top: auto;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-family: 'Courier New', Courier, monospace; /* Terminal look */
+        }
+        
+        .widget-label {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .widget-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--snow-white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .trend-up { color: var(--color-up); font-size: 0.8rem; }
+        .trend-down { color: var(--color-down); font-size: 0.8rem; }
+
+        .loading-dots::after {
+            content: ' .';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: ' .'; }
+            40% { content: ' ..'; }
+            60% { content: ' ...'; }
+            80%, 100% { content: ''; }
+        }
+
+        /* Carousel (SWIPABLE) */
+        .workflow-section { text-align: center; overflow: hidden; }
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            padding: 10px 0;
+        }
+        .carousel-track {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding: 20px 10px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            touch-action: pan-y;
+        }
+        .carousel-track::-webkit-scrollbar { display: none; }
+
+        .workflow-card {
+            min-width: 260px;
+            flex-shrink: 0;
+            padding: 25px 15px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            text-align: left;
+            scroll-snap-align: center;
+        }
+        .workflow-icon { font-size: 1.8rem; margin-bottom: 15px; color: var(--primary-gold); }
+        .workflow-name { color: var(--primary-gold); font-family: var(--font-heading); font-size: 1rem; margin-bottom: 8px; }
+        .workflow-desc { font-size: 0.8rem; color: #ccc; line-height: 1.5; }
+
+        /* --- FOOTER & TICKER --- */
+        footer {
+            background: #05080f;
+            border-top: 1px solid rgba(197, 160, 89, 0.3);
+            position: relative;
+            z-index: 10;
+            padding-bottom: 20px;
+        }
+
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            background-color: #000;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
+
+        .ticker-wrap::before, .ticker-wrap::after {
+            content: ''; position: absolute; top: 0; width: 50px; height: 100%; z-index: 2;
+        }
+        .ticker-wrap::before { left: 0; background: linear-gradient(to right, #05080f, transparent); }
+        .ticker-wrap::after { right: 0; background: linear-gradient(to left, #05080f, transparent); }
+
+        .ticker-move {
+            display: inline-flex;
+            white-space: nowrap;
+            animation: ticker 30s linear infinite;
+            will-change: transform;
+        }
+        
+        .ticker-wrap:hover .ticker-move, .ticker-wrap:active .ticker-move {
+            animation-play-state: paused;
+        }
+
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            padding: 0 25px;
+            filter: grayscale(100%) brightness(0.7);
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .ticker-item i { font-size: 1.8rem; margin-right: 10px; }
+        .ticker-item span {
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .ticker-item:hover, .ticker-item.active-tap {
+            filter: grayscale(0%) brightness(1.2);
+            transform: scale(1.15);
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .fa-html5:hover, .fa-html5.active-tap { color: #E34F26; text-shadow: 0 0 15px #E34F26; }
+        .fa-css3-alt:hover, .fa-css3-alt.active-tap { color: #1572B6; text-shadow: 0 0 15px #1572B6; }
+        .fa-js:hover, .fa-js.active-tap { color: #F7DF1E; text-shadow: 0 0 15px #F7DF1E; }
+        .fa-node:hover, .fa-node.active-tap { color: #339933; text-shadow: 0 0 15px #339933; }
+        .fa-react:hover, .fa-react.active-tap { color: #61DAFB; text-shadow: 0 0 15px #61DAFB; }
+        .fa-python:hover, .fa-python.active-tap { color: #3776AB; text-shadow: 0 0 15px #3776AB; }
+        .fa-git-alt:hover, .fa-git-alt.active-tap { color: #F05032; text-shadow: 0 0 15px #F05032; }
+        .fa-docker:hover, .fa-docker.active-tap { color: #2496ED; text-shadow: 0 0 15px #2496ED; }
+        .fa-aws:hover, .fa-aws.active-tap { color: #FF9900; text-shadow: 0 0 15px #FF9900; }
+        .fa-database:hover, .fa-database.active-tap { color: #4DB33D; text-shadow: 0 0 15px #4DB33D; }
+
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        .footer-credits { text-align: center; padding-top: 20px; }
+        .footer-credits .logo { margin-bottom: 10px; display: inline-block; font-size: 1.5rem; }
+        .footer-links a { color: #888; margin: 0 10px; text-decoration: none; font-size: 0.8rem; }
+        .copy { margin-top: 10px; font-size: 0.7rem; color: #555; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(15, 23, 42, 0.95);
+            color: var(--primary-gold);
+            border: 1px solid var(--primary-gold);
+            padding: 12px 25px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: all 0.4s;
+            z-index: 10000;
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            width: max-content;
+            max-width: 90%;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* Reveal */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Desktop Overrides */
+        @media (min-width: 769px) {
+            .grid-split { grid-template-columns: 1fr 1fr; }
+            .card-wrapper { height: 500px; }
+            .hero h1 { font-size: 4.5rem; }
+            .hero p { font-size: 1.4rem; }
+            .tech-grid { grid-template-columns: repeat(3, 1fr); }
+            .section { padding: 100px 10%; }
+            .start-cta h1 { font-size: 4rem; }
+            .workflow-card { min-width: 280px; }
+            .ticker-item { padding: 0 50px; }
+            .ticker-item i { font-size: 2.5rem; }
+            .ticker-item span { font-size: 1.2rem; }
+            .ticker-move { animation: ticker 40s linear infinite; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Visual FX -->
-    <div class="scanlines"></div>
-    <div class="vignette"></div>
+    <!-- Tech Rain Canvas -->
+    <canvas id="tech-canvas"></canvas>
 
-    <!-- Loader -->
-    <div id="loader">
-        <div class="loader-text">INITIALIZING HYPER-VISOR</div>
-        <div style="margin-top:10px; color: #555; font-family: 'Share Tech Mono'; font-size: 0.8rem;">CONNECTING TO NEURAL NET...</div>
-    </div>
-
-    <!-- 3D Scene -->
-    <div id="canvas-container"></div>
-
-    <!-- UI Overlay -->
-    <div id="ui-layer">
-        <div class="header">
-            <h1>Quantum Vault</h1>
+    <!-- INTRO -->
+    <div id="intro-overlay">
+        <div class="frame"></div>
+        <div class="door-light"></div>
+        <div class="start-cta">
+            <h1>SYSTEM INIT</h1>
+            <p>Tap to Enter</p>
+            <button class="btn" id="enter-btn">OPEN</button>
         </div>
-        <div class="instruction" id="scroll-hint">
-            DRAG TO EXPLORE • CLICK NODES TO DECRYPT
+        <div class="doors-container">
+            <div class="door door-left"><div class="handle"></div></div>
+            <div class="door door-right"><div class="handle"></div></div>
         </div>
     </div>
 
-    <!-- Media Modal -->
-    <div id="content-modal">
-        <div class="modal-header">
-            <div class="modal-title" id="modal-title">Archive Title</div>
-            <button class="close-btn" id="close-modal">×</button>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="logo">DEV<span class="text-gold">SYSTEM</span></div>
+        <div class="nav-links">
+            <a href="#core">Core Engine</a>
+            <a href="#systems">Advanced Systems</a>
+            <a href="#workflow">Workflow</a>
+            <a href="#" onclick="showToast('Contact Protocol...'); return false;">Contact</a>
         </div>
-        
-        <div class="carousel-viewport" id="carousel-viewport">
-            <button class="nav-btn nav-prev" id="prev-slide">❮</button>
-            <button class="nav-btn nav-next" id="next-slide">❯</button>
-            <div class="carousel-caption">
-                <h3 id="caption-text">Loading...</h3>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero" id="hero">
+        <div class="hero-content">
+            <h1>Building <span class="text-gold">Secure</span><br>& Scalable Systems</h1>
+            <p>Full stack architecture focusing on performance, security, and intelligent data flow.</p>
+            <a href="#core" class="btn">Inspect Core</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- CORE ENGINE -->
+        <section id="core" class="section core-section">
+            <div class="grid-split">
+                <div class="card-wrapper reveal">
+                    <div class="tilt-card" id="tiltCard"></div>
+                </div>
+                <div class="text-content reveal">
+                    <h2 class="text-gold">01. Core Engine</h2>
+                    <p style="color: #cbd5e1; line-height: 1.8; margin-top: 20px;">
+                        The foundation of clean, no-fluff interfaces and robust back-end logic. 
+                        I build systems that are fast, responsive, and easy to maintain.
+                    </p>
+                    <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h3 style="font-size: 1rem; color: #fff; margin-bottom: 10px;">Frontend Layer</h3>
+                            <ul style="list-style: none; color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
+                                <li>• HTML5 / CSS3</li>
+                                <li>• JavaScript (ES6+)</li>
+                                <li>• Responsive UI/UX</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 1rem; color: #fff; margin-bottom: 10px;">Backend Layer</h3>
+                            <ul style="list-style: none; color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
+                                <li>• Node.js Runtime</li>
+                                <li>• Express.js Framework</li>
+                                <li>• API Architecture</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </section>
+
+        <!-- ADVANCED SYSTEMS -->
+        <section id="systems" class="section systems-section">
+            <div style="text-align: center;" class="reveal">
+                <h2>Advanced Capabilities</h2>
+                <p style="color: #cbd5e1; margin-top: 10px;">Specialized modules for Security, Intelligence, and Data.</p>
+            </div>
+
+            <div class="tech-grid reveal">
+                
+                <!-- SECURITY CARD with IP API -->
+                <div class="tech-card">
+                    <div class="tech-visual"><img src="https://picsum.photos/seed/securitylock/600/400" alt="Security"></div>
+                    <div class="tech-content">
+                        <h3>Security & Cyber</h3>
+                        <ul class="tech-list">
+                            <li>API Security Testing</li>
+                            <li>Auth (JWT, Sessions)</li>
+                            <li>OWASP Vulnerability Analysis</li>
+                            <li>Input Validation</li>
+                        </ul>
+                        
+                        <!-- API Widget: IP Scan -->
+                        <div class="api-widget">
+                            <span class="widget-label">Current Session / Network Scan</span>
+                            <div class="widget-value">
+                                <span id="user-ip" class="loading-dots">Scanning...</span>
+                                <i class="fa-solid fa-wifi" style="font-size: 0.8rem; opacity: 0.5;"></i>
+                            </div>
+                            <div id="user-location" style="font-size: 0.75rem; color: #64748b; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI CARD -->
+                <div class="tech-card">
+                    <div class="tech-visual"><img src="https://picsum.photos/seed/artificialintel/600/400" alt="AI"></div>
+                    <div class="tech-content">
+                        <h3>AI & Logic</h3>
+                        <ul class="tech-list">
+                            <li>AI API Integration</li>
+                            <li>Custom Logic Systems</li>
+                            <li>Automated Workflows</li>
+                            <li>Data Processing</li>
+                        </ul>
+                        <div class="api-widget">
+                            <span class="widget-label">System Status</span>
+                            <div class="widget-value" style="color: var(--color-up);">OPERATIONAL</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DATA CARD with CoinGecko API -->
+                <div class="tech-card">
+                    <div class="tech-visual"><img src="https://picsum.photos/seed/databasecloud/600/400" alt="Database"></div>
+                    <div class="tech-content">
+                        <h3>Data Architecture</h3>
+                        <ul class="tech-list">
+                            <li>MongoDB (NoSQL)</li>
+                            <li>Firebase (Realtime)</li>
+                            <li>Data Modeling</li>
+                            <li>Retrieval Optimization</li>
+                        </ul>
+
+                        <!-- API Widget: Market Ticker -->
+                        <div class="api-widget">
+                            <span class="widget-label">Market Monitor (BTC)</span>
+                            <div class="widget-value">
+                                <span id="btc-price">Loading...</span>
+                            </div>
+                            <div id="btc-change" class="loading-dots" style="font-size: 0.8rem; margin-top: 5px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- WORKFLOW (SWIPEABLE) -->
+        <section id="workflow" class="section workflow-section">
+            <h2 class="reveal">Workflow & Ecosystem</h2>
+            <div class="carousel-container reveal">
+                <div class="carousel-track" id="track">
+                    
+                    <!-- Cloud -->
+                    <div class="workflow-card">
+                        <div class="workflow-icon">☁️</div>
+                        <div class="workflow-name">Cloud & Deploy</div>
+                        <div class="workflow-desc">Deploying live systems on Railway and GitHub Pages.</div>
+                    </div>
+
+                    <!-- NEW: GitHub Stats Card -->
+                    <div class="workflow-card">
+                        <div class="workflow-icon"><i class="fa-brands fa-github"></i></div>
+                        <div class="workflow-name">Live Git Stats</div>
+                        <div class="api-widget" style="margin-top: 10px;">
+                            <span class="widget-label">User: <span id="git-username">Loading...</span></span>
+                            <div class="widget-value" style="margin-top: 5px;">
+                                <i class="fa-solid fa-code-branch"></i> <span id="git-repos">--</span>
+                                <i class="fa-solid fa-users" style="margin-left: 10px;"></i> <span id="git-followers">--</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: #64748b; margin-top: 5px;">Last Updated: <span id="git-updated">--</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Tooling -->
+                    <div class="workflow-card">
+                        <div class="workflow-icon">🛠️</div>
+                        <div class="workflow-name">Tooling</div>
+                        <div class="workflow-desc">REST APIs, Postman testing, and DevTools debugging.</div>
+                    </div>
+
+                    <!-- Performance -->
+                    <div class="workflow-card">
+                        <div class="workflow-icon">⚡</div>
+                        <div class="workflow-name">Performance</div>
+                        <div class="workflow-desc">Optimizing render cycles and bundle sizes.</div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER WITH TICKER -->
+    <footer>
+        <div class="ticker-wrap">
+            <div class="ticker-move" id="ticker-content"></div>
         </div>
-    </div>
+        <div class="footer-credits">
+            <div class="logo">DEV<span class="text-gold">SYSTEM</span></div>
+            <div class="footer-links">
+                <a href="#">GitHub</a>
+                <a href="#">LinkedIn</a>
+                <a href="#">Railway</a>
+            </div>
+            <div class="copy">&copy; 2023 System Architecture Portfolio.</div>
+        </div>
+    </footer>
+
+    <div id="toast" class="toast">Notification</div>
 
     <script>
-        // --- 1. COMPLETE DATA ---
-        const galleryData = [
-            { 
-                id: 1, title: "The Qubit", subtitle: "Fundamental Unit", 
-                preview: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=800&auto=format&fit=crop", 
-                gallery: [
-                    { type: "image", src: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=1600&auto=format&fit=crop", title: "Superconducting Chip" },
-                    { type: "video", src: "https://www.youtube.com/embed/QuR969uMICM?enablejsapi=1", title: "Quantum Computing Explained" },
-                    { type: "text", content: "<span class='data-label'>DATA LOG // SUPERPOSITION</span><h2>What is a Qubit?</h2><p>Unlike a classical bit that is either 0 or 1, a Qubit utilizes the principle of <strong>Superposition</strong>. It can exist in a complex combination of both states simultaneously until it is measured.</p><p style='margin-top:1rem;'>This allows quantum computers to process vast amounts of possibilities in parallel.</p>", title: "Concept: Superposition" }
-                ]
-            },
-            { 
-                id: 2, title: "Entanglement", subtitle: "Spooky Action", 
-                preview: "https://images.unsplash.com/photo-1620641788421-7f1c91b8ac36?q=80&w=800&auto=format&fit=crop",
-                gallery: [
-                    { type: "image", src: "https://images.unsplash.com/photo-1620641788421-7f1c91b8ac36?q=80&w=1600&auto=format&fit=crop", title: "Neural Network" },
-                    { type: "video", src: "https://www.youtube.com/embed/6Jp9T2TtgWg?enablejsapi=1", title: "Visualizing Entanglement" },
-                    { type: "text", content: "<span class='data-label'>PHYSICS LOG // NON-LOCALITY</span><h2>Quantum Entanglement</h2><p>Einstein called it 'spooky action at a distance.' When two particles become entangled, they form a single system. Measuring the state of one particle instantly determines the state of the other, no matter how far apart they are.</p>", title: "Einstein's Paradox" }
-                ]
-            },
-            { 
-                id: 3, title: "Cryptography", subtitle: "Unbreakable Codes", 
-                preview: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=800&auto=format&fit=crop",
-                gallery: [
-                    { type: "image", src: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=1600&auto=format&fit=crop", title: "Digital Fortress" },
-                    { type: "video", src: "https://www.youtube.com/embed/2A0Q0898kD4?enablejsapi=1", title: "Encryption Explained" },
-                    { type: "text", content: "<span class='data-label'>SECURITY LOG // POST-QUANTUM</span><h2>The Threat & The Shield</h2><p>Current encryption (RSA) relies on the difficulty of factoring large numbers. Quantum computers (using Shor's Algorithm) can do this instantly.</p><p style='margin-top:1rem;'>However, Quantum Key Distribution (QKD) uses physics to create unhackable keys.</p>", title: "The Future of Security" }
-                ]
-            },
-            { 
-                id: 4, title: "Simulations", subtitle: "Molecular Modeling", 
-                preview: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=800&auto=format&fit=crop",
-                gallery: [
-                    { type: "image", src: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=1600&auto=format&fit=crop", title: "Molecular Analysis" },
-                    { type: "video", src: "https://www.youtube.com/embed/UHxNGgL-KMs?enablejsapi=1", title: "Simulating Nature" },
-                    { type: "text", content: "<span class='data-label'>SCIENCE LOG // BIO-MIMICRY</span><h2>Drug Discovery</h2><p>Simulating molecules on classical computers is incredibly difficult due to the exponential complexity of electron interactions. Quantum computers mimic nature at the subatomic level, allowing us to discover new medicines.</p>", title: "Why it Matters" }
-                ]
-            },
-             { 
-                id: 5, title: "Hardware", subtitle: "The Chiller", 
-                preview: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop",
-                gallery: [
-                    { type: "image", src: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1600&auto=format&fit=crop", title: "Server Infrastructure" },
-                    { type: "video", src: "https://www.youtube.com/embed/gNaI6R_zMjg?enablejsapi=1", title: "Inside Google's Quantum Lab" },
-                    { type: "text", content: "<span class='data-label'>ENGINEERING LOG // THERMODYNAMICS</span><h2>Near Absolute Zero</h2><p>Quantum states are fragile. To maintain coherence, superconducting qubits must be cooled to temperatures colder than outer space (approx 15 milliKelvin).</p>", title: "Keeping it Cool" }
-                ]
-            },
-            {
-                id: 6, title: "Teleportation", subtitle: "State Transfer",
-                preview: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop",
-                gallery: [
-                    { type: "image", src: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop", title: "Fiber Optic Network" },
-                    { type: "video", src: "https://www.youtube.com/embed/yM-ayGCm7wY?enablejsapi=1", title: "Quantum Teleportation Explained" },
-                    { type: "text", content: "<span class='data-label'>COMM LOG // TRANSPORT</span><h2>Not Star Trek Yet</h2><p>Quantum teleportation does not transport matter. It transfers the <em>quantum state</em> of one particle to another distant particle, destroying the original state in the process.</p>", title: "Information Transport" }
-                ]
-            },
-            {
-                id: 7, title: "Grover's Algo", subtitle: "Search Speedup",
-                preview: "https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=800&auto=format&fit=crop",
-                gallery: [
-                    { type: "image", src: "https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=1600&auto=format&fit=crop", title: "Optimization Maze" },
-                    { type: "video", src: "https://www.youtube.com/embed/D1WQIMiYrL0?enablejsapi=1", title: "Grover's Algorithm Visualized" },
-                    { type: "text", content: "<span class='data-label'>ALGO LOG // OPTIMIZATION</span><h2>Finding a Needle in a Haystack</h2><p>Grover's Algorithm provides a quadratic speedup for unstructured search problems. While classical computers need N steps to find an item, a quantum computer only needs roughly √N steps.</p>", title: "Quadratic Speedup" }
-                ]
-            },
-            {
-                id: 8, title: "Sensing", subtitle: "Precision Measurement",
-                preview: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop",
-                gallery: [
-                    { type: "image", src: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1600&auto=format&fit=crop", title: "Laboratory Sensors" },
-                    { type: "video", src: "https://www.youtube.com/embed/BpA8463H6KY?enablejsapi=1", title: "Quantum Sensing Intro" },
-                    { type: "text", content: "<span class='data-label'>METROLOGY LOG // DETECTION</span><h2>Measuring the Impossible</h2><p>Quantum sensors use entanglement to detect magnetic fields, gravity, and time with unprecedented precision. Applications range from medical imaging to detecting submarines.</p>", title: "High Precision Detection" }
-                ]
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            /* =========================================
+               1. TICKER GENERATION & TOUCH
+               ========================================= */
+            const techStack = [
+                { name: "HTML5", icon: "fa-html5", color: "#E34F26" },
+                { name: "CSS3", icon: "fa-css3-alt", color: "#1572B6" },
+                { name: "JavaScript", icon: "fa-js", color: "#F7DF1E" },
+                { name: "Node.js", icon: "fa-node", color: "#339933" },
+                { name: "React", icon: "fa-react", color: "#61DAFB" },
+                { name: "Python", icon: "fa-python", color: "#3776AB" },
+                { name: "Git", icon: "fa-git-alt", color: "#F05032" },
+                { name: "Docker", icon: "fa-docker", color: "#2496ED" },
+                { name: "AWS", icon: "fa-aws", color: "#FF9900" },
+                { name: "MongoDB", icon: "fa-database", color: "#4DB33D" }
+            ];
+
+            const tickerContainer = document.getElementById('ticker-content');
+
+            function createTickerItem(item) {
+                return `
+                    <div class="ticker-item" onclick="activateTickerItem(this)">
+                        <i class="fa-brands ${item.icon} ${item.icon === 'fa-database' ? 'fa-solid' : ''}"></i>
+                        <span>${item.name}</span>
+                    </div>
+                `;
             }
-        ];
 
-        // --- 2. THREE.JS SETUP ---
-        const container = document.getElementById('canvas-container');
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x030305);
-        // Thicker fog for depth
-        scene.fog = new THREE.FogExp2(0x030305, 0.025);
+            let tickerHTML = techStack.map(item => createTickerItem(item)).join('');
+            tickerContainer.innerHTML = tickerHTML + tickerHTML + tickerHTML;
 
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        container.appendChild(renderer.domElement);
-
-        // --- 3. ENHANCED ASSETS & WORLD BUILDING ---
-
-        // A. CARD TEXTURES
-        const cardTextures = {};
-        function createCardTexture(item) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 512; canvas.height = 768;
-            const ctx = canvas.getContext('2d');
-            
-            // Card Background (Glassy dark blue)
-            const grad = ctx.createLinearGradient(0,0,0,768);
-            grad.addColorStop(0, '#050a14');
-            grad.addColorStop(1, '#020205');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0,0,512,768);
-
-            // Border
-            ctx.strokeStyle = 'rgba(0, 243, 255, 0.5)';
-            ctx.lineWidth = 4;
-            ctx.strokeRect(10, 10, 492, 748);
-            ctx.strokeRect(15, 15, 482, 738);
-
-            // Image Area
-            ctx.fillStyle = '#000';
-            ctx.fillRect(20, 20, 472, 530);
-            
-            const img = new Image();
-            img.crossOrigin = "Anonymous";
-            img.src = item.preview;
-            
-            img.onload = () => {
-                const scale = Math.max(512 / img.width, 540 / img.height);
-                const x = (512 - img.width * scale) / 2;
-                const y = (540 - img.height * scale) / 2;
-                ctx.save();
-                ctx.beginPath(); ctx.rect(20, 20, 472, 530); ctx.clip();
-                ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-                
-                // Image Overlay Gradient
-                const imgGrad = ctx.createLinearGradient(0, 400, 0, 550);
-                imgGrad.addColorStop(0, 'transparent');
-                imgGrad.addColorStop(1, '#050a14');
-                ctx.fillStyle = imgGrad;
-                ctx.fillRect(20, 20, 472, 530);
-                ctx.restore();
-                drawTextContent(ctx, item);
-                if(cardTextures[item.id]) cardTextures[item.id].needsUpdate = true;
+            window.activateTickerItem = function(el) {
+                document.querySelectorAll('.ticker-item').forEach(i => i.classList.remove('active-tap'));
+                el.classList.add('active-tap');
+                setTimeout(() => { el.classList.remove('active-tap'); }, 1000);
             };
-            drawTextContent(ctx, item);
-            const texture = new THREE.CanvasTexture(canvas);
-            cardTextures[item.id] = texture;
-            return texture;
-        }
 
-        function drawTextContent(ctx, item) {
-            // Text Box Background
-            ctx.fillStyle = "rgba(0, 20, 40, 0.6)";
-            ctx.fillRect(20, 560, 472, 188);
-            
-            // Subtitle
-            ctx.fillStyle = '#00f3ff';
-            ctx.font = 'bold 18px "Share Tech Mono"';
-            ctx.textAlign = 'center';
-            ctx.fillText(item.subtitle.toUpperCase(), 256, 600);
-            
-            // Title
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 36px Cinzel';
-            const words = item.title.split(' ');
-            let line = '';
-            let y = 650;
-            for(let n = 0; n < words.length; n++) {
-                const testLine = line + words[n] + ' ';
-                const metrics = ctx.measureText(testLine);
-                if (metrics.width > 400 && n > 0) {
-                    ctx.fillText(line, 256, y);
-                    line = words[n] + ' ';
-                    y += 40;
-                } else {
-                    line = testLine;
+            /* =========================================
+               2. INTEGRATION: CoinGecko API (Price Ticker)
+               ========================================= */
+            async function fetchCryptoData() {
+                try {
+                    // Fetching Bitcoin price
+                    const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
+                    const data = await response.json();
+                    
+                    const btc = data.bitcoin;
+                    const priceEl = document.getElementById('btc-price');
+                    const changeEl = document.getElementById('btc-change');
+
+                    // Format Price
+                    priceEl.innerText = `$${btc.usd.toLocaleString()}`;
+                    
+                    // Format Change
+                    const change = btc.usd_24h_change.toFixed(2);
+                    changeEl.innerText = `${change}%`;
+                    
+                    // Color Logic
+                    if (btc.usd_24h_change >= 0) {
+                        changeEl.classList.remove('trend-down', 'loading-dots');
+                        changeEl.classList.add('trend-up');
+                    } else {
+                        changeEl.classList.remove('trend-up', 'loading-dots');
+                        changeEl.classList.add('trend-down');
+                    }
+                } catch (error) {
+                    console.error('CoinGecko Error:', error);
+                    document.getElementById('btc-change').innerText = 'API Error';
                 }
             }
-            ctx.fillText(line, 256, y);
-        }
 
-        // B. BACKGROUND WORLD ELEMENTS
-        
-        // 1. Moving Starfield (Depth effect)
-        const starGeo = new THREE.BufferGeometry();
-        const starCount = 2000;
-        const starPos = new Float32Array(starCount * 3);
-        const starSpeeds = [];
-        for(let i=0; i<starCount*3; i+=3) {
-            starPos[i] = (Math.random() - 0.5) * 100;   // x
-            starPos[i+1] = (Math.random() - 0.5) * 100; // y
-            starPos[i+2] = (Math.random() - 0.5) * 80;  // z
-            starSpeeds.push(0.02 + Math.random() * 0.05);
-        }
-        starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-        const starMat = new THREE.PointsMaterial({ color: 0x88ccff, size: 0.08, transparent: true, opacity: 0.8 });
-        const starField = new THREE.Points(starGeo, starMat);
-        scene.add(starField);
+            /* =========================================
+               3. INTEGRATION: IP API (Security Scan)
+               ========================================= */
+            async function fetchNetworkData() {
+                try {
+                    // Using ipapi.co for HTTPS compatibility
+                    const response = await fetch('https://ipapi.co/json/');
+                    const data = await response.json();
 
-        // 2. Floating Geodesics (Background Ruins)
-        const bgGroup = new THREE.Group();
-        const geoGeo = new THREE.IcosahedronGeometry(10, 0); // Low poly
-        const geoMat = new THREE.MeshBasicMaterial({ color: 0x004466, wireframe: true, transparent: true, opacity: 0.15 });
-        
-        for(let i=0; i<6; i++) {
-            const mesh = new THREE.Mesh(geoGeo, geoMat);
-            mesh.position.set(
-                (Math.random() - 0.5) * 60,
-                (Math.random() - 0.5) * 40,
-                (Math.random() - 0.5) * 30 - 20 // Push back
-            );
-            mesh.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, 0);
-            bgGroup.add(mesh);
-        }
-        scene.add(bgGroup);
+                    const ipEl = document.getElementById('user-ip');
+                    const locEl = document.getElementById('user-location');
 
-        // 3. Grid Floor (Retro feel)
-        const gridHelper = new THREE.GridHelper(100, 50, 0x00f3ff, 0x112233);
-        gridHelper.position.y = -15;
-        gridHelper.material.transparent = true;
-        gridHelper.material.opacity = 0.15;
-        scene.add(gridHelper);
-
-        // C. THE CORE (Reactor Style)
-        const coreGroup = new THREE.Group();
-        
-        // Wireframe Outer
-        const coreGeo = new THREE.TorusKnotGeometry(1.8, 0.5, 128, 16);
-        const coreMat = new THREE.MeshBasicMaterial({ color: 0x00f3ff, wireframe: true, transparent: true, opacity: 0.3 });
-        const core = new THREE.Mesh(coreGeo, coreMat);
-        coreGroup.add(core);
-
-        // Inner Glow (Sprite)
-        const spriteCanvas = document.createElement('canvas');
-        spriteCanvas.width = 64; spriteCanvas.height = 64;
-        const sCtx = spriteCanvas.getContext('2d');
-        const sGrad = sCtx.createRadialGradient(32,32,0,32,32,32);
-        sGrad.addColorStop(0, 'rgba(0, 243, 255, 1)');
-        sGrad.addColorStop(0.4, 'rgba(0, 243, 255, 0.3)');
-        sGrad.addColorStop(1, 'rgba(0,0,0,0)');
-        sCtx.fillStyle = sGrad;
-        sCtx.fillRect(0,0,64,64);
-        const spriteTex = new THREE.CanvasTexture(spriteCanvas);
-        const spriteMat = new THREE.SpriteMaterial({ map: spriteTex, color: 0x00f3ff, blending: THREE.AdditiveBlending });
-        const glowSprite = new THREE.Sprite(spriteMat);
-        glowSprite.scale.set(8, 8, 1);
-        coreGroup.add(glowSprite);
-
-        scene.add(coreGroup);
-
-        // D. LIGHTING SYSTEM (Dynamic RGB)
-        const lights = [];
-        const lightColors = [0x00f3ff, 0xff0055, 0x7700ff]; // Cyan, Magenta, Purple
-        for(let i=0; i<3; i++) {
-            const light = new THREE.PointLight(lightColors[i], 2, 50);
-            lights.push(light);
-            scene.add(light);
-        }
-        const ambient = new THREE.AmbientLight(0x404040, 0.5); // Soft white ambient
-        scene.add(ambient);
-
-
-        // --- 4. CARDS SETUP ---
-        const cardGroup = new THREE.Group();
-        const cardGeo = new THREE.PlaneGeometry(2.2, 3.3);
-        const cards = [];
-        const interactables = []; 
-
-        galleryData.forEach((item, i) => {
-            const material = new THREE.MeshBasicMaterial({ 
-                map: createCardTexture(item), 
-                side: THREE.DoubleSide,
-                transparent: true
-            });
-            const card = new THREE.Mesh(cardGeo, material);
-
-            const angle = i * 0.8; 
-            const radius = 8.5;
-            const y = (i - galleryData.length / 2) * 1.8;
-
-            card.position.set(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
-            card.lookAt(0, y, 0);
-            card.userData = { id: item.id, data: item };
-
-            cards.push(card);
-            interactables.push(card);
-            cardGroup.add(card);
-        });
-        scene.add(cardGroup);
-
-
-        // --- 5. INTERACTION ---
-        let isDragging = false;
-        let previousMousePosition = { x: 0, y: 0 };
-        let isZoomed = false;
-        let activeCard = null;
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-
-        container.addEventListener('mousedown', (e) => {
-            if(isZoomed) return;
-            isDragging = true;
-            previousMousePosition = { x: e.clientX, y: e.clientY };
-        });
-
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-
-            if (!isZoomed) {
-                if(isDragging) {
-                    const deltaMove = { x: e.clientX - previousMousePosition.x, y: e.clientY - previousMousePosition.y };
-                    cardGroup.rotation.y += deltaMove.x * 0.005;
-                    cardGroup.rotation.x += deltaMove.y * 0.005;
-                    previousMousePosition = { x: e.clientX, y: e.clientY };
-                } else {
-                    cardGroup.rotation.x = mouse.y * 0.05; 
+                    if (data.ip) {
+                        ipEl.innerText = data.ip;
+                        ipEl.classList.remove('loading-dots');
+                        
+                        if(data.city || data.country_code) {
+                            locEl.innerText = `${data.city}, ${data.country_code} (${data.org})`;
+                        } else {
+                            locEl.innerText = data.org || 'Unknown Network';
+                        }
+                    } else {
+                        throw new Error("No IP data");
+                    }
+                } catch (error) {
+                    console.error('IP API Error:', error);
+                    document.getElementById('user-ip').innerText = 'Secure/Private';
+                    document.getElementById('user-location').innerText = 'Network hidden';
                 }
             }
-        });
 
-        window.addEventListener('mouseup', () => { isDragging = false; });
+            /* =========================================
+               4. INTEGRATION: GitHub API (Proof of Work)
+               ========================================= */
+            // CHANGE THIS TO YOUR USERNAME
+            const GITHUB_USERNAME = 'torvalds'; // Example: 'torvalds', 'octocat', or YOUR name
 
-        let mouseDownPos = { x: 0, y: 0 };
-        container.addEventListener('mousedown', (e) => { mouseDownPos = { x: e.clientX, y: e.clientY }; });
+            async function fetchGitHubData() {
+                try {
+                    const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}`);
+                    const data = await response.json();
 
-        window.addEventListener('click', (e) => {
-            if(isZoomed) return; 
-            const dist = Math.hypot(e.clientX - mouseDownPos.x, e.clientY - mouseDownPos.y);
-            if (dist > 5) return; 
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(interactables);
-            if (intersects.length > 0) zoomToCard(intersects[0].object);
-        });
+                    if (data.message === "Not Found") {
+                        document.getElementById('git-username').innerText = "User Not Found";
+                        return;
+                    }
 
-        function zoomToCard(card) {
-            isZoomed = true;
-            activeCard = card;
-            const offset = new THREE.Vector3(0, 0, 5.5); 
-            offset.applyQuaternion(card.quaternion);
-            const targetPos = card.position.clone().add(offset);
-            document.getElementById('scroll-hint').style.opacity = '0';
+                    document.getElementById('git-username').innerText = data.login;
+                    document.getElementById('git-repos').innerText = data.public_repos;
+                    document.getElementById('git-followers').innerText = data.followers;
+                    
+                    const date = new Date(data.updated_at);
+                    document.getElementById('git-updated').innerText = date.toLocaleDateString();
 
-            gsap.to(camera.position, {
-                x: targetPos.x, y: targetPos.y, z: targetPos.z,
-                duration: 1.5, ease: "power3.inOut"
-            });
-
-            gsap.to(camera.rotation, {
-                duration: 1.5,
-                onUpdate: () => camera.lookAt(card.position),
-                onComplete: () => {
-                    gsap.to(card.material, { opacity: 0, duration: 0.5 });
-                    openCarousel(card.userData.data);
+                } catch (error) {
+                    console.error('GitHub API Error:', error);
+                    document.getElementById('git-username').innerText = "Error";
                 }
-            });
-
-            cards.forEach(c => {
-                if(c !== card) gsap.to(c.material, { opacity: 0.1, duration: 1 });
-            });
-        }
-
-        function resetView() {
-            if(!isZoomed) return;
-            closeCarousel();
-            gsap.to(activeCard.material, { opacity: 1, duration: 0.5 });
-            gsap.to(camera.position, { x: 0, y: 0, z: 22, duration: 1.5, ease: "power2.inOut" });
-            gsap.to(camera.rotation, { x: 0, y: 0, z: 0, duration: 1.5, onComplete: () => {
-                isZoomed = false;
-                activeCard = null;
-                document.getElementById('scroll-hint').style.opacity = '1';
-            }});
-            cards.forEach(c => { gsap.to(c.material, { opacity: 1, duration: 1 }); });
-        }
-
-        // --- 6. CAROUSEL LOGIC ---
-        const modal = document.getElementById('content-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const viewport = document.getElementById('carousel-viewport');
-        const captionText = document.getElementById('caption-text');
-        const prevBtn = document.getElementById('prev-slide');
-        const nextBtn = document.getElementById('next-slide');
-        const closeBtn = document.getElementById('close-modal');
-        
-        let currentGallery = [];
-        let currentIndex = 0;
-        let currentSlideElement = null;
-
-        function openCarousel(data) {
-            currentGallery = data.gallery;
-            currentIndex = 0;
-            modalTitle.innerText = data.title;
-            viewport.querySelectorAll('.slide-content').forEach(el => el.remove());
-            loadSlide(0);
-            modal.classList.add('active');
-        }
-
-        function closeCarousel() {
-            modal.classList.remove('active');
-            if(currentSlideElement) {
-                const iframe = currentSlideElement.querySelector('iframe');
-                if(iframe) { iframe.src = ""; }
-                currentSlideElement.remove();
-            }
-            currentSlideElement = null;
-        }
-
-        function loadSlide(index) {
-            if (currentSlideElement) {
-                const iframe = currentSlideElement.querySelector('iframe');
-                if(iframe) { iframe.src = ""; }
-                gsap.to(currentSlideElement, { opacity: 0, duration: 0.3, onComplete: () => {
-                    if(currentSlideElement) currentSlideElement.remove();
-                    renderNewSlide(index);
-                }});
-            } else {
-                renderNewSlide(index);
-            }
-        }
-
-        function renderNewSlide(index) {
-            const data = currentGallery[index];
-            const el = document.createElement('div');
-            el.className = 'slide-content';
-            el.style.opacity = 0; 
-
-            if (data.type === 'image') {
-                const img = document.createElement('img');
-                img.src = data.src;
-                el.appendChild(img);
-            } 
-            else if (data.type === 'video') {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'video-wrapper';
-                const iframe = document.createElement('iframe');
-                iframe.src = data.src;
-                iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-                iframe.allowFullscreen = true;
-                wrapper.appendChild(iframe);
-                el.appendChild(wrapper);
-            } 
-            else if (data.type === 'text') {
-                const textDiv = document.createElement('div');
-                textDiv.className = 'text-slide';
-                textDiv.innerHTML = data.content;
-                el.appendChild(textDiv);
             }
 
-            viewport.appendChild(el);
-            currentSlideElement = el;
-            captionText.innerText = data.title;
-            gsap.to(el, { opacity: 1, duration: 0.5, className: 'slide-content active' });
-        }
+            // Initialize All APIs
+            fetchCryptoData();
+            fetchNetworkData();
+            fetchGitHubData();
 
-        function nextImage() {
-            currentIndex = (currentIndex + 1) % currentGallery.length;
-            loadSlide(currentIndex);
-        }
 
-        function prevImage() {
-            currentIndex = (currentIndex - 1 + currentGallery.length) % currentGallery.length;
-            loadSlide(currentIndex);
-        }
+            /* =========================================
+               5. INTRO DOOR
+               ========================================= */
+            const enterBtn = document.getElementById('enter-btn');
+            const introOverlay = document.getElementById('intro-overlay');
+            const navbar = document.getElementById('navbar');
+            const hero = document.getElementById('hero');
 
-        nextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); });
-        prevBtn.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); });
-        closeBtn.addEventListener('click', resetView);
-
-        // --- 7. ANIMATION LOOP ---
-        camera.position.z = 22;
-        let time = 0;
-
-        function animate() {
-            requestAnimationFrame(animate);
-            time += 0.005;
-
-            // Core Animation
-            core.rotation.y = -time;
-            core.rotation.x = time * 0.5;
-            const scale = 1 + Math.sin(time * 3) * 0.05;
-            core.scale.set(scale, scale, scale);
-            glowSprite.material.rotation = time * 0.2;
-
-            // Moving Lights (RGB Orbit)
-            lights.forEach((light, i) => {
-                const angle = time + (i * (Math.PI * 2 / 3));
-                light.position.x = Math.cos(angle) * 15;
-                light.position.z = Math.sin(angle) * 15;
-                light.position.y = Math.sin(time * 2 + i) * 5;
-            });
-
-            // Background Starfield Flow
-            const positions = starField.geometry.attributes.position.array;
-            for(let i=2; i<starCount*3; i+=3) {
-                positions[i] += starSpeeds[(i-2)/3];
-                if(positions[i] > 40) positions[i] = -40;
-            }
-            starField.geometry.attributes.position.needsUpdate = true;
-            starField.rotation.z += 0.0005;
-
-            // Background Geodesics Rotation
-            bgGroup.rotation.y -= 0.001;
-            bgGroup.children.forEach((mesh, i) => {
-                mesh.rotation.x += 0.001 * (i%2===0?1:-1);
-                mesh.rotation.y += 0.002 * (i%2===0?-1:1);
-            });
-
-            // Floating Cards
-            cards.forEach((card, i) => {
-                card.position.y += Math.sin(time + i) * 0.002;
-            });
-
-            renderer.render(scene, camera);
-        }
-
-        window.onload = () => {
-            setTimeout(() => {
-                document.getElementById('loader').style.opacity = '0';
+            enterBtn.addEventListener('click', () => {
+                introOverlay.classList.add('open');
                 setTimeout(() => {
-                    document.getElementById('loader').style.display = 'none';
-                    animate();
+                    document.body.classList.add('system-active');
+                    introOverlay.classList.add('hidden');
+                    navbar.classList.add('visible');
+                    hero.classList.add('active');
                 }, 1000);
-            }, 1500);
-        };
+            });
 
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            /* =========================================
+               6. CANVAS (Optimized)
+               ========================================= */
+            const canvas = document.getElementById('tech-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            const particles = [];
+
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+
+            class BinaryParticle {
+                constructor() { this.reset(true); }
+                reset(initial = false) {
+                    this.x = Math.random() * width;
+                    this.y = initial ? Math.random() * height : -10;
+                    this.size = Math.random() * 1.5 + 0.5;
+                    this.speedY = Math.random() * 2 + 1;
+                    this.opacity = Math.random() * 0.5 + 0.1;
+                }
+                update() { this.y += this.speedY; if (this.y > height) this.reset(); }
+                draw() {
+                    ctx.fillStyle = `rgba(165, 243, 252, ${this.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function initCanvas() {
+                resize();
+                const particleCount = window.innerWidth < 768 ? 50 : 150; 
+                for (let i = 0; i < particleCount; i++) particles.push(new BinaryParticle());
+                animateCanvas();
+            }
+
+            function animateCanvas() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => { p.update(); p.draw(); });
+                requestAnimationFrame(animateCanvas);
+            }
+            window.addEventListener('resize', resize);
+            initCanvas();
+
+            /* =========================================
+               7. SCROLL REVEAL
+               ========================================= */
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('active');
+                });
+            }, { threshold: 0.15 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+            /* =========================================
+               8. UNIVERSAL DRAG SCROLL
+               ========================================= */
+            const track = document.getElementById('track');
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            function getX(e) { return e.touches ? e.touches[0].pageX : e.pageX; }
+
+            const startDrag = (e) => {
+                isDown = true;
+                track.style.cursor = 'grabbing';
+                startX = getX(e) - track.offsetLeft;
+                scrollLeft = track.scrollLeft;
+            };
+
+            const endDrag = () => {
+                isDown = false;
+                track.style.cursor = 'grab';
+            };
+
+            const moveDrag = (e) => {
+                if (!isDown) return;
+                e.preventDefault(); 
+                const x = getX(e) - track.offsetLeft;
+                const walk = (x - startX) * 2; 
+                track.scrollLeft = scrollLeft - walk;
+            };
+
+            track.addEventListener('mousedown', startDrag);
+            track.addEventListener('mouseleave', endDrag);
+            track.addEventListener('mouseup', endDrag);
+            track.addEventListener('mousemove', moveDrag);
+
+            track.addEventListener('touchstart', startDrag, { passive: false });
+            track.addEventListener('touchend', endDrag);
+            track.addEventListener('touchmove', moveDrag, { passive: false });
+
+            /* =========================================
+               9. 3D TILT (Desktop Only)
+               ========================================= */
+            const tiltCard = document.getElementById('tiltCard');
+            const tiltContainer = document.querySelector('.card-wrapper');
+
+            if (window.innerWidth > 768 && tiltCard && tiltContainer) {
+                tiltContainer.addEventListener('mousemove', (e) => {
+                    const rect = tiltContainer.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -10;
+                    const rotateY = ((x - centerX) / centerX) * 10;
+                    tiltCard.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+                });
+                tiltContainer.addEventListener('mouseleave', () => {
+                    tiltCard.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale(1)`;
+                });
+            }
+
+            /* =========================================
+               10. TOAST
+               ========================================= */
+            window.showToast = function(msg) {
+                const toast = document.getElementById('toast');
+                toast.textContent = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }
         });
-
     </script>
 </body>
 </html>

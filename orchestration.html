@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orchestration Layer | Kubernetes Visualizer</title>
+    
+    <!-- Fonts matching main site -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- 1. THREE.JS CORE -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js"></script>
+    
+    <!-- 2. ANIMATION LIBRARY -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        :root {
+            /* Aligned with Main Site */
+            --cyan: #00f9cb;
+            --magenta: #ff0055;
+            --deep-space: #050505;
+            --glass: rgba(20, 20, 25, 0.85);
+            --border: rgba(0, 249, 203, 0.4);
+            
+            /* Font Variables */
+            --font-display: 'Inter', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+            --font-mono: 'Fira Code', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--deep-space);
+            color: white;
+            font-family: var(--font-display);
+            overflow: hidden;
+            height: 100vh;
+            user-select: none;
+        }
+
+        /* --- BACKGROUND HOVER EFFECT --- */
+        #hover-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+            pointer-events: none;
+            filter: brightness(0.3) contrast(1.1); /* Dimmed slightly for UI contrast */
+            transform: scale(1.05);
+        }
+        #hover-bg.active {
+            opacity: 1;
+            transform: scale(1.0);
+        }
+
+        /* --- VISUAL FX OVERLAYS --- */
+        .vignette {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 40%, #000000 130%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0.15; /* Subtler scanlines for cleaner look */
+        }
+        
+        #canvas-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            cursor: grab;
+        }
+        #canvas-container:active { cursor: grabbing; }
+
+        /* --- UI LAYER --- */
+        #ui-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem;
+        }
+
+        .header-container {
+            pointer-events: auto;
+            width: 320px;
+            transform: perspective(800px) rotateY(5deg) rotateX(2deg);
+            transform-origin: top left;
+            background: rgba(0, 0, 0, 0.9);
+            border-left: 4px solid var(--magenta);
+            border-bottom: 2px solid var(--cyan);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .sys-status {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--magenta);
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 8px;
+        }
+        .status-dot {
+            width: 8px; height: 8px;
+            background: var(--cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--cyan);
+            animation: pulse 2s infinite;
+        }
+
+        .header-title {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            line-height: 0.9;
+            text-transform: uppercase;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        .header-title span {
+            color: var(--cyan);
+            display: block;
+            font-size: 3.5rem; 
+            text-shadow: 0 0 20px rgba(0, 249, 203, 0.6);
+        }
+        
+        .header-deco {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: 5px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .instruction {
+            align-self: center;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+            padding: 10px 25px;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            box-shadow: 0 0 15px rgba(0, 249, 203, 0.2);
+            backdrop-filter: blur(5px);
+            transition: opacity 0.5s;
+            pointer-events: auto;
+            margin-top: auto;
+            margin-bottom: 2rem;
+        }
+
+        /* --- NAV BUTTONS --- */
+        .nav-controls {
+            position: absolute;
+            bottom: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            pointer-events: none;
+            z-index: 15;
+        }
+        
+        .rotate-btn {
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            transition: 0.3s;
+            backdrop-filter: blur(4px);
+        }
+        .rotate-btn:hover {
+            background: var(--cyan);
+            color: #000;
+            box-shadow: 0 0 20px var(--cyan);
+        }
+
+        /* --- EXPANDABLE MENU --- */
+        #menu-container {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            pointer-events: auto;
+        }
+
+        #menu-toggle {
+            width: 50px; height: 50px;
+            background: var(--glass);
+            border: 1px solid var(--magenta);
+            border-radius: 50%;
+            color: var(--magenta);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);
+            font-family: var(--font-mono);
+        }
+        #menu-toggle:hover { background: var(--magenta); color: white; transform: rotate(90deg); }
+
+        #menu-grid {
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            width: 350px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        #menu-grid.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .menu-item {
+            aspect-ratio: 1;
+            border: 1px solid rgba(255,255,255,0.2);
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            transition: 0.3s;
+        }
+        .menu-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: 0.3s;
+        }
+        .menu-item:hover { border-color: var(--cyan); transform: scale(1.05); z-index: 2; }
+        .menu-item:hover img { opacity: 0.6; }
+        .menu-item span {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(0,0,0,0.9);
+            color: var(--cyan);
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            text-align: center;
+            padding: 4px 0;
+            transform: translateY(100%);
+            transition: 0.3s;
+        }
+        .menu-item:hover span { transform: translateY(0); }
+
+        /* --- MODAL --- */
+        #content-modal {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 90%; max-width: 1200px;
+            height: 85vh;
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--border);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: auto;
+            box-shadow: 0 0 100px rgba(0, 249, 203, 0.15), inset 0 0 50px rgba(0, 0, 0, 0.5);
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        #content-modal.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-header {
+            padding: 1.5rem 2.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-title {
+            font-family: var(--font-serif);
+            color: var(--cyan);
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 249, 203, 0.4);
+        }
+
+        .close-btn {
+            background: transparent;
+            border: 1px solid var(--magenta);
+            color: var(--magenta);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.2);
+            font-family: var(--font-mono);
+        }
+        .close-btn:hover { background: var(--magenta); color: white; box-shadow: 0 0 20px var(--magenta); }
+
+        .carousel-viewport {
+            flex: 1;
+            position: relative;
+            background: rgba(0,0,0,0.8);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .slide-content {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .slide-content.active { pointer-events: auto; }
+
+        .slide-content img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            border: 1px solid #333;
+        }
+
+        .video-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            aspect-ratio: 16/9;
+            background: #000;
+            border: 1px solid var(--cyan);
+            box-shadow: 0 0 50px rgba(0, 249, 203, 0.2);
+        }
+        .video-wrapper iframe { width: 100%; height: 100%; border: none; }
+
+        .sketchfab-wrapper {
+            width: 100%; height: 100%;
+            border: 1px solid var(--magenta);
+            box-shadow: 0 0 50px rgba(255, 0, 85, 0.2);
+        }
+        .sketchfab-wrapper iframe { width: 100%; height: 100%; border: none; }
+
+        .text-slide {
+            width: 80%; max-width: 800px;
+            background: linear-gradient(135deg, rgba(0, 20, 40, 0.95), rgba(0, 0, 0, 0.98));
+            border: 1px solid var(--cyan);
+            padding: 3rem;
+            box-shadow: 0 0 30px rgba(0, 249, 203, 0.1);
+        }
+        .text-slide h2 {
+            font-family: var(--font-mono);
+            color: var(--cyan);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+            text-transform: uppercase;
+        }
+        .text-slide p {
+            font-size: 1.1rem; line-height: 1.8; color: #ccc; text-align: justify;
+            font-family: var(--font-display);
+        }
+        .data-label {
+            display: block; font-family: var(--font-mono);
+            color: var(--magenta); font-size: 0.8rem; margin-bottom: 1rem; letter-spacing: 2px;
+        }
+
+        .nav-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8); border: 1px solid var(--cyan);
+            color: var(--cyan); padding: 1rem; cursor: pointer; font-size: 1.5rem;
+            transition: 0.3s; z-index: 20; width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .nav-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
+        .nav-prev { left: 1rem; border-radius: 0 8px 8px 0; }
+        .nav-next { right: 1rem; border-radius: 8px 0 0 8px; }
+
+        .carousel-caption {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 1.5rem 2rem; background: linear-gradient(to top, rgba(0,0,0,1), transparent);
+            text-align: center; pointer-events: none;
+        }
+        .carousel-caption h3 {
+            font-family: var(--font-serif); color: #fff; font-size: 1.2rem;
+            text-transform: uppercase; letter-spacing: 4px;
+        }
+
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center;
+            flex-direction: column; transition: opacity 1s ease;
+        }
+        .loader-text {
+            font-family: var(--font-mono); color: var(--cyan);
+            letter-spacing: 5px; font-size: 1.5rem; animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; text-shadow: 0 0 20px var(--cyan); } }
+
+    </style>
+</head>
+<body>
+
+    <!-- Background Hover Layer -->
+    <div id="hover-bg"></div>
+
+    <!-- Visual FX -->
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+
+    <!-- Loader -->
+    <div id="loader">
+        <div class="loader-text">INITIALIZING CLUSTER</div>
+        <div style="margin-top:10px; color: #555; font-family: var(--font-mono); font-size: 0.8rem;">DEPLOYING PODS...</div>
+    </div>
+
+    <!-- 3D Scene -->
+    <div id="canvas-container"></div>
+
+    <!-- UI Overlay -->
+    <div id="ui-layer">
+        <div class="header-container">
+            <div class="sys-status" id="sys-status">
+                <div class="status-dot"></div>
+                ORCHESTRATION // ACTIVE
+            </div>
+            <h1 class="header-title">SYSTEM<span>GRID</span></h1>
+            <div class="header-deco">KUBERNETES CLUSTER // VISUALIZED</div>
+        </div>
+
+        <div class="instruction" id="scroll-hint">
+            DRAG TO ROTATE • CLICK NODES • VOICE: "NEXT" / "RESET"
+        </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="nav-controls">
+        <button class="rotate-btn" id="rotate-left">❮</button>
+        <button class="rotate-btn" id="rotate-right">❯</button>
+    </div>
+
+    <!-- Expandable Menu -->
+    <div id="menu-container">
+        <div id="menu-grid"></div>
+        <button id="menu-toggle">☷</button>
+    </div>
+
+    <!-- Media Modal -->
+    <div id="content-modal">
+        <div class="modal-header">
+            <div class="modal-title" id="modal-title">Node Details</div>
+            <button class="close-btn" id="close-modal">×</button>
+        </div>
+        
+        <div class="carousel-viewport" id="carousel-viewport">
+            <button class="nav-btn nav-prev" id="prev-slide">❮</button>
+            <button class="nav-btn nav-next" id="next-slide">❯</button>
+            <div class="carousel-caption">
+                <h3 id="caption-text">Loading...</h3>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. DATA (ORCHESTRATION THEMED) ---
+        const galleryData = [
+            { 
+                id: 1, title: "Pods", subtitle: "Atomic Units", 
+                preview: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop", 
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1600&auto=format&fit=crop", title: "Container Infrastructure" },
+                    { type: "sketchfab", src: "https://sketchfab.com/models/9d34e221a77e40f6822e53c4838a759c/embed?autostart=1&ui_controls=1&ui_infos=0&ui_watermark=0", title: "3D Server Node" },
+                    { type: "text", content: "<span class='data-label'>LOG // CONTAINERIZATION</span><h2>The Pod Structure</h2><p>A Pod is the smallest deployable unit in Kubernetes. It encapsulates an application's container (or, in some cases, multiple containers), storage resources, a unique network IP, and options that govern how the container(s) should run.</p>", title: "Concept: Pods" }
+                ]
+            },
+            { 
+                id: 2, title: "Service Mesh", subtitle: "Traffic Logic", 
+                preview: "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?q=80&w=800&auto=format&fit=crop",
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?q=80&w=1600&auto=format&fit=crop", title: "Network Topology" },
+                    { type: "sketchfab", src: "https://sketchfab.com/models/0c8796349c5a4224865cfc8d69273435/embed?autostart=1&ui_controls=1&ui_infos=0&ui_watermark=0", title: "Network Visualization" },
+                    { type: "text", content: "<span class='data-label'>NET LOG // ISTIO/LINKERD</span><h2>Service Mesh</h2><p>A dedicated infrastructure layer for facilitating service-to-service communication between microservices. It handles traffic management, security, and observability without changing application code.</p>", title: "Micro-Communication" }
+                ]
+            },
+            { 
+                id: 3, title: "Ingress", subtitle: "Gateway Control", 
+                preview: "https://images.unsplash.com/photo-1544197150-b99a580bbcbf?q=80&w=800&auto=format&fit=crop",
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1544197150-b99a580bbcbf?q=80&w=1600&auto=format&fit=crop", title: "Gateway Entry Point" },
+                    { type: "video", src: "https://www.youtube.com/embed/2A0Q0898kD4?enablejsapi=1", title: "Load Balancing Explained" },
+                    { type: "text", content: "<span class='data-label'>API LOG // ROUTING</span><h2>Ingress Controller</h2><p>Manages external access to the services in a cluster, typically HTTP. Ingress can provide load balancing, SSL termination and name-based virtual hosting.</p>", title: "The Gatekeeper" }
+                ]
+            },
+            { 
+                id: 4, title: "ConfigMaps", subtitle: "Decoupled Config", 
+                preview: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop",
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop", title: "Configuration Data" },
+                    { type: "video", src: "https://www.youtube.com/embed/UHxNGgL-KMs?enablejsapi=1", title: "K8s ConfigMaps 101" },
+                    { type: "text", content: "<span class='data-label'>DEV OPS LOG // 12-FACTOR</span><h2>Separation of Concerns</h2><p>ConfigMaps allow you to decouple environment-specific configuration from container images. This makes your applications portable and easier to manage across different environments.</p>", title: "Environment Config" }
+                ]
+            },
+             { 
+                id: 5, title: "Auto-Scaling", subtitle: "Dynamic Resource", 
+                preview: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop",
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600&auto=format&fit=crop", title: "Global Cloud Network" },
+                    { type: "video", src: "https://www.youtube.com/embed/gNaI6R_zMjg?enablejsapi=1", title: "HPA Mechanics" },
+                    { type: "text", content: "<span class='data-label'>OPS LOG // ELASTICITY</span><h2>Horizontal Pod Autoscaler</h2><p>Automatically scales the number of pods in a replication controller, deployment, or replica set based on observed CPU utilization (or, with custom metrics support, on some other application-provided metrics).</p>", title: "Elastic Infrastructure" }
+                ]
+            },
+            {
+                id: 6, title: "StatefulSets", subtitle: "Persistent State",
+                preview: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop",
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1600&auto=format&fit=crop", title: "Database Cluster" },
+                    { type: "video", src: "https://www.youtube.com/embed/yM-ayGCm7wY?enablejsapi=1", title: "Stateful Applications on K8s" },
+                    { type: "text", content: "<span class='data-label'>DB LOG // PERSISTENCE</span><h2>Managing State</h2><p>While Pods are ephemeral, StatefulSets manage the deployment and scaling of a set of Pods, and provide guarantees about the ordering and uniqueness of these Pods.</p>", title: "Databases & Queues" }
+                ]
+            },
+            {
+                id: 7, title: "Helm", subtitle: "Package Manager",
+                preview: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop",
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1600&auto=format&fit=crop", title: "Package Charts" },
+                    { type: "video", src: "https://www.youtube.com/embed/D1WQIMiYrL0?enablejsapi=1", title: "Helm 3 Tutorial" },
+                    { type: "text", content: "<span class='data-label'>PKG LOG // CHARTS</span><h2>The Kubernetes Package Manager</h2><p>Helm helps you manage Kubernetes applications — Helm Charts help you define, install, and upgrade even the most complex Kubernetes application.</p>", title: "Simplifying Deployment" }
+                ]
+            },
+            {
+                id: 8, title: "Observability", subtitle: "Prometheus/Grafana",
+                preview: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?q=80&w=800&auto=format&fit=crop",
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?q=80&w=1600&auto=format&fit=crop", title: "Monitoring Dashboard" },
+                    { type: "video", src: "https://www.youtube.com/embed/BpA8463H6KY?enablejsapi=1", title: "K8s Monitoring Stack" },
+                    { type: "text", content: "<span class='data-label'>MONITOR LOG // METRICS</span><h2>Seeing the Invisible</h2><p>Effective observability combines logs, metrics, and traces. We use Prometheus for scraping metrics and Grafana for visualization to maintain system health.</p>", title: "System Health" }
+                ]
+            }
+        ];
+
+        // --- 2. THREE.JS SETUP ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050505, 0.025);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // --- 3. ASSETS & CARDS ---
+        const cardGroup = new THREE.Group();
+        const cards = [];
+        const interactables = []; 
+        const angleStep = 0.8;
+
+        function createCardTexture(item) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512; canvas.height = 768;
+            const ctx = canvas.getContext('2d');
+            
+            const grad = ctx.createLinearGradient(0,0,0,768);
+            grad.addColorStop(0, '#050a14'); grad.addColorStop(1, '#020205');
+            ctx.fillStyle = grad; ctx.fillRect(0,0,512,768);
+
+            ctx.strokeStyle = 'rgba(0, 249, 203, 0.5)'; ctx.lineWidth = 4;
+            ctx.strokeRect(10, 10, 492, 748); ctx.strokeRect(15, 15, 482, 738);
+            ctx.fillStyle = '#000'; ctx.fillRect(20, 20, 472, 530);
+            
+            const img = new Image(); img.crossOrigin = "Anonymous"; img.src = item.preview;
+            img.onload = () => {
+                const scale = Math.max(512 / img.width, 540 / img.height);
+                const x = (512 - img.width * scale) / 2; const y = (540 - img.height * scale) / 2;
+                ctx.save(); ctx.beginPath(); ctx.rect(20, 20, 472, 530); ctx.clip();
+                ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+                const imgGrad = ctx.createLinearGradient(0, 400, 0, 550);
+                imgGrad.addColorStop(0, 'transparent'); imgGrad.addColorStop(1, '#050a14');
+                ctx.fillStyle = imgGrad; ctx.fillRect(20, 20, 472, 530); ctx.restore();
+                drawTextContent(ctx, item);
+            };
+            drawTextContent(ctx, item);
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        function drawTextContent(ctx, item) {
+            ctx.fillStyle = "rgba(0, 20, 40, 0.6)"; ctx.fillRect(20, 560, 472, 188);
+            ctx.fillStyle = '#00f9cb'; ctx.font = 'bold 18px "Fira Code"'; ctx.textAlign = 'center';
+            ctx.fillText(item.subtitle.toUpperCase(), 256, 600);
+            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 36px "Playfair Display"';
+            const words = item.title.split(' '); let line = ''; let y = 650;
+            for(let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                if (ctx.measureText(testLine).width > 400 && n > 0) {
+                    ctx.fillText(line, 256, y); line = words[n] + ' '; y += 40;
+                } else { line = testLine; }
+            }
+            ctx.fillText(line, 256, y);
+        }
+
+        const cardGeo = new THREE.PlaneGeometry(2.2, 3.3);
+        galleryData.forEach((item, i) => {
+            const card = new THREE.Mesh(cardGeo, new THREE.MeshBasicMaterial({ 
+                map: createCardTexture(item), side: THREE.DoubleSide, transparent: true
+            }));
+            const angle = i * angleStep; const radius = 10;
+            const y = (i - galleryData.length / 2) * 0.8; 
+            card.position.set(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
+            card.lookAt(0, y, 0);
+            card.userData = { id: item.id, data: item, initialAngle: angle };
+            cards.push(card); interactables.push(card); cardGroup.add(card);
+        });
+        scene.add(cardGroup);
+
+        // --- 4. ENVIRONMENT ---
+        const bgGroup = new THREE.Group();
+        const geoGeo = new THREE.IcosahedronGeometry(10, 0);
+        const geoMat = new THREE.MeshBasicMaterial({ color: 0x004466, wireframe: true, transparent: true, opacity: 0.15 });
+        for(let i=0; i<6; i++) {
+            const mesh = new THREE.Mesh(geoGeo, geoMat);
+            mesh.position.set((Math.random() - 0.5) * 60, (Math.random() - 0.5) * 40, (Math.random() - 0.5) * 30 - 20);
+            mesh.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, 0); bgGroup.add(mesh);
+        }
+        scene.add(bgGroup);
+
+        const gridHelper = new THREE.GridHelper(100, 50, 0x00f9cb, 0x112233);
+        gridHelper.position.y = -15; gridHelper.material.transparent = true; gridHelper.material.opacity = 0.15;
+        scene.add(gridHelper);
+
+        // Core
+        const coreGroup = new THREE.Group();
+        const coreGeo = new THREE.TorusKnotGeometry(1.8, 0.5, 128, 16);
+        const coreMat = new THREE.MeshBasicMaterial({ color: 0x00f9cb, wireframe: true, transparent: true, opacity: 0.3 });
+        const core = new THREE.Mesh(coreGeo, coreMat); coreGroup.add(core);
+        
+        const spriteCanvas = document.createElement('canvas'); spriteCanvas.width = 64; spriteCanvas.height = 64;
+        const sCtx = spriteCanvas.getContext('2d');
+        const sGrad = sCtx.createRadialGradient(32,32,0,32,32,32);
+        sGrad.addColorStop(0, 'rgba(0, 249, 203, 1)'); sGrad.addColorStop(0.4, 'rgba(0, 249, 203, 0.3)'); sGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        sCtx.fillStyle = sGrad; sCtx.fillRect(0,0,64,64);
+        const glowSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(spriteCanvas), color: 0x00f9cb, blending: THREE.AdditiveBlending }));
+        glowSprite.scale.set(8, 8, 1); coreGroup.add(glowSprite);
+        scene.add(coreGroup);
+
+        // Lights
+        const lights = [];
+        const lightColors = [0x00f9cb, 0xff0055, 0x7700ff];
+        for(let i=0; i<3; i++) {
+            const light = new THREE.PointLight(lightColors[i], 2, 50);
+            lights.push(light); scene.add(light);
+        }
+        scene.add(new THREE.AmbientLight(0x404040, 0.5));
+
+        // --- 5. INTERACTION ---
+        let isDragging = false, isZoomed = false, activeCard = null;
+        let previousMousePosition = { x: 0, y: 0 };
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const hoverBg = document.getElementById('hover-bg');
+
+        container.addEventListener('mousedown', (e) => {
+            if(isZoomed) return; isDragging = true; previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+            if (!isZoomed) {
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(interactables);
+                if (intersects.length > 0) {
+                    document.body.style.cursor = 'pointer';
+                    const data = intersects[0].object.userData.data;
+                    hoverBg.style.backgroundImage = `url(${data.preview})`;
+                    hoverBg.classList.add('active');
+                    gsap.to(intersects[0].object.scale, { x: 1.1, y: 1.1, duration: 0.3 });
+                } else {
+                    document.body.style.cursor = isDragging ? 'grabbing' : 'grab';
+                    hoverBg.classList.remove('active');
+                    cards.forEach(c => gsap.to(c.scale, { x: 1, y: 1, duration: 0.3 }));
+                }
+
+                if(isDragging) {
+                    const deltaMove = { x: e.clientX - previousMousePosition.x, y: e.clientY - previousMousePosition.y };
+                    cardGroup.rotation.y += deltaMove.x * 0.005;
+                    cardGroup.rotation.x += deltaMove.y * 0.005;
+                    cardGroup.rotation.x = Math.max(-0.5, Math.min(0.5, cardGroup.rotation.x));
+                    previousMousePosition = { x: e.clientX, y: e.clientY };
+                } else {
+                    gsap.to(cardGroup.rotation, { x: 0, duration: 1 });
+                }
+            }
+        });
+
+        window.addEventListener('mouseup', () => { isDragging = false; });
+        
+        let mouseDownPos = { x: 0, y: 0 };
+        container.addEventListener('mousedown', (e) => { mouseDownPos = { x: e.clientX, y: e.clientY }; });
+
+        window.addEventListener('click', (e) => {
+            if(isZoomed) return;
+            const dist = Math.hypot(e.clientX - mouseDownPos.x, e.clientY - mouseDownPos.y);
+            if (dist > 5) return;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(interactables);
+            if (intersects.length > 0) zoomToCard(intersects[0].object);
+        });
+
+        function zoomToCard(card) {
+            isZoomed = true; activeCard = card;
+            const offset = new THREE.Vector3(0, 0, 5.5);
+            offset.applyQuaternion(card.quaternion);
+            const targetPos = card.position.clone().add(offset);
+            document.getElementById('scroll-hint').style.opacity = '0';
+
+            gsap.to(camera.position, { x: targetPos.x, y: targetPos.y, z: targetPos.z, duration: 1.5, ease: "power3.inOut" });
+            gsap.to(camera.rotation, { duration: 1.5, onUpdate: () => camera.lookAt(card.position), onComplete: () => {
+                gsap.to(card.material, { opacity: 0, duration: 0.5 });
+                openCarousel(card.userData.data);
+            }});
+            cards.forEach(c => { if(c !== card) gsap.to(c.material, { opacity: 0.1, duration: 1 }); });
+        }
+
+        function resetView() {
+            if(!isZoomed) return; closeCarousel();
+            gsap.to(activeCard.material, { opacity: 1, duration: 0.5 });
+            gsap.to(camera.position, { x: 0, y: 0, z: 22, duration: 1.5, ease: "power2.inOut" });
+            gsap.to(camera.rotation, { x: 0, y: 0, z: 0, duration: 1.5, onComplete: () => {
+                isZoomed = false; activeCard = null; document.getElementById('scroll-hint').style.opacity = '1';
+            }});
+            cards.forEach(c => { gsap.to(c.material, { opacity: 1, duration: 1 }); });
+        }
+
+        // --- 6. CAROUSEL ---
+        const modal = document.getElementById('content-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const viewport = document.getElementById('carousel-viewport');
+        const captionText = document.getElementById('caption-text');
+        
+        let currentGallery = [], currentIndex = 0, currentSlideElement = null;
+
+        function openCarousel(data) {
+            currentGallery = data.gallery; currentIndex = 0;
+            modalTitle.innerText = data.title;
+            viewport.querySelectorAll('.slide-content').forEach(el => el.remove());
+            loadSlide(0);
+            modal.classList.add('active');
+        }
+
+        function closeCarousel() {
+            modal.classList.remove('active');
+            if(currentSlideElement) {
+                const iframe = currentSlideElement.querySelector('iframe');
+                if(iframe) iframe.src = "";
+                currentSlideElement.remove();
+            }
+            currentSlideElement = null;
+        }
+
+        function loadSlide(index) {
+            if (currentSlideElement) {
+                const iframe = currentSlideElement.querySelector('iframe');
+                if(iframe) iframe.src = "";
+                gsap.to(currentSlideElement, { opacity: 0, duration: 0.3, onComplete: () => {
+                    if(currentSlideElement) currentSlideElement.remove();
+                    renderNewSlide(index);
+                }});
+            } else {
+                renderNewSlide(index);
+            }
+        }
+
+        function renderNewSlide(index) {
+            const data = currentGallery[index];
+            const el = document.createElement('div');
+            el.className = 'slide-content'; el.style.opacity = 0; 
+
+            if (data.type === 'image') {
+                const img = document.createElement('img'); img.src = data.src; el.appendChild(img);
+            } 
+            else if (data.type === 'video') {
+                const wrapper = document.createElement('div'); wrapper.className = 'video-wrapper';
+                const iframe = document.createElement('iframe');
+                iframe.src = data.src; iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+                iframe.allowFullscreen = true; wrapper.appendChild(iframe); el.appendChild(wrapper);
+            }
+            else if (data.type === 'sketchfab') {
+                const wrapper = document.createElement('div'); wrapper.className = 'sketchfab-wrapper';
+                const iframe = document.createElement('iframe');
+                iframe.src = data.src; iframe.allow = "autoplay; fullscreen; xr-spatial-tracking";
+                iframe.allowFullscreen = true; wrapper.appendChild(iframe); el.appendChild(wrapper);
+            }
+            else if (data.type === 'text') {
+                const textDiv = document.createElement('div'); textDiv.className = 'text-slide'; textDiv.innerHTML = data.content; el.appendChild(textDiv);
+            }
+
+            viewport.appendChild(el); currentSlideElement = el;
+            captionText.innerText = data.title;
+            gsap.to(el, { opacity: 1, duration: 0.5, className: 'slide-content active' });
+        }
+
+        function nextImage() {
+            currentIndex = (currentIndex + 1) % currentGallery.length; loadSlide(currentIndex);
+        }
+        function prevImage() {
+            currentIndex = (currentIndex - 1 + currentGallery.length) % currentGallery.length; loadSlide(currentIndex);
+        }
+
+        document.getElementById('next-slide').addEventListener('click', (e) => { e.stopPropagation(); nextImage(); });
+        document.getElementById('prev-slide').addEventListener('click', (e) => { e.stopPropagation(); prevImage(); });
+        document.getElementById('close-modal').addEventListener('click', resetView);
+        document.getElementById('rotate-left').addEventListener('click', () => {
+            if(!isZoomed) gsap.to(cardGroup.rotation, { y: cardGroup.rotation.y + angleStep, duration: 0.8, ease: "power2.out" });
+        });
+        document.getElementById('rotate-right').addEventListener('click', () => {
+            if(!isZoomed) gsap.to(cardGroup.rotation, { y: cardGroup.rotation.y - angleStep, duration: 0.8, ease: "power2.out" });
+        });
+
+        // Menu
+        const menuToggle = document.getElementById('menu-toggle');
+        const menuGrid = document.getElementById('menu-grid');
+        let isMenuOpen = false;
+        galleryData.forEach((item, i) => {
+            const div = document.createElement('div'); div.className = 'menu-item';
+            div.innerHTML = `<img src="${item.preview}" alt="${item.title}"><span>${item.title}</span>`;
+            div.addEventListener('click', () => {
+                gsap.to(cardGroup.rotation, { y: -(i * angleStep), duration: 1.5, ease: "power3.inOut" });
+                toggleMenu();
+            }); menuGrid.appendChild(div);
+        });
+        function toggleMenu() {
+            isMenuOpen = !isMenuOpen;
+            isMenuOpen ? menuGrid.classList.add('open') : menuGrid.classList.remove('open');
+        }
+        menuToggle.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
+        container.addEventListener('click', () => { if(isMenuOpen) toggleMenu(); });
+
+        // --- 7. ANIMATION LOOP ---
+        camera.position.z = 22; let time = 0;
+        function animate() {
+            requestAnimationFrame(animate); time += 0.005;
+
+            core.rotation.y = -time; core.rotation.x = time * 0.5;
+            const scale = 1 + Math.sin(time * 3) * 0.05; core.scale.set(scale, scale, scale);
+            glowSprite.material.rotation = time * 0.2;
+
+            lights.forEach((light, i) => {
+                const angle = time + (i * (Math.PI * 2 / 3));
+                light.position.x = Math.cos(angle) * 15; light.position.z = Math.sin(angle) * 15;
+                light.position.y = Math.sin(time * 2 + i) * 5;
+            });
+
+            bgGroup.rotation.y -= 0.001;
+            bgGroup.children.forEach((mesh, i) => {
+                mesh.rotation.x += 0.001 * (i%2===0?1:-1); mesh.rotation.y += 0.002 * (i%2===0?-1:1);
+            });
+
+            cards.forEach((card, i) => { if(!isZoomed) card.position.y += Math.sin(time + i) * 0.002; });
+
+            renderer.render(scene, camera);
+        }
+
+        // --- 8. RESIZE ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- 9. VOICE CONTROL ---
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.continuous = true; recognition.lang = 'en-US'; recognition.interimResults = false;
+            const statusIndicator = document.getElementById('sys-status');
+            
+            recognition.onstart = () => {
+                statusIndicator.innerHTML = '<div class="status-dot" style="background:var(--magenta)"></div> VOICE LINK ACTIVE';
+            };
+            recognition.onend = () => { recognition.start(); };
+            recognition.onresult = (event) => {
+                const last = event.results.length - 1;
+                const command = event.results[last][0].transcript.trim().toLowerCase();
+                
+                const flash = document.createElement('div');
+                flash.style.position = 'fixed'; flash.style.top = '20px'; flash.style.right = '20px';
+                flash.style.color = 'var(--cyan)'; flash.style.fontFamily = 'Fira Code';
+                flash.style.fontSize = '1.5rem'; flash.style.zIndex = '9999';
+                flash.innerText = `CMD: ${command.toUpperCase()}`;
+                document.body.appendChild(flash); setTimeout(() => flash.remove(), 2000);
+
+                if (command === 'left' || command === 'back' || command === 'previous') document.getElementById('rotate-left').click();
+                if (command === 'right' || command === 'next') document.getElementById('rotate-right').click();
+                if (command === 'reset' || command === 'close' || command === 'back out') { if (isZoomed) resetView(); }
+                if (command === 'menu' || command === 'open menu') { if(!isMenuOpen) toggleMenu(); }
+            };
+            setTimeout(() => { try { recognition.start(); } catch(e){} }, 2000);
+        }
+
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => { document.getElementById('loader').style.display = 'none'; animate(); }, 1000);
+            }, 1500);
+        };
+    </script>
+</body>
+</html>

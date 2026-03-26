@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Quantum Vault | Hyper-Visor</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        :root {
+            --cyan: #00f3ff;
+            --magenta: #ff0055;
+            --deep-space: #030305;
+            --glass: rgba(10, 15, 30, 0.85);
+            --border: rgba(0, 243, 255, 0.4);
+            --text-gold: #ffd700;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--deep-space);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            user-select: none;
+        }
+
+        /* --- VISUAL FX OVERLAYS --- */
+        .vignette {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 30%, #000000 120%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0.4;
+        }
+        
+        /* --- 3D CANVAS --- */
+        #canvas-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            cursor: grab;
+        }
+        #canvas-container:active { cursor: grabbing; }
+
+        /* --- UI LAYER --- */
+        #ui-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2.5rem;
+        }
+
+        .header h1 {
+            font-family: 'Cinzel', serif;
+            color: var(--cyan);
+            font-size: 2.5rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.6), 0 0 40px rgba(0, 243, 255, 0.3);
+            border-left: 5px solid var(--magenta);
+            padding-left: 20px;
+        }
+
+        .instruction {
+            align-self: center;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+            padding: 12px 30px;
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.9rem;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        /* --- MODAL --- */
+        #content-modal {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 90%; max-width: 1200px;
+            height: 85vh;
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--border);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: auto;
+            box-shadow: 0 0 100px rgba(0, 243, 255, 0.15), inset 0 0 50px rgba(0, 0, 0, 0.5);
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        #content-modal.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-header {
+            padding: 1.5rem 2.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-title {
+            font-family: 'Cinzel', serif;
+            color: var(--cyan);
+            font-size: 1.6rem;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+
+        .close-btn {
+            background: transparent;
+            border: 1px solid var(--magenta);
+            color: var(--magenta);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.2);
+        }
+        .close-btn:hover { background: var(--magenta); color: white; box-shadow: 0 0 20px var(--magenta); }
+
+        .carousel-viewport {
+            flex: 1;
+            position: relative;
+            background: rgba(0,0,0,0.8);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .slide-content {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .slide-content.active { pointer-events: auto; }
+
+        .slide-content img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            border: 1px solid #333;
+        }
+
+        .video-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            aspect-ratio: 16/9;
+            background: #000;
+            border: 1px solid var(--cyan);
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.2);
+        }
+        .video-wrapper iframe { width: 100%; height: 100%; border: none; }
+
+        .text-slide {
+            width: 80%;
+            max-width: 800px;
+            background: linear-gradient(135deg, rgba(0, 20, 40, 0.95), rgba(0, 0, 0, 0.98));
+            border: 1px solid var(--cyan);
+            padding: 3rem;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
+        }
+        .text-slide h2 {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--cyan);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+        .text-slide p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #ccc;
+            text-align: justify;
+        }
+        .data-label {
+            display: block;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--magenta);
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+            padding: 1rem;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: 0.3s;
+            z-index: 20;
+            width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .nav-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
+        .nav-prev { left: 1rem; border-radius: 0 8px 8px 0; }
+        .nav-next { right: 1rem; border-radius: 8px 0 0 8px; }
+
+        .carousel-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,1), transparent);
+            text-align: center;
+            pointer-events: none;
+        }
+        .carousel-caption h3 {
+            font-family: 'Cinzel', serif;
+            color: #fff;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        #loader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 1s ease;
+        }
+        .loader-text {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--cyan);
+            letter-spacing: 5px;
+            font-size: 1.5rem;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; text-shadow: 0 0 20px var(--cyan); } }
+
+    </style>
+</head>
+<body>
+
+    <!-- Visual FX -->
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+
+    <!-- Loader -->
+    <div id="loader">
+        <div class="loader-text">INITIALIZING HYPER-VISOR</div>
+        <div style="margin-top:10px; color: #555; font-family: 'Share Tech Mono'; font-size: 0.8rem;">CONNECTING TO NEURAL NET...</div>
+    </div>
+
+    <!-- 3D Scene -->
+    <div id="canvas-container"></div>
+
+    <!-- UI Overlay -->
+    <div id="ui-layer">
+        <div class="header">
+            <h1>Quantum Vault</h1>
+        </div>
+        <div class="instruction" id="scroll-hint">
+            DRAG TO EXPLORE • CLICK NODES TO DECRYPT
+        </div>
+    </div>
+
+    <!-- Media Modal -->
+    <div id="content-modal">
+        <div class="modal-header">
+            <div class="modal-title" id="modal-title">Archive Title</div>
+            <button class="close-btn" id="close-modal">×</button>
+        </div>
+        
+        <div class="carousel-viewport" id="carousel-viewport">
+            <button class="nav-btn nav-prev" id="prev-slide">❮</button>
+            <button class="nav-btn nav-next" id="next-slide">❯</button>
+            <div class="carousel-caption">
+                <h3 id="caption-text">Loading...</h3>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. COMPLETE DATA ---
+        const galleryData = [
+            { 
+                id: 1, title: "The Qubit", subtitle: "Fundamental Unit", 
+                preview: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=800&auto=format&fit=crop", 
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=1600&auto=format&fit=crop", title: "Superconducting Chip" },
+                    { type: "video", src: "https://www.youtube.com/embed/QuR969uMICM?enablejsapi=1", title: "Quantum Computing Explained" },
+                    { type: "text", content: "<span class='data-label'>DATA LOG // SUPERPOSITION</span><h2>What is a Qubit?</h2><p>Unlike a classical bit that is either 0 or 1, a Qubit utilizes the principle of <strong>Superposition</strong>. It can exist in a complex combination of both states simultaneously until it is measured.</p><p style='margin-top:1rem;'>This allows quantum computers to process vast amounts of possibilities in parallel.</p>", title: "Concept: Superposition" }
+                ]
+            },
+            { 
+                id: 2, title: "Entanglement", subtitle: "Spooky Action", 
+                preview: "https://images.unsplash.com/photo-1620641788421-7f1c91b8ac36?q=80&w=800&auto=format&fit=crop",
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1620641788421-7f1c91b8ac36?q=80&w=1600&auto=format&fit=crop", title: "Neural Network" },
+                    { type: "video", src: "https://www.youtube.com/embed/6Jp9T2TtgWg?enablejsapi=1", title: "Visualizing Entanglement" },
+                    { type: "text", content: "<span class='data-label'>PHYSICS LOG // NON-LOCALITY</span><h2>Quantum Entanglement</h2><p>Einstein called it 'spooky action at a distance.' When two particles become entangled, they form a single system. Measuring the state of one particle instantly determines the state of the other, no matter how far apart they are.</p>", title: "Einstein's Paradox" }
+                ]
+            },
+            { 
+                id: 3, title: "Cryptography", subtitle: "Unbreakable Codes", 
+                preview: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=800&auto=format&fit=crop",
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=1600&auto=format&fit=crop", title: "Digital Fortress" },
+                    { type: "video", src: "https://www.youtube.com/embed/2A0Q0898kD4?enablejsapi=1", title: "Encryption Explained" },
+                    { type: "text", content: "<span class='data-label'>SECURITY LOG // POST-QUANTUM</span><h2>The Threat & The Shield</h2><p>Current encryption (RSA) relies on the difficulty of factoring large numbers. Quantum computers (using Shor's Algorithm) can do this instantly.</p><p style='margin-top:1rem;'>However, Quantum Key Distribution (QKD) uses physics to create unhackable keys.</p>", title: "The Future of Security" }
+                ]
+            },
+            { 
+                id: 4, title: "Simulations", subtitle: "Molecular Modeling", 
+                preview: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=800&auto=format&fit=crop",
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=1600&auto=format&fit=crop", title: "Molecular Analysis" },
+                    { type: "video", src: "https://www.youtube.com/embed/UHxNGgL-KMs?enablejsapi=1", title: "Simulating Nature" },
+                    { type: "text", content: "<span class='data-label'>SCIENCE LOG // BIO-MIMICRY</span><h2>Drug Discovery</h2><p>Simulating molecules on classical computers is incredibly difficult due to the exponential complexity of electron interactions. Quantum computers mimic nature at the subatomic level, allowing us to discover new medicines.</p>", title: "Why it Matters" }
+                ]
+            },
+             { 
+                id: 5, title: "Hardware", subtitle: "The Chiller", 
+                preview: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop",
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1600&auto=format&fit=crop", title: "Server Infrastructure" },
+                    { type: "video", src: "https://www.youtube.com/embed/gNaI6R_zMjg?enablejsapi=1", title: "Inside Google's Quantum Lab" },
+                    { type: "text", content: "<span class='data-label'>ENGINEERING LOG // THERMODYNAMICS</span><h2>Near Absolute Zero</h2><p>Quantum states are fragile. To maintain coherence, superconducting qubits must be cooled to temperatures colder than outer space (approx 15 milliKelvin).</p>", title: "Keeping it Cool" }
+                ]
+            },
+            {
+                id: 6, title: "Teleportation", subtitle: "State Transfer",
+                preview: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop",
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop", title: "Fiber Optic Network" },
+                    { type: "video", src: "https://www.youtube.com/embed/yM-ayGCm7wY?enablejsapi=1", title: "Quantum Teleportation Explained" },
+                    { type: "text", content: "<span class='data-label'>COMM LOG // TRANSPORT</span><h2>Not Star Trek Yet</h2><p>Quantum teleportation does not transport matter. It transfers the <em>quantum state</em> of one particle to another distant particle, destroying the original state in the process.</p>", title: "Information Transport" }
+                ]
+            },
+            {
+                id: 7, title: "Grover's Algo", subtitle: "Search Speedup",
+                preview: "https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=800&auto=format&fit=crop",
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=1600&auto=format&fit=crop", title: "Optimization Maze" },
+                    { type: "video", src: "https://www.youtube.com/embed/D1WQIMiYrL0?enablejsapi=1", title: "Grover's Algorithm Visualized" },
+                    { type: "text", content: "<span class='data-label'>ALGO LOG // OPTIMIZATION</span><h2>Finding a Needle in a Haystack</h2><p>Grover's Algorithm provides a quadratic speedup for unstructured search problems. While classical computers need N steps to find an item, a quantum computer only needs roughly √N steps.</p>", title: "Quadratic Speedup" }
+                ]
+            },
+            {
+                id: 8, title: "Sensing", subtitle: "Precision Measurement",
+                preview: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop",
+                gallery: [
+                    { type: "image", src: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1600&auto=format&fit=crop", title: "Laboratory Sensors" },
+                    { type: "video", src: "https://www.youtube.com/embed/BpA8463H6KY?enablejsapi=1", title: "Quantum Sensing Intro" },
+                    { type: "text", content: "<span class='data-label'>METROLOGY LOG // DETECTION</span><h2>Measuring the Impossible</h2><p>Quantum sensors use entanglement to detect magnetic fields, gravity, and time with unprecedented precision. Applications range from medical imaging to detecting submarines.</p>", title: "High Precision Detection" }
+                ]
+            }
+        ];
+
+        // --- 2. THREE.JS SETUP ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x030305);
+        // Thicker fog for depth
+        scene.fog = new THREE.FogExp2(0x030305, 0.025);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        // --- 3. ENHANCED ASSETS & WORLD BUILDING ---
+
+        // A. CARD TEXTURES
+        const cardTextures = {};
+        function createCardTexture(item) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512; canvas.height = 768;
+            const ctx = canvas.getContext('2d');
+            
+            // Card Background (Glassy dark blue)
+            const grad = ctx.createLinearGradient(0,0,0,768);
+            grad.addColorStop(0, '#050a14');
+            grad.addColorStop(1, '#020205');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0,0,512,768);
+
+            // Border
+            ctx.strokeStyle = 'rgba(0, 243, 255, 0.5)';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(10, 10, 492, 748);
+            ctx.strokeRect(15, 15, 482, 738);
+
+            // Image Area
+            ctx.fillStyle = '#000';
+            ctx.fillRect(20, 20, 472, 530);
+            
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.src = item.preview;
+            
+            img.onload = () => {
+                const scale = Math.max(512 / img.width, 540 / img.height);
+                const x = (512 - img.width * scale) / 2;
+                const y = (540 - img.height * scale) / 2;
+                ctx.save();
+                ctx.beginPath(); ctx.rect(20, 20, 472, 530); ctx.clip();
+                ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+                
+                // Image Overlay Gradient
+                const imgGrad = ctx.createLinearGradient(0, 400, 0, 550);
+                imgGrad.addColorStop(0, 'transparent');
+                imgGrad.addColorStop(1, '#050a14');
+                ctx.fillStyle = imgGrad;
+                ctx.fillRect(20, 20, 472, 530);
+                ctx.restore();
+                drawTextContent(ctx, item);
+                if(cardTextures[item.id]) cardTextures[item.id].needsUpdate = true;
+            };
+            drawTextContent(ctx, item);
+            const texture = new THREE.CanvasTexture(canvas);
+            cardTextures[item.id] = texture;
+            return texture;
+        }
+
+        function drawTextContent(ctx, item) {
+            // Text Box Background
+            ctx.fillStyle = "rgba(0, 20, 40, 0.6)";
+            ctx.fillRect(20, 560, 472, 188);
+            
+            // Subtitle
+            ctx.fillStyle = '#00f3ff';
+            ctx.font = 'bold 18px "Share Tech Mono"';
+            ctx.textAlign = 'center';
+            ctx.fillText(item.subtitle.toUpperCase(), 256, 600);
+            
+            // Title
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 36px Cinzel';
+            const words = item.title.split(' ');
+            let line = '';
+            let y = 650;
+            for(let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > 400 && n > 0) {
+                    ctx.fillText(line, 256, y);
+                    line = words[n] + ' ';
+                    y += 40;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, 256, y);
+        }
+
+        // B. BACKGROUND WORLD ELEMENTS
+        
+        // 1. Moving Starfield (Depth effect)
+        const starGeo = new THREE.BufferGeometry();
+        const starCount = 2000;
+        const starPos = new Float32Array(starCount * 3);
+        const starSpeeds = [];
+        for(let i=0; i<starCount*3; i+=3) {
+            starPos[i] = (Math.random() - 0.5) * 100;   // x
+            starPos[i+1] = (Math.random() - 0.5) * 100; // y
+            starPos[i+2] = (Math.random() - 0.5) * 80;  // z
+            starSpeeds.push(0.02 + Math.random() * 0.05);
+        }
+        starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+        const starMat = new THREE.PointsMaterial({ color: 0x88ccff, size: 0.08, transparent: true, opacity: 0.8 });
+        const starField = new THREE.Points(starGeo, starMat);
+        scene.add(starField);
+
+        // 2. Floating Geodesics (Background Ruins)
+        const bgGroup = new THREE.Group();
+        const geoGeo = new THREE.IcosahedronGeometry(10, 0); // Low poly
+        const geoMat = new THREE.MeshBasicMaterial({ color: 0x004466, wireframe: true, transparent: true, opacity: 0.15 });
+        
+        for(let i=0; i<6; i++) {
+            const mesh = new THREE.Mesh(geoGeo, geoMat);
+            mesh.position.set(
+                (Math.random() - 0.5) * 60,
+                (Math.random() - 0.5) * 40,
+                (Math.random() - 0.5) * 30 - 20 // Push back
+            );
+            mesh.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, 0);
+            bgGroup.add(mesh);
+        }
+        scene.add(bgGroup);
+
+        // 3. Grid Floor (Retro feel)
+        const gridHelper = new THREE.GridHelper(100, 50, 0x00f3ff, 0x112233);
+        gridHelper.position.y = -15;
+        gridHelper.material.transparent = true;
+        gridHelper.material.opacity = 0.15;
+        scene.add(gridHelper);
+
+        // C. THE CORE (Reactor Style)
+        const coreGroup = new THREE.Group();
+        
+        // Wireframe Outer
+        const coreGeo = new THREE.TorusKnotGeometry(1.8, 0.5, 128, 16);
+        const coreMat = new THREE.MeshBasicMaterial({ color: 0x00f3ff, wireframe: true, transparent: true, opacity: 0.3 });
+        const core = new THREE.Mesh(coreGeo, coreMat);
+        coreGroup.add(core);
+
+        // Inner Glow (Sprite)
+        const spriteCanvas = document.createElement('canvas');
+        spriteCanvas.width = 64; spriteCanvas.height = 64;
+        const sCtx = spriteCanvas.getContext('2d');
+        const sGrad = sCtx.createRadialGradient(32,32,0,32,32,32);
+        sGrad.addColorStop(0, 'rgba(0, 243, 255, 1)');
+        sGrad.addColorStop(0.4, 'rgba(0, 243, 255, 0.3)');
+        sGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        sCtx.fillStyle = sGrad;
+        sCtx.fillRect(0,0,64,64);
+        const spriteTex = new THREE.CanvasTexture(spriteCanvas);
+        const spriteMat = new THREE.SpriteMaterial({ map: spriteTex, color: 0x00f3ff, blending: THREE.AdditiveBlending });
+        const glowSprite = new THREE.Sprite(spriteMat);
+        glowSprite.scale.set(8, 8, 1);
+        coreGroup.add(glowSprite);
+
+        scene.add(coreGroup);
+
+        // D. LIGHTING SYSTEM (Dynamic RGB)
+        const lights = [];
+        const lightColors = [0x00f3ff, 0xff0055, 0x7700ff]; // Cyan, Magenta, Purple
+        for(let i=0; i<3; i++) {
+            const light = new THREE.PointLight(lightColors[i], 2, 50);
+            lights.push(light);
+            scene.add(light);
+        }
+        const ambient = new THREE.AmbientLight(0x404040, 0.5); // Soft white ambient
+        scene.add(ambient);
+
+
+        // --- 4. CARDS SETUP ---
+        const cardGroup = new THREE.Group();
+        const cardGeo = new THREE.PlaneGeometry(2.2, 3.3);
+        const cards = [];
+        const interactables = []; 
+
+        galleryData.forEach((item, i) => {
+            const material = new THREE.MeshBasicMaterial({ 
+                map: createCardTexture(item), 
+                side: THREE.DoubleSide,
+                transparent: true
+            });
+            const card = new THREE.Mesh(cardGeo, material);
+
+            const angle = i * 0.8; 
+            const radius = 8.5;
+            const y = (i - galleryData.length / 2) * 1.8;
+
+            card.position.set(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
+            card.lookAt(0, y, 0);
+            card.userData = { id: item.id, data: item };
+
+            cards.push(card);
+            interactables.push(card);
+            cardGroup.add(card);
+        });
+        scene.add(cardGroup);
+
+
+        // --- 5. INTERACTION ---
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let isZoomed = false;
+        let activeCard = null;
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        container.addEventListener('mousedown', (e) => {
+            if(isZoomed) return;
+            isDragging = true;
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+            if (!isZoomed) {
+                if(isDragging) {
+                    const deltaMove = { x: e.clientX - previousMousePosition.x, y: e.clientY - previousMousePosition.y };
+                    cardGroup.rotation.y += deltaMove.x * 0.005;
+                    cardGroup.rotation.x += deltaMove.y * 0.005;
+                    previousMousePosition = { x: e.clientX, y: e.clientY };
+                } else {
+                    cardGroup.rotation.x = mouse.y * 0.05; 
+                }
+            }
+        });
+
+        window.addEventListener('mouseup', () => { isDragging = false; });
+
+        let mouseDownPos = { x: 0, y: 0 };
+        container.addEventListener('mousedown', (e) => { mouseDownPos = { x: e.clientX, y: e.clientY }; });
+
+        window.addEventListener('click', (e) => {
+            if(isZoomed) return; 
+            const dist = Math.hypot(e.clientX - mouseDownPos.x, e.clientY - mouseDownPos.y);
+            if (dist > 5) return; 
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(interactables);
+            if (intersects.length > 0) zoomToCard(intersects[0].object);
+        });
+
+        function zoomToCard(card) {
+            isZoomed = true;
+            activeCard = card;
+            const offset = new THREE.Vector3(0, 0, 5.5); 
+            offset.applyQuaternion(card.quaternion);
+            const targetPos = card.position.clone().add(offset);
+            document.getElementById('scroll-hint').style.opacity = '0';
+
+            gsap.to(camera.position, {
+                x: targetPos.x, y: targetPos.y, z: targetPos.z,
+                duration: 1.5, ease: "power3.inOut"
+            });
+
+            gsap.to(camera.rotation, {
+                duration: 1.5,
+                onUpdate: () => camera.lookAt(card.position),
+                onComplete: () => {
+                    gsap.to(card.material, { opacity: 0, duration: 0.5 });
+                    openCarousel(card.userData.data);
+                }
+            });
+
+            cards.forEach(c => {
+                if(c !== card) gsap.to(c.material, { opacity: 0.1, duration: 1 });
+            });
+        }
+
+        function resetView() {
+            if(!isZoomed) return;
+            closeCarousel();
+            gsap.to(activeCard.material, { opacity: 1, duration: 0.5 });
+            gsap.to(camera.position, { x: 0, y: 0, z: 22, duration: 1.5, ease: "power2.inOut" });
+            gsap.to(camera.rotation, { x: 0, y: 0, z: 0, duration: 1.5, onComplete: () => {
+                isZoomed = false;
+                activeCard = null;
+                document.getElementById('scroll-hint').style.opacity = '1';
+            }});
+            cards.forEach(c => { gsap.to(c.material, { opacity: 1, duration: 1 }); });
+        }
+
+        // --- 6. CAROUSEL LOGIC ---
+        const modal = document.getElementById('content-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const viewport = document.getElementById('carousel-viewport');
+        const captionText = document.getElementById('caption-text');
+        const prevBtn = document.getElementById('prev-slide');
+        const nextBtn = document.getElementById('next-slide');
+        const closeBtn = document.getElementById('close-modal');
+        
+        let currentGallery = [];
+        let currentIndex = 0;
+        let currentSlideElement = null;
+
+        function openCarousel(data) {
+            currentGallery = data.gallery;
+            currentIndex = 0;
+            modalTitle.innerText = data.title;
+            viewport.querySelectorAll('.slide-content').forEach(el => el.remove());
+            loadSlide(0);
+            modal.classList.add('active');
+        }
+
+        function closeCarousel() {
+            modal.classList.remove('active');
+            if(currentSlideElement) {
+                const iframe = currentSlideElement.querySelector('iframe');
+                if(iframe) { iframe.src = ""; }
+                currentSlideElement.remove();
+            }
+            currentSlideElement = null;
+        }
+
+        function loadSlide(index) {
+            if (currentSlideElement) {
+                const iframe = currentSlideElement.querySelector('iframe');
+                if(iframe) { iframe.src = ""; }
+                gsap.to(currentSlideElement, { opacity: 0, duration: 0.3, onComplete: () => {
+                    if(currentSlideElement) currentSlideElement.remove();
+                    renderNewSlide(index);
+                }});
+            } else {
+                renderNewSlide(index);
+            }
+        }
+
+        function renderNewSlide(index) {
+            const data = currentGallery[index];
+            const el = document.createElement('div');
+            el.className = 'slide-content';
+            el.style.opacity = 0; 
+
+            if (data.type === 'image') {
+                const img = document.createElement('img');
+                img.src = data.src;
+                el.appendChild(img);
+            } 
+            else if (data.type === 'video') {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'video-wrapper';
+                const iframe = document.createElement('iframe');
+                iframe.src = data.src;
+                iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+                iframe.allowFullscreen = true;
+                wrapper.appendChild(iframe);
+                el.appendChild(wrapper);
+            } 
+            else if (data.type === 'text') {
+                const textDiv = document.createElement('div');
+                textDiv.className = 'text-slide';
+                textDiv.innerHTML = data.content;
+                el.appendChild(textDiv);
+            }
+
+            viewport.appendChild(el);
+            currentSlideElement = el;
+            captionText.innerText = data.title;
+            gsap.to(el, { opacity: 1, duration: 0.5, className: 'slide-content active' });
+        }
+
+        function nextImage() {
+            currentIndex = (currentIndex + 1) % currentGallery.length;
+            loadSlide(currentIndex);
+        }
+
+        function prevImage() {
+            currentIndex = (currentIndex - 1 + currentGallery.length) % currentGallery.length;
+            loadSlide(currentIndex);
+        }
+
+        nextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); });
+        prevBtn.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); });
+        closeBtn.addEventListener('click', resetView);
+
+        // --- 7. ANIMATION LOOP ---
+        camera.position.z = 22;
+        let time = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.005;
+
+            // Core Animation
+            core.rotation.y = -time;
+            core.rotation.x = time * 0.5;
+            const scale = 1 + Math.sin(time * 3) * 0.05;
+            core.scale.set(scale, scale, scale);
+            glowSprite.material.rotation = time * 0.2;
+
+            // Moving Lights (RGB Orbit)
+            lights.forEach((light, i) => {
+                const angle = time + (i * (Math.PI * 2 / 3));
+                light.position.x = Math.cos(angle) * 15;
+                light.position.z = Math.sin(angle) * 15;
+                light.position.y = Math.sin(time * 2 + i) * 5;
+            });
+
+            // Background Starfield Flow
+            const positions = starField.geometry.attributes.position.array;
+            for(let i=2; i<starCount*3; i+=3) {
+                positions[i] += starSpeeds[(i-2)/3];
+                if(positions[i] > 40) positions[i] = -40;
+            }
+            starField.geometry.attributes.position.needsUpdate = true;
+            starField.rotation.z += 0.0005;
+
+            // Background Geodesics Rotation
+            bgGroup.rotation.y -= 0.001;
+            bgGroup.children.forEach((mesh, i) => {
+                mesh.rotation.x += 0.001 * (i%2===0?1:-1);
+                mesh.rotation.y += 0.002 * (i%2===0?-1:1);
+            });
+
+            // Floating Cards
+            cards.forEach((card, i) => {
+                card.position.y += Math.sin(time + i) * 0.002;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                    animate();
+                }, 1000);
+            }, 1500);
+        };
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+    </script>
+</body>
+</html>

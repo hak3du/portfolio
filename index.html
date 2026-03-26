@@ -958,7 +958,19 @@
     if(iframe) iframe.style.opacity = '1'; 
 }
 
-
+// --- ADD CLICK LISTENERS TO CARDS (CRITICAL) ---
+document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('.neuron-card');
+    cards.forEach((card, index) => {
+        // Make it look clickable
+        card.style.cursor = 'pointer';
+        
+        // When clicked, run the toggle function with the specific index
+        card.addEventListener('click', () => {
+            toggleSystemOverlay(true, index);
+        });
+    });
+});
         // --- 2. TYPEWRITER EFFECT ---
         window.addEventListener('DOMContentLoaded', () => {
             const h2 = document.getElementById('hero-h2');

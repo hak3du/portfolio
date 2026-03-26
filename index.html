@@ -947,21 +947,16 @@
         }
 
         // Helper to hide loader when iframe loads
-        function hideLoader() {
-            document.getElementById('sys-loader').style.display = 'none';
-        }
-
-        // Add Click Listeners to Cards
-        document.addEventListener('DOMContentLoaded', () => {
-            const cards = document.querySelectorAll('.neuron-card');
-            cards.forEach((card, index) => {
-                card.style.cursor = 'pointer';
-                card.addEventListener('click', () => {
-                    // Pass the index (0, 1, 2, or 3) to the function
-                    toggleSystemOverlay(true, index);
-                });
-            });
-        });
+     function hideLoader() {
+    const loader = document.getElementById('sys-loader');
+    const iframe = document.getElementById('system-iframe');
+    
+    // Remove the spinner
+    if(loader) loader.style.display = 'none';
+    
+    // MAKE IFRAME VISIBLE (This line was missing)
+    if(iframe) iframe.style.opacity = '1'; 
+}
 
 
         // --- 2. TYPEWRITER EFFECT ---

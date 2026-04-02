@@ -60,7 +60,205 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        
+   /* =========================================
+    SLIDESHOW PROFILE STYLES
+    ========================================= */
+.profile-wrapper {
+    /* Make sure position is relative for the absolute timeline */
+    position: relative; 
+}
+
+/* Base styles for all images in the stack */
+.profile-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease-in-out, transform 7s ease-out;
+    transform: scale(1.0); /* Start slightly zoomed out or normal */
+    z-index: 1;
+}
+
+/* The active image is visible */
+.profile-slide.active {
+    opacity: 1;
+    z-index: 2;
+    transform: scale(1.05); /* Slow zoom effect while active */
+}
+
+/* Timeline Bar at the bottom of the image */
+.timeline-progress {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.timeline-fill {
+    height: 100%;
+    width: 0%;
+    background-color: var(--accent-cyan);
+    box-shadow: 0 0 10px var(--accent-cyan);
+    transition: width 0.1s linear;
+}     
+        /* =========================================
+    ADD-ON: VN STYLE AUDIO PLAYER
+    ========================================= */
+.vn-player-wrapper {
+    margin-top: var(--space-lg); /* Spacing below the H1 */
+    padding: var(--space-md) var(--space-lg);
+    background: rgba(10, 10, 12, 0.6);
+    border: 1px solid var(--glass-border);
+    border-left: 3px solid var(--accent-cyan);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+}
+
+.vn-player-wrapper:hover {
+    border-color: rgba(0, 249, 203, 0.4);
+}
+
+/* Track Info Area */
+.vn-track-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.vn-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--accent-cyan);
+    letter-spacing: 2px;
+    opacity: 0.8;
+}
+
+.vn-title-marquee {
+    white-space: nowrap;
+    overflow: hidden;
+    font-family: var(--font-display);
+    font-weight: 500;
+    color: #fff;
+    font-size: 0.95rem;
+    position: relative;
+}
+
+/* Controls */
+.vn-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+}
+
+.vn-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vn-btn svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+.vn-btn:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+}
+
+.vn-btn.main-action {
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--accent-cyan);
+    box-shadow: 0 0 10px rgba(0, 249, 203, 0.1);
+}
+
+.vn-btn.main-action:hover {
+    background: var(--accent-cyan);
+    color: #000;
+    box-shadow: 0 0 15px rgba(0, 249, 203, 0.4);
+}
+
+/* Fake Visualizer Bars */
+.vn-visualizer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 20px;
+    width: 100%;
+    opacity: 0.5;
+}
+
+.vn-visualizer .bar {
+    width: 4px;
+    background: var(--accent-cyan);
+    height: 4px;
+    border-radius: 2px;
+    animation: none;
+}
+
+/* Active State: When playing, bars animate */
+.vn-player-wrapper.playing .vn-visualizer {
+    opacity: 1;
+}
+
+.vn-player-wrapper.playing .vn-visualizer .bar {
+    animation: soundwave 0.8s ease-in-out infinite alternate;
+}
+
+/* Staggered animation delays for visualizer */
+.vn-visualizer .bar:nth-child(1) { animation-delay: 0.1s; }
+.vn-visualizer .bar:nth-child(2) { animation-delay: 0.3s; }
+.vn-visualizer .bar:nth-child(3) { animation-delay: 0.5s; }
+.vn-visualizer .bar:nth-child(4) { animation-delay: 0.2s; }
+.vn-visualizer .bar:nth-child(5) { animation-delay: 0.4s; }
+.vn-visualizer .bar:nth-child(6) { animation-delay: 0.1s; }
+.vn-visualizer .bar:nth-child(7) { animation-delay: 0.3s; }
+.vn-visualizer .bar:nth-child(8) { animation-delay: 0.5s; }
+.vn-visualizer .bar:nth-child(9) { animation-delay: 0.2s; }
+.vn-visualizer .bar:nth-child(10) { animation-delay: 0.4s; }
+.vn-visualizer .bar:nth-child(11) { animation-delay: 0.1s; }
+.vn-visualizer .bar:nth-child(12) { animation-delay: 0.3s; }
+
+@keyframes soundwave {
+    0% { height: 4px; opacity: 0.5; }
+    100% { height: 20px; opacity: 1; box-shadow: 0 0 5px var(--accent-cyan); }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .vn-player-wrapper {
+        max-width: 100%;
+        margin-top: var(--space-md);
+    }
+}
+
         body { 
             background-color: var(--bg-deep); color: var(--text-main); 
             font-family: var(--font-display); overflow-x: hidden; line-height: 1.6; 
@@ -148,7 +346,7 @@
         nav:hover .news-ticker-container { width: 100%; opacity: 1; }
         .news-ticker {
             display: inline-block; padding-left: 100%;
-            animation: ticker 15s linear infinite;
+            animation: ticker 115s linear infinite;
             font-size: 0.75rem; color: #ddd; font-family: var(--font-mono);
         }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
@@ -703,31 +901,97 @@
     <!-- SECTION: HERO -->
     <section class="section-hero" data-bg="https://picsum.photos/seed/tech_arch/1920/1080">
         <div class="hero-container">
-            <div class="hero-content">
-                <h2 id="hero-h2" class="hero-subtitle"></h2>
-                <h1 id="hero-h1" class="hero-title"></h1>
-                
-                <div class="cta-group">
-                    <a href="#" class="cta-petite">
-                        <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                        GitHub
-                    </a>
-                    <a href="#" class="cta-petite secondary">
-                        <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                        LinkedIn
-                    </a>
-                    <!-- EMAIL ICON -->
-                    <a href="mailto:hello@example.com" class="cta-petite secondary">
-                        <svg viewBox="0 0 24 24"><path d="M0 3v18h24v-18h-24zm6.623 7.929l-4.623 5.712v-11.174l4.623 5.462zm-4.484-6.358h19.722l-9.861 11.661-9.861-11.661zm5.694 6.837l4.337 5.127 4.337-5.127 4.824 5.828h-18.322l4.824-5.828zm9.208-6.358l4.623 5.462v-11.174l-4.623 5.712z"/></svg>
-                        Email
-                    </a>
-                </div>
+           <div class="hero-content">
+    <!-- 1. Subtitle (Status) -->
+    <h2 id="hero-h2" class="hero-subtitle"></h2>
+    
+    <!-- 2. Main Title (Typewriter Effect) -->
+    <h1 id="hero-h1" class="hero-title"></h1>
+    
+    <!-- 3. NEW: MP3 PLAYER (Inserted Here) -->
+    <div class="vn-player-wrapper">
+        <div class="vn-track-info">
+            <span class="vn-label">AUDIO_STREAM_01</span>
+            <div class="vn-title-marquee">
+                <span id="track-name">INITIATING_AUDIO_LINK...</span>
             </div>
+        </div>
+        
+        <!-- The Audio Element -->
+        <!-- Update src to your file, e.g., 'assets/intro.mp3' -->
+        <audio id="main-audio" src="path/to/your/local-file.mp3" preload="auto"></audio>
+
+        <div class="vn-controls">
+            <button id="btn-prev" class="vn-btn" aria-label="Previous">
+                <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+            </button>
+            
+            <button id="btn-play" class="vn-btn main-action" aria-label="Play/Pause">
+                <svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <svg id="icon-pause" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            </button>
+            
+            <button id="btn-next" class="vn-btn" aria-label="Next">
+                <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+            </button>
+        </div>
+
+        <div class="vn-visualizer">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+    </div>
+    <!-- END MP3 PLAYER -->
+
+    <!-- 4. Buttons (CTA Group) -->
+    <div class="cta-group">
+        <a href="#" class="cta-petite">
+            <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            GitHub
+        </a>
+        <a href="#" class="cta-petite secondary">
+            <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+            LinkedIn
+        </a>
+        <a href="mailto:hello@example.com" class="cta-petite secondary">
+            <svg viewBox="0 0 24 24"><path d="M0 3v18h24v-18h-24zm6.623 7.929l-4.623 5.712v-11.174l4.623 5.462zm-4.484-6.358h19.722l-9.861 11.661-9.861-11.661zm5.694 6.837l4.337 5.127 4.337-5.127 4.824 5.828h-18.322l4.824-5.828zm9.208-6.358l4.623 5.462v-11.174l-4.623 5.712z"/></svg>
+            Email
+        </a>
+    </div>
+</div>
             
             <div class="profile-wrapper">
-                <!-- HIGH RESOLUTION IMAGE (1200px width) -->
-                <img src="profile-pic.png" alt="Profile" class="profile-img">
-            </div>
+    <!-- 1. Add your 10 local images here. 
+         Ensure they have the class 'profile-slide' and unique IDs -->
+    
+    <!-- Image 1 -->
+    <img id="slide-0" src="profile-1.jpg" class="profile-img profile-slide active">
+    <!-- Image 2 -->
+    <img id="slide-1" src="profile-2.jpg" class="profile-img profile-slide">
+    <!-- Image 3 -->
+    <img id="slide-2" src="profile-3.jpg" class="profile-img profile-slide">
+    <!-- Image 4 -->
+    <img id="slide-3" src="profile-4.jpg" class="profile-img profile-slide">
+    <!-- Image 5 -->
+    <img id="slide-4" src="profile-5.jpg" class="profile-img profile-slide">
+    <!-- Image 6 -->
+    <img id="slide-5" src="profile-6.jpg" class="profile-img profile-slide">
+    <!-- Image 7 -->
+    <img id="slide-6" src="profile-7.jpg" class="profile-img profile-slide">
+    <!-- Image 8 -->
+    <img id="slide-7" src="profile-8.jpg" class="profile-img profile-slide">
+    <!-- Image 9 -->
+    <img id="slide-8" src="profile-9.jpg" class="profile-img profile-slide">
+    <!-- Image 10 -->
+    <img id="slide-9" src="profile-10.jpg" class="profile-img profile-slide">
+
+    <!-- 2. Progress Bar Container -->
+    <div class="timeline-progress">
+        <div id="timeline-bar" class="timeline-fill"></div>
+    </div>
+</div>
         </div>
     </section>
 
@@ -1357,6 +1621,140 @@ document.addEventListener('DOMContentLoaded', () => {
                 requestAnimationFrame(slide);
             }
         }
+     // --- VN AUDIO PLAYER & SLIDESHOW LOGIC ---
+document.addEventListener('DOMContentLoaded', () => {
+    const audio = document.getElementById('main-audio');
+    const playBtn = document.getElementById('btn-play');
+    const iconPlay = document.getElementById('icon-play');
+    const iconPause = document.getElementById('icon-pause');
+    const playerWrapper = document.querySelector('.vn-player-wrapper');
+    const trackName = document.getElementById('track-name');
+    
+    // SLIDESHOW VARIABLES
+    const slides = document.querySelectorAll('.profile-slide');
+    const timelineBar = document.getElementById('timeline-bar');
+    let currentSlideIndex = 0;
+    let slideshowInterval;
+    
+    // AUDIO PLAYLIST
+    const playlist = [
+        { title: "Main_Theme_Immersion.mp3", src: "path/to/your/local-file.mp3" }
+    ];
+    let currentTrackIndex = 0;
+
+    function togglePlay() {
+        if (audio.paused) {
+            // Load source if empty
+            if (!audio.src || audio.src === window.location.href) {
+                if(playlist[currentTrackIndex]) {
+                    audio.src = playlist[currentTrackIndex].src;
+                    trackName.innerText = playlist[currentTrackIndex].title;
+                } else {
+                    showToast("ERROR: NO AUDIO SOURCE", true);
+                    return;
+                }
+            }
+            
+            audio.play()
+                .then(() => {
+                    iconPlay.style.display = 'none';
+                    iconPause.style.display = 'block';
+                    playerWrapper.classList.add('playing');
+                    startSlideshow(); // START IMAGES
+                })
+                .catch(err => {
+                    console.error("Playback failed:", err);
+                    showToast("AUDIO LOAD FAILED", true);
+                });
+        } else {
+            pauseSystem(); // PAUSE EVERYTHING
+        }
+    }
+
+    function pauseSystem() {
+        audio.pause();
+        iconPlay.style.display = 'block';
+        iconPause.style.display = 'none';
+        playerWrapper.classList.remove('playing');
+        stopSlideshow(); // STOP IMAGES
+    }
+
+    // --- SLIDESHOW LOGIC ---
+
+    function startSlideshow() {
+        // Calculate time per image based on total audio duration
+        // If duration isn't loaded yet, default to 5 seconds per slide
+        const duration = audio.duration || (slides.length * 5);
+        const timePerSlide = (duration / slides.length) * 1000; // in milliseconds
+
+        // Show first slide immediately if resuming
+        showSlide(currentSlideIndex);
+
+        // Clear any existing interval
+        if(slideshowInterval) clearInterval(slideshowInterval);
+
+        // Start loop
+        slideshowInterval = setInterval(() => {
+            nextSlide();
+        }, timePerSlide);
+        
+        // Start progress bar animation
+        updateProgressBar(duration);
+    }
+
+    function stopSlideshow() {
+        if(slideshowInterval) clearInterval(slideshowInterval);
+        timelineBar.style.width = '0%'; // Reset progress
+    }
+
+    function nextSlide() {
+        // Remove active class from current
+        slides[currentSlideIndex].classList.remove('active');
+        
+        // Calculate next index (Loop back to 0 if at end)
+        currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+        
+        // Add active class to next
+        slides[currentSlideIndex].classList.add('active');
+    }
+
+    function showSlide(index) {
+        slides.forEach(s => s.classList.remove('active'));
+        slides[index].classList.add('active');
+    }
+
+    function updateProgressBar(duration) {
+        const startTime = Date.now();
+        
+        // Use requestAnimationFrame for smooth bar
+        function update() {
+            if(audio.paused) return; // Stop updating if paused
+            
+            const elapsed = (Date.now() - startTime) / 1000;
+            const percent = Math.min((elapsed / duration) * 100, 100);
+            
+            timelineBar.style.width = percent + '%';
+            
+            if (percent < 100) {
+                requestAnimationFrame(update);
+            } else {
+                timelineBar.style.width = '0%';
+            }
+        }
+        requestAnimationFrame(update);
+    }
+
+    // Event Listeners
+    playBtn.addEventListener('click', togglePlay);
+    
+    // Reset when song ends
+    audio.addEventListener('ended', () => {
+        pauseSystem();
+        // Optional: Reset to first slide
+        currentSlideIndex = 0;
+        showSlide(0);
+    });
+});
     </script>
 </body> 
 </html>

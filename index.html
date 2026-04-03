@@ -643,9 +643,9 @@
         #aether-portal .btn {
             display: inline-flex; align-items: center; justify-content: center; padding: 1rem 2.5rem; border-radius: 100px;
             border: 1px solid var(--text-main); background: transparent; color: var(--text-main); font-family: var(--font-sans); font-size: 0.8rem;
-            text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; transition: all 0.4s var(--ease-out); position: relative; overflow: hidden; z-index: 1;
+            text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; transition: all 0.4s var(--ease-out); position: relative; overflow: hidden; z-index: 10;
         }
-        #aether-portal .btn::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--text-main); z-index: -1; transform: scaleX(0); transform-origin: right; transition: transform 0.4s var(--ease-out); }
+        #aether-portal .btn::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--text-main); transform: scaleX(0); transform-origin: right; transition: transform 0.4s var(--ease-out); }
         #aether-portal .btn:hover { color: var(--bg-body); border-color: transparent; }
         #aether-portal .btn:hover::before { transform: scaleX(1); transform-origin: left; }
 
@@ -654,7 +654,7 @@
         #aether-portal .container { max-width: var(--container-width); margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
         #aether-portal section { position: relative; padding: 8rem 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; border-bottom: none; }
         #aether-portal .hero { align-items: flex-start; padding-top: 20vh; overflow: hidden; }
-        #aether-portal .hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 120%; object-fit: cover; z-index: -1; opacity: 0.8; filter: grayscale(100%) contrast(0.9); }
+        #aether-portal .hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 120%; object-fit: cover; z-index: 0; opacity: 0.8; filter: grayscale(100%) contrast(0.9); }
         #aether-portal .hero-content { max-width: 800px; opacity: 0; transform: translateY(30px); animation: fadeInUp 1s var(--ease-out) forwards 0.5s; }
         @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
         #aether-portal h1 { font-family: var(--font-serif); font-size: clamp(3rem, 8vw, 8rem); line-height: 0.95; letter-spacing: -0.03em; margin-bottom: 2rem; color: var(--text-main); }

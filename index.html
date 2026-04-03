@@ -1257,85 +1257,89 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { threshold: 0.3 });
         $$('section').forEach(s => observer.observe(s));
 
-        const projects = [
-            {
-                title: "Neon Finance",
-                tech: "React / D3.js",
-                img: "https://www.pexels.com/photo/back-view-of-a-blond-woman-in-an-office-looking-at-two-computer-screens-with-multicoloured-code-12899189/",
-                previewVideo: "https://www.youtube.com/embed/ScMzIvxBSi4?autoplay=1&mute=1&controls=0&loop=1&playlist=ScMzIvxBSi4&showinfo=0",
-                portal: {
-                    theme: { bg: "#F9F8F4", text: "#1C1C1C", accent: "#D4AF37" },
-                    heroImg: "https://picsum.photos/seed/luxury_arch/1920/1080",
-                    heroTitle: "Neon<br>Finance<br>Analytics.",
-                    desc: "A high-frequency trading visualization platform merging luxury aesthetics with real-time data streams.",
-                    videoTitle: "The Trading Floor",
-                    videoSrc: "https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1&loop=1&playlist=jfKfPfyJRdk&controls=0&showinfo=0",
-                    gallery: [
-                        { img: "https://picsum.photos/seed/finance_1/1200/800", col: "col-8", aspect: "aspect-landscape" },
-                        { img: "https://picsum.photos/seed/finance_2/600/800", col: "col-4", aspect: "aspect-h-2" },
-                        { img: "https://picsum.photos/seed/finance_3/600/600", col: "col-4", aspect: "aspect-h-1" },
-                        { img: "https://picsum.photos/seed/finance_4/1200/1500", col: "col-8", aspect: "aspect-h-2" }
-                    ]
-                }
-            },
-            {
-                title: "Cyber Security",
-                tech: "Python / Rust",
-                img: "https://picsum.photos/seed/security_card/600/800",
-                previewVideo: "https://www.youtube.com/embed/LXb3EKWsInQ?autoplay=1&mute=1&controls=0&loop=1&playlist=LXb3EKWsInQ&showinfo=0",
-                portal: {
-                    theme: { bg: "#0B1026", text: "#E2E8F0", accent: "#38BDF8" },
-                    heroImg: "https://picsum.photos/seed/server_tech/1920/1080",
-                    heroTitle: "Zero<br>Trust<br>Security.",
-                    desc: "Zero-trust network infrastructure visualization. Dark mode native with immersive data threat mapping.",
-                    videoTitle: "Threat Analysis",
-                    videoSrc: "https://www.youtube.com/embed/LXb3EKWsInQ?autoplay=1&mute=1&loop=1&playlist=LXb3EKWsInQ&controls=0",
-                    gallery: [
-                        { img: "https://picsum.photos/seed/cyber_1/1200/800", col: "col-6", aspect: "aspect-landscape" },
-                        { img: "https://picsum.photos/seed/cyber_2/1200/800", col: "col-6", aspect: "aspect-landscape" },
-                        { img: "https://picsum.photos/seed/cyber_3/800/450", col: "col-12", aspect: "aspect-landscape" }
-                    ]
-                }
-            },
-            {
-                title: "Neural Net",
-                tech: "TensorFlow",
-                img: "https://picsum.photos/seed/ai_card/600/800",
-                previewVideo: "https://www.youtube.com/embed/2ePf9rue1Ao?autoplay=1&mute=1&controls=0&loop=1&playlist=2ePf9rue1Ao&showinfo=0",
-                portal: {
-                    theme: { bg: "#F3E8FF", text: "#4C1D95", accent: "#A855F7" },
-                    heroImg: "https://picsum.photos/seed/abstract_brain/1920/1080",
-                    heroTitle: "Neural<br>Net<br>Vision.",
-                    desc: "Generative AI interface design. Focusing on human-computer interaction and model interpretability.",
-                    videoTitle: "Model Training",
-                    videoSrc: "https://www.youtube.com/embed/2ePf9rue1Ao?autoplay=1&mute=1&loop=1&playlist=2ePf9rue1Ao&controls=0",
-                    gallery: [
-                        { img: "https://picsum.photos/seed/ai_1/600/800", col: "col-4", aspect: "aspect-h-2" },
-                        { img: "https://picsum.photos/seed/ai_2/1200/800", col: "col-8", aspect: "aspect-landscape" },
-                        { img: "https://picsum.photos/seed/ai_3/1200/1500", col: "col-12", aspect: "aspect-h-2" }
-                    ]
-                }
-            },
-            {
-                title: "Quantum Chat",
-                tech: "WebRTC / Node",
-                img: "https://picsum.photos/seed/chat_card/600/800",
-                previewVideo: "https://www.youtube.com/embed/aircAruvnKk?autoplay=1&mute=1&controls=0&loop=1&playlist=aircAruvnKk&showinfo=0",
-                portal: {
-                    theme: { bg: "#ECFDF5", text: "#064E3B", accent: "#10B981" },
-                    heroImg: "https://picsum.photos/seed/nature_pattern/1920/1080",
-                    heroTitle: "Quantum<br>Chat<br>Protocol.",
-                    desc: "Encrypted, decentralized communication protocol with nature-inspired UI elements.",
-                    videoTitle: "Handshake Protocol",
-                    videoSrc: "https://www.youtube.com/embed/aircAruvnKk?autoplay=1&mute=1&loop=1&playlist=aircAruvnKk&controls=0",
-                    gallery: [
-                        { img: "https://picsum.photos/seed/nature_1/800/450", col: "col-12", aspect: "aspect-landscape" },
-                        { img: "https://picsum.photos/seed/nature_2/600/600", col: "col-6", aspect: "aspect-h-1" },
-                        { img: "https://picsum.photos/seed/nature_3/600/600", col: "col-6", aspect: "aspect-h-1" }
-                    ]
-                }
-            }
-        ];
+       const projects = [
+    {
+        title: "Neon Finance",
+        tech: "React / D3.js",
+        img: "https://picsum.photos/seed/finance_card/600/800",
+        // CHANGED: mute=0, controls=1
+        previewVideo: "https://www.youtube.com/embed/ScMzIvxBSi4?autoplay=1&mute=0&controls=1&loop=1&playlist=ScMzIvxBSi4&showinfo=0",
+        portal: {
+            // ... portal data remains the same ...
+            heroImg: "https://picsum.photos/seed/luxury_arch/1920/1080",
+            heroTitle: "Neon<br>Finance<br>Analytics.",
+            desc: "A high-frequency trading visualization platform merging luxury aesthetics with real-time data streams.",
+            videoTitle: "The Trading Floor",
+            videoSrc: "https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1&loop=1&playlist=jfKfPfyJRdk&controls=0&showinfo=0",
+            gallery: [
+                { img: "https://picsum.photos/seed/finance_1/1200/800", col: "col-8", aspect: "aspect-landscape" },
+                { img: "https://picsum.photos/seed/finance_2/600/800", col: "col-4", aspect: "aspect-h-2" },
+                { img: "https://picsum.photos/seed/finance_3/600/600", col: "col-4", aspect: "aspect-h-1" },
+                { img: "https://picsum.photos/seed/finance_4/1200/1500", col: "col-8", aspect: "aspect-h-2" }
+            ]
+        }
+    },
+    {
+        title: "Cyber Security",
+        tech: "Python / Rust",
+        img: "https://picsum.photos/seed/security_card/600/800",
+        // CHANGED: mute=0, controls=1
+        previewVideo: "https://www.youtube.com/embed/LXb3EKWsInQ?autoplay=1&mute=0&controls=1&loop=1&playlist=LXb3EKWsInQ&showinfo=0",
+        portal: {
+            // ... portal data ...
+            heroImg: "https://picsum.photos/seed/server_tech/1920/1080",
+            heroTitle: "Zero<br>Trust<br>Security.",
+            desc: "Zero-trust network infrastructure visualization. Dark mode native with immersive data threat mapping.",
+            videoTitle: "Threat Analysis",
+            videoSrc: "https://www.youtube.com/embed/LXb3EKWsInQ?autoplay=1&mute=1&loop=1&playlist=LXb3EKWsInQ&controls=0",
+            gallery: [
+                { img: "https://picsum.photos/seed/cyber_1/1200/800", col: "col-6", aspect: "aspect-landscape" },
+                { img: "https://picsum.photos/seed/cyber_2/1200/800", col: "col-6", aspect: "aspect-landscape" },
+                { img: "https://picsum.photos/seed/cyber_3/800/450", col: "col-12", aspect: "aspect-landscape" }
+            ]
+        }
+    },
+    {
+        title: "Neural Net",
+        tech: "TensorFlow",
+        img: "https://picsum.photos/seed/ai_card/600/800",
+        // CHANGED: mute=0, controls=1
+        previewVideo: "https://www.youtube.com/embed/2ePf9rue1Ao?autoplay=1&mute=0&controls=1&loop=1&playlist=2ePf9rue1Ao&showinfo=0",
+        portal: {
+             // ... portal data ...
+            heroImg: "https://picsum.photos/seed/abstract_brain/1920/1080",
+            heroTitle: "Neural<br>Net<br>Vision.",
+            desc: "Generative AI interface design. Focusing on human-computer interaction and model interpretability.",
+            videoTitle: "Model Training",
+            videoSrc: "https://www.youtube.com/embed/2ePf9rue1Ao?autoplay=1&mute=1&loop=1&playlist=2ePf9rue1Ao&controls=0",
+            gallery: [
+                { img: "https://picsum.photos/seed/ai_1/600/800", col: "col-4", aspect: "aspect-h-2" },
+                { img: "https://picsum.photos/seed/ai_2/1200/800", col: "col-8", aspect: "aspect-landscape" },
+                { img: "https://picsum.photos/seed/ai_3/1200/1500", col: "col-12", aspect: "aspect-h-2" }
+            ]
+        }
+    },
+    {
+        title: "Quantum Chat",
+        tech: "WebRTC / Node",
+        img: "https://picsum.photos/seed/chat_card/600/800",
+        // CHANGED: mute=0, controls=1
+        previewVideo: "https://www.youtube.com/embed/aircAruvnKk?autoplay=1&mute=0&controls=1&loop=1&playlist=aircAruvnKk&showinfo=0",
+        portal: {
+             // ... portal data ...
+            heroImg: "https://picsum.photos/seed/nature_pattern/1920/1080",
+            heroTitle: "Quantum<br>Chat<br>Protocol.",
+            desc: "Encrypted, decentralized communication protocol with nature-inspired UI elements.",
+            videoTitle: "Handshake Protocol",
+            videoSrc: "https://www.youtube.com/embed/aircAruvnKk?autoplay=1&mute=1&loop=1&playlist=aircAruvnKk&controls=0",
+            gallery: [
+                { img: "https://picsum.photos/seed/nature_1/800/450", col: "col-12", aspect: "aspect-landscape" },
+                { img: "https://picsum.photos/seed/nature_2/600/600", col: "col-6", aspect: "aspect-h-1" },
+                { img: "https://picsum.photos/seed/nature_3/600/600", col: "col-6", aspect: "aspect-h-1" }
+            ]
+        }
+    }
+];
 
         const track = $('#track');
         let carouselIndex = 0;

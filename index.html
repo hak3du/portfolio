@@ -661,7 +661,7 @@
         #aether-portal .hero p { font-size: 1.25rem; color: var(--text-muted); max-width: 500px; line-height: 1.6; margin-bottom: 3rem; }
         #aether-portal .video-section { background: #fff; }
         #aether-portal .video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border-radius: 20px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.1); }
-        #aether-portal .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; pointer-events: none; }
+        #aether-portal .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; z-index: 1;}
         #aether-portal .gallery-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem; margin-top: 4rem; }
         #aether-portal .gallery-item { position: relative; border-radius: 12px; overflow: hidden; background: #eee; }
         #aether-portal .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; }
@@ -1045,7 +1045,7 @@
                     <div class="hero-content" data-speed="0.05">
                         <h1 id="p-hero-title">Design<br>Motion<br>Emotion.</h1>
                         <p id="p-hero-desc">We craft digital experiences that transcend the ordinary. Blending high-end aesthetics with fluid, physics-based interaction.</p>
-                        <a href="#p-work" class="btn" id="heroBtn">View Projects</a>
+                        
                     </div>
                 </section>
                 <section class="video-section" id="p-work">

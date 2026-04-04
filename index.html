@@ -440,22 +440,39 @@
         .carousel-3d-container { perspective: 1000px; height: 400px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
         .carousel-track { display: flex; align-items: center; position: absolute; left: 50%; top: 50%; transform-style: preserve-3d; }
         
-        .carousel-card { 
-            width: 300px; height: 380px; position: absolute; left: 0; 
-            border-radius: 16px; overflow: hidden; 
-            transition: all 0.6s var(--ease-out-expo); cursor: pointer; 
-            border: 1px solid var(--glass-border);
-        }
-        .carousel-card img {
-    width: 100% !important; 
-    height: 100% !important; 
-    object-fit: cover !important; 
+    .carousel-card { 
+    width: 300px; 
+    height: 380px; 
     position: absolute; 
-    top: 0; 
     left: 0; 
+    border-radius: 16px; 
+    overflow: hidden; /* CRITICAL: This hides the parts of the image that spill over */
+    /* ... your other styles ... */
+}
+ .carousel-card img {
+    /* 1. Position it in the center of the card */
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    
+    /* 2. FORCE it to be at least as wide and tall as the card */
+    min-width: 100% !important;
+    min-height: 100% !important;
+    
+    /* 3. Reset any global height restrictions */
+    width: auto !important;
+    height: auto !important;
+    
+    /* 4. Pull it back into perfect center */
+    transform: translate(-50%, -50%) !important;
+    
     z-index: 1;
     transition: transform 0.5s;
-    /* This background will show RED if your image fails to load or has transparent edges */
+    
+    /* 5. Disable object-fit to let the math above do the work */
+    object-fit: unset !important; 
+    
+    /* KEEP THIS FOR NOW TO SEE WHAT HAPPENS: */
     background-color: red; 
 }
         .carousel-content {

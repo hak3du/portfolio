@@ -312,19 +312,19 @@
         /* =========================================
            3. SECTION: HERO
            ========================================= */
-        .section-hero { 
-            padding: var(--space-2xl) 5% var(--space-xl) 5%; 
-            position: relative; min-height: 100vh; 
-            display: flex; flex-direction: column; justify-content: center; 
-            border-bottom: 1px solid rgba(255,255,255,0.03); 
-        }
+       .section-hero { 
+    padding: var(--space-2xl) 5% var(--space-xl) 5%; 
+    position: relative; min-height: 100vh; 
+    display: grid; /* Changed from flex */
+    place-items: center; /* Perfect vertical and horizontal centering */
+    border-bottom: 1px solid rgba(255,255,255,0.03); 
+}
 
    .hero-container { 
     display: grid; grid-template-columns: 1fr 1fr; 
     gap: var(--space-xl); max-width: 1400px; width: 100%; 
     margin: 0 auto; 
     align-items: start;
-    align-self: start; /* NEW: Stops the grid from stretching to 100vh */
 }
         .hero-content { display: flex; flex-direction: column; }
         

@@ -449,31 +449,18 @@
     overflow: hidden; /* CRITICAL: This hides the parts of the image that spill over */
     /* ... your other styles ... */
 }
- .carousel-card img {
-    /* 1. Position it in the center of the card */
+.carousel-card img {
     position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    
-    /* 2. FORCE it to be at least as wide and tall as the card */
-    min-width: 100% !important;
-    min-height: 100% !important;
-    
-    /* 3. Reset any global height restrictions */
-    width: auto !important;
-    height: auto !important;
-    
-    /* 4. Pull it back into perfect center */
-    transform: translate(-50%, -50%) !important;
-    
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important; /* This prevents stretching */
     z-index: 1;
     transition: transform 0.5s;
     
-    /* 5. Disable object-fit to let the math above do the work */
-    object-fit: unset !important; 
-    
-    /* KEEP THIS FOR NOW TO SEE WHAT HAPPENS: */
-    background-color: red; 
+    /* Change this to green to see what is actually happening */
+    background-color: green; 
 }
         .carousel-content {
             position: absolute; bottom: 0; left: 0; width: 100%;

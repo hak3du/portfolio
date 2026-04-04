@@ -320,10 +320,11 @@
         }
 
         .hero-container { 
-            display: grid; grid-template-columns: 1fr 1fr; 
-            gap: var(--space-xl); max-width: 1400px; width: 100%; 
-            margin: 0 auto; align-items: center; 
-        }
+    display: grid; grid-template-columns: 1fr 1fr; 
+    gap: var(--space-xl); max-width: 1400px; width: 100%; 
+    margin: 0 auto; 
+    align-items: start; /* CHANGED FROM center */
+}
         .hero-content { display: flex; flex-direction: column; }
         
         .hero-subtitle { 
@@ -369,15 +370,15 @@
             box-shadow: none;
         }
 
-     .profile-wrapper {
-    height: 50%; /* Changed from 450px - now matches left column */
-    width: 50%; 
-    border-radius: 1px; overflow: hidden;
-    position: relative; border: 1px solid rgba(255,255,255,0.1);
+   .profile-wrapper {
+    height: 100%; /* Automatically matches the left column's exact height */
+    width: 100%; 
+    border-radius: 1px; 
+    overflow: hidden;
+    position: relative; 
+    border: 1px solid rgba(255,255,255,0.1);
     box-shadow: 0 0 40px rgba(0, 249, 203, 0.1);
-    display: flex; align-items: center; justify-content: center;
     background: #0a0a0a;
-    align-self: stretch; /* NEW: Forces the grid item to match the tallest column */
 }
         
         .profile-img { 

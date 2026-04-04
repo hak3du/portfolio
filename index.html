@@ -471,18 +471,148 @@
         /* =========================================
            5. SECTION: ARCHITECTURE (GRID)
            ========================================= */
-        .section-architecture { 
-            padding: var(--space-2xl) 5% var(--space-xl) 5%; 
-            position: relative; min-height: 100vh; 
-            display: flex; flex-direction: column; justify-content: center; 
-            border-bottom: 1px solid rgba(255,255,255,0.03); 
-        }
-        .neural-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-md); }
-        .neuron-card { background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: var(--space-lg); border-radius: 12px; transition: 0.4s; cursor: pointer; }
-        .neuron-card:hover { background: rgba(255,255,255,0.05); transform: translateY(-8px); border-color: var(--accent-cyan); }
-        .neuron-icon { font-size: var(--text-2xl); margin-bottom: var(--space-md); color: var(--text-muted); transition: 0.3s; }
-        .neuron-card:hover .neuron-icon { color: var(--accent-cyan); transform: scale(1.1); }
+   /* =========================================
+   5. SECTION: ARCHITECTURE (GRID)
+   ========================================= */
+.section-architecture { 
+    padding: var(--space-2xl) 5% var(--space-xl) 5%; 
+    position: relative; min-height: 100vh; 
+    display: flex; flex-direction: column; justify-content: center; 
+    border-bottom: 1px solid rgba(255,255,255,0.03); 
+}
 
+.neural-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
+    gap: var(--space-lg); 
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.neuron-card { 
+    background: rgba(255,255,255,0.015); 
+    border: 1px solid var(--glass-border); 
+    padding: var(--space-xl) var(--space-lg); 
+    border-radius: 16px; 
+    transition: all 0.5s var(--ease-out-expo); 
+    cursor: pointer; 
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Animated top accent line */
+.neuron-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 0%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+    transition: width 0.5s var(--ease-out-expo);
+}
+
+/* Corner glow on hover */
+.neuron-card::after {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 120px;
+    background: var(--accent-cyan);
+    opacity: 0;
+    filter: blur(60px);
+    border-radius: 50%;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.neuron-card:hover { 
+    background: rgba(0, 249, 203, 0.03); 
+    transform: translateY(-10px); 
+    border-color: rgba(0, 249, 203, 0.3);
+    box-shadow: 
+        0 20px 60px rgba(0,0,0,0.4),
+        0 0 30px rgba(0, 249, 203, 0.05),
+        inset 0 1px 0 rgba(0, 249, 203, 0.1);
+}
+
+.neuron-card:hover::before { width: 60%; }
+.neuron-card:hover::after { opacity: 0.15; }
+
+/* Icon container — centred circle */
+.neuron-icon { 
+    width: 72px; height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem; 
+    margin-bottom: var(--space-lg); 
+    color: var(--text-muted); 
+    transition: all 0.4s var(--ease-out-expo);
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.neuron-card:hover .neuron-icon { 
+    color: var(--accent-cyan); 
+    transform: scale(1.1); 
+    border-color: rgba(0, 249, 203, 0.3);
+    background: rgba(0, 249, 203, 0.08);
+    box-shadow: 0 0 25px rgba(0, 249, 203, 0.15);
+}
+
+/* Typography inside cards */
+.neuron-card h3 { 
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: var(--space-sm);
+    transition: color 0.3s;
+}
+
+.neuron-card:hover h3 {
+    color: var(--accent-cyan);
+}
+
+.neuron-card p { 
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 240px;
+}
+
+/* Status indicator dot at bottom of card */
+.neuron-status {
+    margin-top: var(--space-lg);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.neuron-status .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-cyan);
+    box-shadow: 0 0 8px var(--accent-cyan);
+    animation: pulse 2s infinite;
+}
         /* =========================================
            6. SECTION: FLAGSHIP (API)
            ========================================= */
@@ -956,19 +1086,39 @@
     </section>
 
     <!-- SECTION: ARCHITECTURE -->
-    <section id="architecture" class="section-architecture" data-bg="https://picsum.photos/seed/cyber_city/1920/1080">
-        <div class="section-header">
-            <span>03 // BLUEPRINT</span>
-            <h2>System Architecture</h2>
+  <!-- SECTION: ARCHITECTURE -->
+<section id="architecture" class="section-architecture" data-bg="https://picsum.photos/seed/cyber_city/1920/1080">
+    <div class="section-header">
+        <span>03 // BLUEPRINT</span>
+        <h2>System Architecture</h2>
+    </div>
+    <div class="neural-grid">
+        <div class="neuron-card">
+            <div class="neuron-icon">⚙️</div>
+            <h3>Orchestration</h3>
+            <p>Kubernetes clusters managing containerized workloads at scale.</p>
+            <div class="neuron-status"><span class="dot"></span> Active</div>
         </div>
-        <div class="neural-grid">
-            <div class="neuron-card"><div class="neuron-icon">⚙️</div><h3>Orchestration</h3><p>Kubernetes clusters.</p></div>
-            <div class="neuron-card"><div class="neuron-icon">🔒</div><h3>Security</h3><p>Zero-trust networks.</p></div>
-            <div class="neuron-card"><div class="neuron-icon">💻</div><h3>Edge Compute</h3><p>Lambda functions.</p></div>
-            <div class="neuron-card"><div class="neuron-icon">📊</div><h3>Data Lakes</h3><p>Petabyte analytics.</p></div>
+        <div class="neuron-card">
+            <div class="neuron-icon">🔒</div>
+            <h3>Security</h3>
+            <p>Zero-trust network architecture with end-to-end encryption.</p>
+            <div class="neuron-status"><span class="dot"></span> Active</div>
         </div>
-    </section>
-
+        <div class="neuron-card">
+            <div class="neuron-icon">💻</div>
+            <h3>Edge Compute</h3>
+            <p>Lambda functions deployed to 40+ global edge nodes.</p>
+            <div class="neuron-status"><span class="dot"></span> Active</div>
+        </div>
+        <div class="neuron-card">
+            <div class="neuron-icon">📊</div>
+            <h3>Data Lakes</h3>
+            <p>Petabyte-scale analytics with real-time stream processing.</p>
+            <div class="neuron-status"><span class="dot"></span> Active</div>
+        </div>
+    </div>
+</section>
     <!-- SECTION: FLAGSHIP -->
     <section id="flagship" class="section-flagship" data-bg="https://picsum.photos/seed/network_code/1920/1080">
         <div class="section-header">

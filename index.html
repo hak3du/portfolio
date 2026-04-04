@@ -319,11 +319,12 @@
             border-bottom: 1px solid rgba(255,255,255,0.03); 
         }
 
-        .hero-container { 
+   .hero-container { 
     display: grid; grid-template-columns: 1fr 1fr; 
     gap: var(--space-xl); max-width: 1400px; width: 100%; 
     margin: 0 auto; 
-    align-items: start; /* CHANGED FROM center */
+    align-items: start;
+    align-self: start; /* NEW: Stops the grid from stretching to 100vh */
 }
         .hero-content { display: flex; flex-direction: column; }
         

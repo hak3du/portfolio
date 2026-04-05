@@ -339,7 +339,7 @@
         
         .hero-title { 
             font-size: clamp(1.618rem, 1.618vw, 3.61rem);
-            line-height: 1.618 margin-bottom: var(--space-lg); font-weight: 444.618; letter-spacing: -2px; color: #fff; 
+            line-height: 1.618 margin-bottom; var(--space-lg); font-weight: 444.618; letter-spacing: -2px; color: #fff; 
             white-space: nowrap; overflow: hidden; display: inline-block;
             border-right: 3px solid var(--accent-cyan); animation: blink 0.75s step-end infinite;
         }
@@ -455,12 +455,11 @@
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    object-fit: cover !important; /* This prevents stretching */
+    object-fit: contain !important;
+    object-position: center center !important;
     z-index: 1;
     transition: transform 0.5s;
-    
-    /* Change this to green to see what is actually happening */
-    background-color: green; 
+    background-color: #0a0a0a;
 }
         .carousel-content {
             position: absolute; bottom: 0; left: 0; width: 100%;
@@ -1666,7 +1665,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const onTouchMove = (e) => {
                 if(!portalState.active) return;
                 const touchY = e.touches[0].clientY;
-                const deltaY = touchStart - touchStart;
+                const deltaY = touchStart - touchY;
                 portalState.target += deltaY;
                 touchStart = touchY;
             };

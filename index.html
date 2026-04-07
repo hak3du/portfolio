@@ -437,17 +437,17 @@
         }
 
         .carousel-wrapper { position: relative; width: 100%; max-width: 100%; margin: 0 auto; }
-        .carousel-3d-container { perspective: 1000px; height: 400px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .carousel-3d-container { 
+    perspective: 1000px; height: 260px; 
+    display: flex; align-items: center; justify-content: center; 
+    position: relative; overflow: hidden; 
+}
         .carousel-track { display: flex; align-items: center; position: absolute; left: 50%; top: 50%; transform-style: preserve-3d; }
         
-    .carousel-card { 
-    width: 300px; 
-    height: 380px; 
-    position: absolute; 
-    left: 0; 
-    border-radius: 16px; 
-    overflow: hidden; /* CRITICAL: This hides the parts of the image that spill over */
-    /* ... your other styles ... */
+   .carousel-card { 
+    width: 380px; 
+    height: 220px; 
+    position: absolute; left: 0; border-radius: 16px; overflow: hidden;
 }
 .carousel-card img {
     position: absolute !important;
@@ -955,7 +955,10 @@
             .hero-subtitle { justify-content: flex-start; }
             .carousel-3d-container { perspective: none; overflow-x: auto; height: auto; display: block; padding-bottom: var(--space-md); justify-content: flex-start; }
             .carousel-track { transform: none !important; position: relative; left: auto; top: auto; display: flex; gap: var(--space-md); width: max-content; padding: 0 var(--space-md); }
-            .carousel-card { position: relative; left: auto !important; transform: none !important; opacity: 1 !important; width: 260px; height: 350px; flex-shrink: 0; }
+            .carousel-card { 
+    position: relative; left: auto !important; transform: none !important; 
+    opacity: 1 !important; width: 300px; height: 175px; flex-shrink: 0; 
+}
             .carousel-controls { display: none; }
         }
 

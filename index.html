@@ -1,1905 +1,705 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adaptive Full-Stack Portfolio — Immersion</title>
-    <!-- Privacy-friendly analytics by Plausible -->
-    <script async src="https://plausible.io/js/pa-27ilakXMQ80kn7vkmOkZs.js"></script>
-    <script>
-  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-  plausible.init()
-    </script>
-    
-    <script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
-    <script src="https://files.bpcontent.cloud/2025/10/25/10/20251025100921-XYXSBLUK.js" defer></script>
-    
-    <!-- Fonts -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>THABANG TONY NGOEPE | Systems Architect</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
     <style>
-        /* =========================================
-           1. GLOBAL VARIABLES & RESET
-           ========================================= */
-        :root {
-            /* Colors */
-            --bg-deep: #050505;
-            --glass-bg: rgba(20, 20, 25, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --text-main: #ffffff;
-            --text-muted: #a1a1aa;
-            --accent-cyan: #00f9cb;
-            --accent-error: #ff4d4d;
-            
-            /* Fonts */
-            --font-display: 'Inter', system-ui, sans-serif;
-            --font-mono: 'Fira Code', monospace;
-            
-            /* Animation */
-            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
-
-            /* PYTHAGOREAN TRITONE MATH */
-            --tritone: 1.41421356; 
-            --base-unit: 1rem;
-
-            /* Sizing Scale */
-            --space-xs: calc(var(--base-unit) / var(--tritone)); 
-            --space-sm: var(--base-unit);               
-            --space-md: calc(var(--base-unit) * var(--tritone)); 
-            --space-lg: calc(var(--base-unit) * 2);      
-            --space-xl: calc(var(--base-unit) * 2.828);  
-            --space-2xl: calc(var(--base-unit) * 4);     
-
-            /* Typography Scale */
-            --text-xs: calc(var(--base-unit) / var(--tritone));
-            --text-sm: var(--base-unit);
-            --text-base: calc(var(--base-unit) * var(--tritone));
-            --text-lg: calc(var(--base-unit) * 2);
-            --text-xl: calc(var(--base-unit) * 2.828);
-            --text-2xl: calc(var(--base-unit) * 4);
-            --text-3xl: calc(var(--base-unit) * 5.656);
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        
-        /* =========================================
-    ADD-ON: VN STYLE AUDIO PLAYER
-    ========================================= */
-.vn-player-wrapper {
-    margin-top: var(--space-lg); /* Spacing below the H1 */
-    padding: var(--space-md) var(--space-lg);
-    background: rgba(10, 10, 12, 0.6);
-    border: 1px solid var(--glass-border);
-    border-left: 3px solid var(--accent-cyan);
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
-    max-width: 500px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-    backdrop-filter: blur(10px);
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s;
-}
-
-.vn-player-wrapper:hover {
-    border-color: rgba(0, 249, 203, 0.4);
-}
-
-/* Track Info Area */
-.vn-track-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.vn-label {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    color: var(--accent-cyan);
-    letter-spacing: 2px;
-    opacity: 0.8;
-}
-
-.vn-title-marquee {
-    white-space: nowrap;
-    overflow: hidden;
-    font-family: var(--font-display);
-    font-weight: 500;
-    color: #fff;
-    font-size: 0.95rem;
-    position: relative;
-}
-
-/* Controls */
-.vn-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-}
-
-.vn-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.vn-btn svg {
-    width: 24px;
-    height: 24px;
-    fill: currentColor;
-}
-
-.vn-btn:hover {
-    color: #fff;
-    background: rgba(255,255,255,0.1);
-}
-
-.vn-btn.main-action {
-    width: 48px;
-    height: 48px;
-    border: 1px solid var(--accent-cyan);
-    box-shadow: 0 0 10px rgba(0, 249, 203, 0.1);
-}
-
-.vn-btn.main-action:hover {
-    background: var(--accent-cyan);
-    color: #000;
-    box-shadow: 0 0 15px rgba(0, 249, 203, 0.4);
-}
-
-/* Fake Visualizer Bars */
-.vn-visualizer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 20px;
-    width: 100%;
-    opacity: 0.5;
-}
-
-.vn-visualizer .bar {
-    width: 4px;
-    background: var(--accent-cyan);
-    height: 4px;
-    border-radius: 2px;
-    animation: none;
-}
-
-/* Active State: When playing, bars animate */
-.vn-player-wrapper.playing .vn-visualizer {
-    opacity: 1;
-}
-
-.vn-player-wrapper.playing .vn-visualizer .bar {
-    animation: soundwave 0.8s ease-in-out infinite alternate;
-}
-
-/* Staggered animation delays for visualizer */
-.vn-visualizer .bar:nth-child(1) { animation-delay: 0.1s; }
-.vn-visualizer .bar:nth-child(2) { animation-delay: 0.3s; }
-.vn-visualizer .bar:nth-child(3) { animation-delay: 0.5s; }
-.vn-visualizer .bar:nth-child(4) { animation-delay: 0.2s; }
-.vn-visualizer .bar:nth-child(5) { animation-delay: 0.4s; }
-.vn-visualizer .bar:nth-child(6) { animation-delay: 0.1s; }
-.vn-visualizer .bar:nth-child(7) { animation-delay: 0.3s; }
-.vn-visualizer .bar:nth-child(8) { animation-delay: 0.5s; }
-.vn-visualizer .bar:nth-child(9) { animation-delay: 0.2s; }
-.vn-visualizer .bar:nth-child(10) { animation-delay: 0.4s; }
-.vn-visualizer .bar:nth-child(11) { animation-delay: 0.1s; }
-.vn-visualizer .bar:nth-child(12) { animation-delay: 0.3s; }
-
-@keyframes soundwave {
-    0% { height: 4px; opacity: 0.5; }
-    100% { height: 20px; opacity: 1; box-shadow: 0 0 5px var(--accent-cyan); }
-}
-
-/* Mobile Adjustments */
-@media (max-width: 768px) {
-    .vn-player-wrapper {
-        max-width: 100%;
-        margin-top: var(--space-md);
-    }
-}
-
-        body { 
-            background-color: var(--bg-deep); color: var(--text-main); 
-            font-family: var(--font-display); overflow-x: hidden; line-height: 1.6; 
-            height: auto; width: 100vw; transition: background-color 0.5s;
-            font-size: 16px;
-        }
-        a { text-decoration: none; color: inherit; }
-        button { cursor: pointer; border: none; font-family: inherit; background: none; }
-        img { display: block; max-width: 100%; height: auto; }
-        ::-webkit-scrollbar { display: none; }
-        body { scrollbar-width: none; }
-        ::selection { background: var(--accent-cyan); color: #000; }
-
-        /* Backgrounds */
-        #bg-slider { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; 
-            transition: background-image 1.2s ease-in-out, opacity 0.5s ease; 
-            background-size: cover; background-position: center; 
-            /* Cleaner filter to reduce artifacting on background images */
-            filter: brightness(0.4) contrast(1.1) saturate(1.1); 
-        }
-        .grain { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            pointer-events: none; z-index: 9000; opacity: 0.04; 
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); 
-        }
-
-        /* =========================================
-           2. COMPONENT: SMART NAVBAR
-           ========================================= */
-             /* =========================================
-           2. COMPONENT: SMART NAVBAR (INTEGRATED)
-           ========================================= */
-        
-        /* PEACH PALETTE FOR FLUID EFFECT */
-        :root {
-            --peach-bright: #ffecd2;   
-            --peach-mid: #fcb69f;      
-            --peach-deep: #ff9a9e;     
-            --peach-glow: rgba(255, 160, 122, 0.4); 
-        }
-
-        nav {
-            /* --- ORIGINAL LAYOUT (CRITICAL: Keep these) --- */
-            position: fixed; top: 0; left: 0; width: 100%;
-            height: 70px;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 var(--space-lg); z-index: 1000;
-            
-            /* --- ORIGINAL STYLING --- */
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 249, 203, 0.15);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            transform: translateY(0);
-
-            /* --- NEW FLUID EFFECTS --- */
-            overflow: hidden; /* Keeps canvas inside */
-            background: rgba(5, 5, 5, 0.85); 
-            position: relative; /* Context for absolute canvas */
-        }
-        
-        nav.nav-hidden { transform: translateY(-100%); }
-
-        /* --- THE CANVAS LAYER --- */
-        #fluid-nav-canvas {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0; /* Behind everything */
-            pointer-events: none; /* Let clicks pass through to links */
-            mix-blend-mode: screen; /* Makes the light blend beautifully with the dark bg */
-        }
-
-        /* Ensure Nav Links sit ON TOP of the canvas */
-        .nav-brand, .nav-center, .news-wrapper {
-            position: relative;
-            z-index: 2; /* Above canvas */
-        }
-
-        .nav-brand { 
-            font-family: var(--font-mono);
-            font-weight: 700; letter-spacing: 2px; 
-            color: var(--accent-cyan); text-transform: uppercase; font-size: var(--text-sm); 
-            z-index: 2;
-        }
-
-        .nav-center {
-            position: absolute; left: 50%; transform: translateX(-50%);
-            display: flex; gap: var(--space-lg);
-        }
-        
-        .nav-links a { 
-            color: var(--text-muted); font-size: var(--text-sm); 
-            font-family: var(--font-mono);
-            text-transform: uppercase; letter-spacing: 1px;
-            transition: 0.3s; position: relative;
-            z-index: 2;
-        }
-        
-        /* Interaction: Text turns peach on hover */
-        .nav-links a:hover { 
-            color: var(--peach-bright); 
-            text-shadow: 0 0 10px var(--peach-mid); 
-        }
-        
-        .nav-links a::after {
-            content: ''; position: absolute; bottom: -4px; left: 0; width: 0%; height: 1px;
-            background: var(--accent-cyan); transition: width 0.3s ease;
-        }
-        .nav-links a:hover::after { width: 100%; }
-
-        /* News Ticker */
-        .news-wrapper { display: flex; align-items: center; width: 35%; justify-content: flex-end; overflow: hidden; position: relative; z-index: 2; }
-        .news-label {
-            font-family: var(--font-mono); color: var(--accent-cyan); font-size: 0.65rem;
-            margin-right: 10px; white-space: nowrap;
-            background: rgba(0, 249, 203, 0.1);
-            padding: 4px 6px; border-radius: 2px;
-            border: 1px solid rgba(0, 249, 203, 0.3);
-        }
-        .news-ticker-container {
-            width: 0; opacity: 0; overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            white-space: nowrap; position: relative;
-        }
-        nav:hover .news-ticker-container { width: 100%; opacity: 1; }
-        .news-ticker {
-            display: inline-block; padding-left: 100%;
-            animation: ticker 115s linear infinite;
-            font-size: 0.75rem; color: #ddd; font-family: var(--font-mono);
-        }
-        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
-        .news-link { color: #ccc; margin-right: 30px; transition: color 0.2s; }
-        .news-link:hover { color: #fff; }
-
-        /* News Ticker */
-        .news-wrapper { display: flex; align-items: center; width: 35%; justify-content: flex-end; overflow: hidden; }
-        .news-label {
-            font-family: var(--font-mono); color: var(--accent-cyan); font-size: 0.65rem;
-            margin-right: 10px; white-space: nowrap;
-            background: rgba(0, 249, 203, 0.1);
-            padding: 4px 6px; border-radius: 2px;
-            border: 1px solid rgba(0, 249, 203, 0.3);
-        }
-        .news-ticker-container {
-            width: 0; opacity: 0; overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            white-space: nowrap; position: relative;
-        }
-        nav:hover .news-ticker-container { width: 100%; opacity: 1; }
-        .news-ticker {
-            display: inline-block; padding-left: 100%;
-            animation: ticker 115s linear infinite;
-            font-size: 0.75rem; color: #ddd; font-family: var(--font-mono);
-        }
-        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
-        .news-link { color: #ccc; margin-right: 30px; transition: color 0.2s; }
-        .news-link:hover { color: #fff; }
-
-        /* =========================================
-           3. SECTION: HERO
-           ========================================= */
-        .section-hero { 
-            padding: var(--space-2xl) 5% var(--space-xl) 5%; 
-            position: relative; min-height: 100vh; 
-            display: flex; flex-direction: column; justify-content: center; 
-            border-bottom: 1px solid rgba(255,255,255,0.03); 
-        }
-
-        .hero-container { 
-            display: grid; grid-template-columns: 1fr 1fr; 
-            gap: var(--space-xl); max-width: 1400px; width: 100%; 
-            margin: 0 auto; align-items: center; 
-        }
-        .hero-content { display: flex; flex-direction: column; }
-        
-        .hero-subtitle { 
-            font-size: var(--text-sm); color: var(--accent-cyan); margin-bottom: var(--space-md); 
-            font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 2px; 
-            display: flex; align-items: center; 
-        }
-        .status-dot { 
-            width: 8px; height: 8px; background: var(--accent-cyan); border-radius: 50%; 
-            margin-right: 10px; box-shadow: 0 0 10px var(--accent-cyan); animation: pulse 2s infinite; 
-        }
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-        
-        .hero-title { 
-            font-size: clamp(1.618rem, 1.618vw, 3.61rem);
-            line-height: 1.618 margin-bottom; var(--space-lg); font-weight: 444.618; letter-spacing: -2px; color: #fff; 
-            white-space: nowrap; overflow: hidden; display: inline-block;
-            border-right: 3px solid var(--accent-cyan); animation: blink 0.75s step-end infinite;
-        }
-        @keyframes blink { from, to { border-color: transparent } 50% { border-color: var(--accent-cyan); } }
-
-        .cta-group { display: flex; gap: var(--space-sm); margin-top: var(--space-lg); flex-wrap: wrap; }
-        .cta-petite {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 6px 14px; 
-            border-radius: 4px;
-            font-weight: 600; font-size: var(--text-xs); 
-            text-transform: uppercase; letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan);
-            background: rgba(0, 249, 203, 0.05);
-        }
-        .cta-petite:hover { background: var(--accent-cyan); color: #000; box-shadow: 0 0 15px rgba(0, 249, 203, 0.3); }
-        .cta-petite svg { width: 14px; height: 14px; fill: currentColor; }
-        
-        .cta-petite.secondary {
-            border-color: var(--glass-border); color: var(--text-muted);
-            background: rgba(255,255,255,0.02);
-        }
-        .cta-petite.secondary:hover {
-            border-color: #fff; color: #fff; background: rgba(255,255,255,0.1);
-            box-shadow: none;
-        }
-
-        .profile-wrapper {
-            height: 44.618%; 
-            width: 100%; 
-            border-radius: 24px; overflow: hidden;
-            position: relative; border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 0 40px rgba(0, 249, 203, 0.1);
-            display: flex; align-items: center; justify-content: center;
-            background: #0a0a0a; 
-        }
-        
-        .profile-img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            object-position: top center; 
-            transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
-        }
-        
-        .profile-wrapper:hover .profile-img { transform: scale(1.03); }
-        
-        .profile-wrapper::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border: 2px solid var(--accent-cyan); border-radius: 24px;
-            opacity: 0.5; pointer-events: none;
-            box-shadow: inset 0 0 20px rgba(0, 249, 203, 0.2);
-        }
-
-        /* =========================================
-           4. SECTION: DEPLOYMENTS (CAROUSEL)
-           ========================================= */
-        .section-deployments { 
-            padding: var(--space-2xl) 5% var(--space-xl) 5%; 
-            position: relative; min-height: 100vh; 
-            display: flex; flex-direction: column; justify-content: center; 
-            border-bottom: 1px solid rgba(255,255,255,0.03); 
-        }
-
-        .section-header { 
-            margin-bottom: var(--space-2xl); text-align: center; 
-            max-width: 800px; margin-left: auto; margin-right: auto; position: relative; z-index: 2; 
-        }
-        .section-header h2 { font-size: var(--text-xl); margin-bottom: var(--space-sm); line-height: 1.1; font-weight: 700; }
-        .section-header span { color: var(--accent-cyan); letter-spacing: 3px; text-transform: uppercase; font-family: var(--font-mono); font-size: var(--text-xs); display: block; margin-bottom: 10px; }
-        .section-header p { color: var(--text-muted); }
-
-        .experience-grid {
-            display: grid; grid-template-columns: 1fr 1.2fr; gap: var(--space-xl);
-            align-items: center; width: 100%; max-width: 1400px; margin: 0 auto;
-        }
-
-        .preview-video-container {
-            position: relative; width: 100%; border-radius: 4px; overflow: hidden;
-            background: transparent; border: none; box-shadow: none;
-        }
-        .video-wrapper-inner {
-            position: relative; width: 100%; padding-bottom: 56.25%; background: #000; overflow: hidden;
-        }
-        .video-wrapper-inner iframe {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
-            mix-blend-mode: screen; filter: contrast(1.2) brightness(1.3) saturate(1.2); opacity: 0.9;
-        }
-        .scanlines {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
-            background-size: 100% 4px; pointer-events: none; z-index: 2;
-        }
-
-        .carousel-wrapper { position: relative; width: 100%; max-width: 100%; margin: 0 auto; }
-        .carousel-3d-container { 
-    perspective: 1000px; height: 260px; 
-    display: flex; align-items: center; justify-content: center; 
-    position: relative; overflow: hidden; 
-}
-        .carousel-track { display: flex; align-items: center; position: absolute; left: 50%; top: 50%; transform-style: preserve-3d; }
-        
-   .carousel-card { 
-    width: 380px; 
-    height: 220px; 
-    position: absolute; left: 0; border-radius: 16px; overflow: hidden;
-}
-.carousel-card img {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain !important;
-    object-position: center center !important;
-    z-index: 1;
-    transition: transform 0.5s;
-    background-color: #0a0a0a;
-}
-        .carousel-content {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            padding: 20px; z-index: 2;
-            background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.6), transparent);
-            display: flex; flex-direction: column; justify-content: flex-end; height: 50%;
-        }
-        .carousel-title { font-size: var(--text-base); font-weight: 700; color: #fff; margin-bottom: 5px; }
-        .carousel-tech { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 1px; }
-
-        .carousel-controls { display: flex; justify-content: center; gap: var(--space-md); margin-top: var(--space-lg); }
-        .nav-arrow { 
-            width: 40px; height: 40px; border: 1px solid var(--glass-border); 
-            background: rgba(255,255,255,0.05); color: #fff; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; transition: 0.3s; 
-        }
-        .nav-arrow:hover { background: var(--accent-cyan); color: #000; border-color: var(--accent-cyan); }
-
-        /* =========================================
-           5. SECTION: ARCHITECTURE (GRID)
-           ========================================= */
-   /* =========================================
-   5. SECTION: ARCHITECTURE (GRID)
-   ========================================= */
-.section-architecture { 
-    padding: var(--space-2xl) 5% var(--space-xl) 5%; 
-    position: relative; min-height: 100vh; 
-    display: flex; flex-direction: column; justify-content: center; 
-    border-bottom: 1px solid rgba(255,255,255,0.03); 
-}
-
-.neural-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
-    gap: var(--space-lg); 
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-}
-
-.neuron-card { 
-    background: rgba(255,255,255,0.015); 
-    border: 1px solid var(--glass-border); 
-    padding: var(--space-xl) var(--space-lg); 
-    border-radius: 16px; 
-    transition: all 0.5s var(--ease-out-expo); 
-    cursor: pointer; 
-    position: relative;
-    overflow: hidden;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* Animated top accent line */
-.neuron-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 0%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
-    transition: width 0.5s var(--ease-out-expo);
-}
-
-/* Corner glow on hover */
-.neuron-card::after {
-    content: '';
-    position: absolute;
-    top: -60px; left: 50%;
-    transform: translateX(-50%);
-    width: 120px; height: 120px;
-    background: var(--accent-cyan);
-    opacity: 0;
-    filter: blur(60px);
-    border-radius: 50%;
-    transition: opacity 0.5s ease;
-    pointer-events: none;
-}
-
-.neuron-card:hover { 
-    background: rgba(0, 249, 203, 0.03); 
-    transform: translateY(-10px); 
-    border-color: rgba(0, 249, 203, 0.3);
-    box-shadow: 
-        0 20px 60px rgba(0,0,0,0.4),
-        0 0 30px rgba(0, 249, 203, 0.05),
-        inset 0 1px 0 rgba(0, 249, 203, 0.1);
-}
-
-.neuron-card:hover::before { width: 60%; }
-.neuron-card:hover::after { opacity: 0.15; }
-
-/* Icon container — centred circle */
-.neuron-icon { 
-    width: 72px; height: 72px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.75rem; 
-    margin-bottom: var(--space-lg); 
-    color: var(--text-muted); 
-    transition: all 0.4s var(--ease-out-expo);
-    border-radius: 50%;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
-    position: relative;
-    flex-shrink: 0;
-}
-
-.neuron-card:hover .neuron-icon { 
-    color: var(--accent-cyan); 
-    transform: scale(1.1); 
-    border-color: rgba(0, 249, 203, 0.3);
-    background: rgba(0, 249, 203, 0.08);
-    box-shadow: 0 0 25px rgba(0, 249, 203, 0.15);
-}
-
-/* Typography inside cards */
-.neuron-card h3 { 
-    font-family: var(--font-mono);
-    font-size: var(--text-base);
-    font-weight: 600;
-    color: #fff;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: var(--space-sm);
-    transition: color 0.3s;
-}
-
-.neuron-card:hover h3 {
-    color: var(--accent-cyan);
-}
-
-.neuron-card p { 
-    font-size: var(--text-sm);
-    color: var(--text-muted);
-    line-height: 1.6;
-    max-width: 240px;
-}
-
-/* Status indicator dot at bottom of card */
-.neuron-status {
-    margin-top: var(--space-lg);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.neuron-status .dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--accent-cyan);
-    box-shadow: 0 0 8px var(--accent-cyan);
-    animation: pulse 2s infinite;
-}
-        /* =========================================
-           6. SECTION: FLAGSHIP (API)
-           ========================================= */
-        .section-flagship { 
-            padding: var(--space-2xl) 5% var(--space-xl) 5%; 
-            position: relative; min-height: 100vh; 
-            display: flex; flex-direction: column; justify-content: center; 
-            border-bottom: 1px solid rgba(255,255,255,0.03); 
-        }
-        .api-interface { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); max-width: 1000px; width: 100%; margin: 0 auto; }
-        .api-controls { background: var(--glass-bg); padding: var(--space-lg); border-radius: 12px; border: 1px solid var(--glass-border); }
-        .api-display { background: #0a0a0a; padding: var(--space-md); border-radius: 12px; font-family: var(--font-mono); font-size: var(--text-sm); color: #4ade80; border: 1px solid #333; overflow: auto; min-height: 300px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
-        .input-group { margin-bottom: var(--space-md); }
-        .input-group label { display: block; margin-bottom: 8px; font-size: var(--text-xs); color: var(--accent-cyan); letter-spacing: 1px; }
-        .api-input { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid #333; color: #fff; padding: 12px; font-family: var(--font-mono); border-radius: 6px; transition: 0.3s; font-size: var(--text-sm); }
-        .api-input:focus { border-color: var(--accent-cyan); background: rgba(0,0,0,0.6); }
-        .btn-group { display: flex; gap: var(--space-sm); margin-top: var(--space-sm); }
-        .action-btn { flex: 1; padding: 12px; border-radius: 6px; font-weight: 600; font-size: var(--text-sm); transition: 0.3s; border: 1px solid var(--accent-cyan); color: var(--accent-cyan); background: transparent; }
-        .action-btn:hover { background: var(--accent-cyan); color: #000; box-shadow: 0 0 20px rgba(0, 249, 203, 0.3); }
-
-        /* =========================================
-           7. SECTION: CONTACT
-           ========================================= */
-        .section-contact { 
-            padding: var(--space-2xl) 5% var(--space-xl) 5%; 
-            position: relative; min-height: 80vh; 
-            display: flex; flex-direction: column; justify-content: center; 
-            border-bottom: 1px solid rgba(255,255,255,0.03); 
-        }
-
-        .contact-container {
-            max-width: 900px; width: 100%; margin: 0 auto;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: var(--space-2xl);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .contact-container::before {
-            content: ''; position: absolute; top: -50px; left: -50px; width: 200px; height: 200px;
-            background: var(--accent-cyan); opacity: 0.1; filter: blur(80px); border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .contact-form-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); margin-top: var(--space-xl);
-        }
-
-        .form-group { display: flex; flex-direction: column; }
-        .form-group.full-width { grid-column: span 2; }
-
-        .contact-label {
-            font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted);
-            margin-bottom: var(--space-sm); letter-spacing: 1px; text-transform: uppercase;
-        }
-
-        .contact-input {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--glass-border);
-            padding: 16px;
-            color: #fff;
-            font-family: var(--font-display);
-            font-size: 1rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .contact-input:focus {
-            border-color: var(--accent-cyan);
-            background: rgba(0,0,0,0.5);
-            box-shadow: 0 0 0 2px rgba(0, 249, 203, 0.1);
-            outline: none;
-        }
-
-        .contact-input::placeholder { color: rgba(255,255,255,0.2); }
-
-        .submit-btn {
-            grid-column: span 2;
-            padding: 18px;
-            background: transparent;
-            border: 1px solid var(--accent-cyan);
-            color: var(--accent-cyan);
-            font-family: var(--font-mono);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            display: flex; justify-content: center; align-items: center; gap: 10px;
-        }
-
-        .submit-btn:hover {
-            background: var(--accent-cyan);
-            color: #000;
-            box-shadow: 0 0 30px rgba(0, 249, 203, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .submit-btn:disabled {
-            opacity: 0.7; cursor: not-allowed; transform: none;
-        }
-
-        .spinner {
-            width: 16px; height: 16px; border: 2px solid rgba(0,0,0,0.1);
-            border-top: 2px solid #000; border-radius: 50%;
-            animation: spin 1s linear infinite; display: none;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* =========================================
-           8. FOOTER & UTILS
-           ========================================= */
-        footer { text-align: center; padding: var(--space-xl) var(--space-md); border-top: 1px solid var(--glass-border); color: var(--text-muted); font-family: var(--font-mono); font-size: var(--text-sm); background: #020202; }
-        
-        #toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 20000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { background: rgba(0,0,0,0.9); border: 1px solid var(--accent-cyan); color: #fff; padding: 15px 25px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.8rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateX(100%); opacity: 0; transition: 0.4s var(--ease-out-expo); }
-        .toast.show { transform: translateX(0); opacity: 1; }
-        .toast.error { border-color: var(--accent-error); }
-
-        /* =========================================
-           9. AETHER PORTAL (STYLES ISOLATED)
-           ========================================= */
-        #aether-portal {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 15000;
-            opacity: 0; pointer-events: none; transform: scale(1.05);
-            transition: opacity 0.6s ease, transform 0.6s ease; overflow: hidden; 
-            font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased;
-            --bg-body: #F9F8F4; --text-main: #1C1C1C; --text-muted: #6B6B6B; --accent: #D4AF37;
-            --accent-light: #F2E8C9; --bg-card: #FFFFFF; --font-sans: 'Inter', sans-serif;
-            --font-serif: 'Playfair Display', serif; --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
-            --container-width: 1400px; background-color: var(--bg-body); color: var(--text-main);
-        }
-        #aether-portal.active { opacity: 1; pointer-events: auto; transform: scale(1); }
-        #aether-portal *, #aether-portal *::before, #aether-portal *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        #aether-portal a { text-decoration: none; color: inherit; }
-        #aether-portal ul { list-style: none; }
-        #aether-portal img { display: block; max-width: 100%; height: auto; }
-        #aether-portal ::-webkit-scrollbar { display: none; }
-        #aether-portal .noise-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
-        
-        #aether-portal nav {
-            position: fixed; top: 0; left: 0; width: 100%; padding: var(--space-lg) 4rem;
-            display: flex; justify-content: space-between; align-items: center; z-index: 100;
-            transition: padding 0.3s ease, background 0.3s ease; mix-blend-mode: difference; color: #fff; 
-            transform: none; left: 0; background: transparent; box-shadow: none; border: none; border-radius: 0;
-        }
-        #aether-portal nav.scrolled { padding: 1.5rem 4rem; background: rgba(252, 250, 245, 0.9); backdrop-filter: blur(10px); mix-blend-mode: normal; color: var(--text-main); border-bottom: 1px solid rgba(0,0,0,0.05); }
-        #aether-portal .logo { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; color: inherit; }
-        #aether-portal .nav-links { display: flex; gap: 3rem; }
-        #aether-portal .nav-link { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; position: relative; transition: opacity 0.3s; color: inherit; cursor: pointer; }
-        #aether-portal .nav-link::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0%; height: 1px; background: currentColor; transition: width 0.4s var(--ease-out); }
-        #aether-portal .nav-link:hover::after { width: 100%; }
-        
-        #aether-portal .btn {
-            display: inline-flex; align-items: center; justify-content: center; padding: 1rem 2.5rem; border-radius: 100px;
-            border: 1px solid var(--text-main); background: transparent; color: var(--text-main); font-family: var(--font-sans); font-size: 0.8rem;
-            text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; transition: all 0.4s var(--ease-out); position: relative; overflow: hidden; z-index: 10;
-        }
-        #aether-portal .btn::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--text-main); transform: scaleX(0); transform-origin: right; transition: transform 0.4s var(--ease-out); }
-        #aether-portal .btn:hover { color: var(--bg-body); border-color: transparent; }
-        #aether-portal .btn:hover::before { transform: scaleX(1); transform-origin: left; }
-
-        #aether-portal .viewport { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; }
-        #aether-portal .scroll-container { width: 100%; will-change: transform; }
-        #aether-portal .container { max-width: var(--container-width); margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
-        #aether-portal section { position: relative; padding: 8rem 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; border-bottom: none; }
-        #aether-portal .hero { align-items: flex-start; padding-top: 20vh; overflow: hidden; }
-        #aether-portal .hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 120%; object-fit: cover; z-index: 0; opacity: 0.8; filter: grayscale(100%) contrast(0.9); }
-        #aether-portal .hero-content { max-width: 800px; opacity: 0; transform: translateY(30px); animation: fadeInUp 1s var(--ease-out) forwards 0.5s; }
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-        #aether-portal h1 { font-family: var(--font-serif); font-size: clamp(3rem, 8vw, 8rem); line-height: 0.95; letter-spacing: -0.03em; margin-bottom: 2rem; color: var(--text-main); }
-        #aether-portal .hero p { font-size: 1.25rem; color: #ffffff ; max-width: 500px; line-height: 1.6; margin-bottom: 3rem; }
-        #aether-portal .video-section { background: #fff; }
-        #aether-portal .video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; background: #000; border-radius: 20px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.1); }
-        #aether-portal .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; z-index: 1;}
-        #aether-portal .gallery-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem; margin-top: 4rem; }
-        #aether-portal .gallery-item { position: relative; border-radius: 12px; overflow: hidden; background: #eee; }
-        #aether-portal .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; }
-        #aether-portal .gallery-item:hover img { transform: scale(1.05); }
-        #aether-portal .col-4 { grid-column: span 4; }
-        #aether-portal .col-6 { grid-column: span 6; }
-        #aether-portal .col-8 { grid-column: span 8; }
-        #aether-portal .col-12 { grid-column: span 12; }
-        #aether-portal .aspect-h-1 { aspect-ratio: 1/1; }
-        #aether-portal .aspect-h-2 { aspect-ratio: 4/5; }
-        #aether-portal .aspect-landscape { aspect-ratio: 16/9; }
-        #aether-portal .text-content { max-width: 700px; margin: 0 auto; text-align: center; }
-        #aether-portal .section-label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1rem; }
-        #aether-portal h2 { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 2rem; color: var(--text-main); }
-        #aether-portal .lead { font-size: 1.5rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 3rem; }
-        #aether-portal footer { padding: 6rem 0 3rem; text-align: center; border-top: 1px solid rgba(0,0,0,0.05); color: var(--text-muted); background: transparent; }
-        @media (max-width: 1024px) { #aether-portal .gallery-grid { grid-template-columns: repeat(8, 1fr); } #aether-portal .col-4, #aether-portal .col-6, #aether-portal .col-8 { grid-column: span 4; } #aether-portal .col-12 { grid-column: span 8; } }
-        @media (max-width: 768px) { #aether-portal nav { padding: 1.5rem 2rem; } #aether-portal .nav-links { display: none; } #aether-portal .container { padding: 0 1.5rem; } #aether-portal .gallery-grid { grid-template-columns: 1fr; gap: 1.5rem; } #aether-portal .col-4, #aether-portal .col-6, #aether-portal .col-8, #aether-portal .col-12 { grid-column: span 1; } #aether-portal .hero-bg { height: 100%; } }
-        #warp-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 14000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
-        #warp-overlay.active { opacity: 1; pointer-events: auto; }
-
-        /* =========================================
-           10. SYSTEM OVERLAY (IFRAME VERSION)
-           ========================================= */
-        #system-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000; /* Pure black background behind the iframe */
-            z-index: 20000; /* Above Aether Portal */
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(100%);
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-            display: flex;
-            flex-direction: column;
-
-        }
-
-        #system-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateY(0);
-        }
-
-        .sys-overlay-header {
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(20, 20, 20, 0.95);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            flex-shrink: 0; /* Prevents header from shrinking */
-            z-index: 20001;
-        }
-
-        .sys-title {
-            font-family: var(--font-mono);
-            color: var(--accent-cyan);
-            font-size: 1rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .sys-close-btn {
-            background: transparent;
-            border: 1px solid #444;
-            color: #fff;
-            padding: 8px 20px;
-            font-family: var(--font-mono);
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-        }
-
-        .sys-close-btn:hover {
-            border-color: var(--accent-error);
-            color: var(--accent-error);
-        }
-
-        /* The container for the iframe */
-        .iframe-wrapper {
-            flex: 1;
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: #111;
-            overflow: hidden;
-        }
-
-.iframe-wrapper iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-    opacity: 0; /* START INVISIBLE */
-    transition: opacity 0.6s ease; /* Smooth fade-in */
-    background: #050505; /* Match your deep-space color to prevent white flash */
-}
-
-        /* Loading Spinner */
-        .iframe-loader {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: var(--accent-cyan);
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            z-index: 0;
-            pointer-events: none;
-            text-align: center;
-        }
-
-        /* Add a simple spinner for the loader */
-        .spinner-ring {
-            display: inline-block;
-            width: 40px; height: 40px;
-            border: 2px solid rgba(0, 249, 203, 0.3);
-            border-top: 2px solid var(--accent-cyan);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 15px;
-        }
-
-        /* =========================================
-           11. RESPONSIVE MEDIA QUERIES
-           ========================================= */
-        @media (max-width: 1024px) {
-            .hero-container { grid-template-columns: 1fr; text-align: center; gap: var(--space-lg); }
-            .hero-content { order: 2; margin-top: var(--space-md); }
-            .experience-grid { grid-template-columns: 1fr; gap: var(--space-lg); }
-            .preview-video-container { order: -1; } 
-            .api-interface { grid-template-columns: 1fr; }
-            .contact-form-grid { grid-template-columns: 1fr; gap: var(--space-md); }
-            .form-group.full-width { grid-column: span 1; }
-            .submit-btn { grid-column: span 1; }
-        }
-
-        @media (max-width: 768px) {
-            :root { --base-unit: 0.9rem; } 
-            nav { padding: 0 var(--space-md); height: 60px; }
-            .nav-center { display: none; } 
-            .news-wrapper { display: none; } 
-            .hero-title { 
-                white-space: normal; width: auto !important; border: none; 
-                font-size: 2.5rem; text-align: left; 
-            }
-            .hero-subtitle { justify-content: flex-start; }
-            .carousel-3d-container { perspective: none; overflow-x: auto; height: auto; display: block; padding-bottom: var(--space-md); justify-content: flex-start; }
-            .carousel-track { transform: none !important; position: relative; left: auto; top: auto; display: flex; gap: var(--space-md); width: max-content; padding: 0 var(--space-md); }
-            .carousel-card { 
-    position: relative; left: auto !important; transform: none !important; 
-    opacity: 1 !important; width: 300px; height: 175px; flex-shrink: 0; 
-}
-            .carousel-controls { display: none; }
-        }
-
-        @media (max-width: 480px) {
-            .section-header h2 { font-size: var(--text-lg); }
-            .neuron-card { padding: var(--space-md); }
-            .cta-group { flex-direction: column; width: 100%; }
-            .cta-petite { justify-content: center; width: 100%; }
-        }
-        /* =========================================
-   UPDATED NAVBAR VARIABLES & STYLES
-   ========================================= */
-
-
+        :root{--accent-yellow:#FFCC00;--accent-green:#01A982;--accent-cyan:#1fd7e8;--accent-magenta:#ff3da6;--deep-black:#000000;--card-bg:rgba(8,8,12,0.55);--text-white:#ffffff;--text-grey:#cccccc;--text-dim:#888888;--font-main:'Space Grotesk',sans-serif;--font-mono:'JetBrains Mono',monospace;--natgeo-yellow:#FFCC00;--dark-grey:#121212;--text-body:#e0e0e0;--border-width:12px;--font-serif:'Playfair Display',serif;--font-sans:'Lato',sans-serif;--ease-out-expo:cubic-bezier(0.19,1,0.22,1);--card-lime:#8ed500;--card-dark:#050505;}
+        *{margin:0;padding:0;box-sizing:border-box;}
+        html,body{width:100%;overflow-x:hidden;background-color:var(--deep-black);}
+        body{font-family:var(--font-main);color:var(--text-white);-webkit-font-smoothing:antialiased;font-weight:400;}
+        body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:50px 50px;z-index:-1;pointer-events:none;}
+        ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:#050505;}::-webkit-scrollbar-thumb{background:#333;border-radius:3px;}::-webkit-scrollbar-thumb:hover{background:var(--accent-yellow);}
+        .noise-overlay{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;opacity:0.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+        .global-scan{position:fixed;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--accent-green),transparent);opacity:0.4;z-index:9998;pointer-events:none;animation:globalScan 8s linear infinite;}
+        @keyframes globalScan{0%{top:0}100%{top:100%}}
+        #network-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;pointer-events:none;opacity:0.3;}
+        .progress-bar{position:fixed;top:0;left:0;height:4px;background:var(--accent-yellow);width:0%;z-index:10002;}
+
+        nav{position:fixed;top:clamp(10px,3vh,30px);left:50%;transform:translateX(-50%);z-index:10001;display:flex;align-items:center;gap:clamp(12px,2vw,30px);background:rgba(0,0,0,0.4);backdrop-filter:blur(20px);padding:clamp(6px,1vh,10px) clamp(12px,2.5vw,30px);border-radius:50px;box-shadow:0 10px 40px rgba(0,0,0,0.5);visibility:hidden;opacity:0;}
+        .logo{font-family:var(--font-main);font-weight:700;font-size:clamp(0.7rem,1.2vw,1rem);color:var(--deep-black);background:var(--accent-yellow);padding:clamp(2px,0.4vh,4px) clamp(6px,1vw,10px);text-transform:uppercase;letter-spacing:2px;cursor:pointer;box-shadow:0 0 15px rgba(255,204,0,0.3);white-space:nowrap;}
+        .nav-links{display:flex;align-items:center;gap:clamp(10px,2vw,30px);}
+        .menu-btn{font-family:var(--font-main);color:rgba(255,255,255,0.7);text-decoration:none;font-weight:500;text-transform:uppercase;font-size:clamp(0.5rem,0.9vw,0.7rem);letter-spacing:clamp(1px,0.15vw,2px);cursor:pointer;transition:all 0.3s ease;white-space:nowrap;}
+        .menu-btn:hover{color:var(--accent-yellow);}
+        .hamburger{display:none;background:none;border:none;cursor:pointer;width:28px;height:20px;position:relative;z-index:10002;flex-direction:column;justify-content:space-between;}
+        .hamburger span{display:block;width:100%;height:2px;background:var(--accent-yellow);transition:all 0.3s ease;transform-origin:center;}
+        .hamburger.active span:nth-child(1){transform:translateY(9px) rotate(45deg);}
+        .hamburger.active span:nth-child(2){opacity:0;}
+        .hamburger.active span:nth-child(3){transform:translateY(-9px) rotate(-45deg);}
+        .mobile-dropdown{display:none;position:fixed;top:0;left:0;width:100%;height:100dvh;background:rgba(0,0,0,0.95);backdrop-filter:blur(30px);z-index:10000;flex-direction:column;align-items:center;justify-content:center;gap:30px;opacity:0;pointer-events:none;transition:opacity 0.4s ease;}
+        .mobile-dropdown.open{opacity:1;pointer-events:auto;}
+        .mobile-dropdown .menu-btn{font-size:1rem;letter-spacing:3px;}
+
+        .hero{position:relative;height:100vh;height:100dvh;min-height:100dvh;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;z-index:10;}
+        .hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;background-image:url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop');background-size:cover;background-position:center;z-index:1;will-change:transform;}
+        .hero-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center,rgba(0,0,0,0.4) 0%,rgba(0,0,0,0.98) 90%);z-index:2;}
+        .cinematic-intro{position:absolute;top:0;left:0;width:100%;height:100vh;height:100dvh;z-index:15;pointer-events:none;overflow:hidden;}
+        .intro-panel{position:absolute;top:0;left:0;width:100%;height:100%;background-size:cover;background-position:center;background-repeat:no-repeat;will-change:transform;filter:brightness(0.8) contrast(1.2) saturate(0.8);}
+        .intro-panel-left{background-color:#0a1a0a;background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop');clip-path:polygon(0 0,100% 0,0 100%);}
+        .intro-panel-right{background-color:#0a0a1a;background-image:url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&auto=format&fit=crop');clip-path:polygon(100% 0,100% 100%,0 100%);}
+        .intro-seam{position:absolute;top:0;left:0;width:100%;height:100%;z-index:11;opacity:0;pointer-events:none;}
+        .intro-seam line{stroke:#FFCC00;stroke-width:2;filter:drop-shadow(0 0 8px #FFCC00) drop-shadow(0 0 20px #FFCC00);}
+        .intro-tagline{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--font-mono);font-size:clamp(0.6rem,1.5vw,0.85rem);letter-spacing:clamp(4px,1vw,8px);color:var(--accent-yellow);text-transform:uppercase;z-index:12;opacity:0;text-align:center;text-shadow:0 0 20px rgba(0,0,0,0.8);user-select:none;-webkit-user-select:none;white-space:nowrap;}
+        .intro-tagline span{display:block;font-size:clamp(0.45rem,1vw,0.65rem);color:var(--text-grey);letter-spacing:clamp(2px,0.5vw,4px);margin-top:10px;white-space:nowrap;}
+        .hero-mechanisms{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:clamp(400px,60vw,800px);height:clamp(400px,60vw,800px);z-index:3;pointer-events:none;opacity:0;}
+        .mech-gear{position:absolute;border:2px solid rgba(255,204,0,0.3);border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);}
+        .mech-circle{position:absolute;border:1px dashed rgba(255,255,255,0.1);border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);}
+        .mech-arm{position:absolute;background:rgba(1,169,130,0.4);height:2px;top:50%;left:50%;transform-origin:0% 50%;border-radius:2px;}
+        .hero-layer{position:absolute;width:100%;height:100%;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 clamp(10px,3vw,20px);opacity:0;visibility:hidden;user-select:none;-webkit-user-select:none;}
+        .hero-layer.is-hidden{pointer-events:none;}
+        .init-logo{font-size:clamp(2.5rem,8vw,4rem);font-weight:700;color:var(--accent-yellow);letter-spacing:-2px;margin-bottom:clamp(15px,3vh,30px);text-shadow:0 0 20px rgba(255,204,0,0.5);}
+        .init-btn-group{display:flex;gap:clamp(10px,2vw,20px);flex-wrap:wrap;justify-content:center;}
+        .btn-mech{font-family:var(--font-mono);font-size:clamp(0.65rem,1.2vw,0.85rem);font-weight:700;padding:clamp(0.7rem,1.5vh,1rem) clamp(1.2rem,3vw,2.5rem);border:none;outline:none;background:rgba(255,204,0,0.1);color:var(--accent-yellow);cursor:pointer;text-transform:uppercase;letter-spacing:2px;transition:0.4s;position:relative;overflow:hidden;text-decoration:none;display:inline-block;backdrop-filter:blur(10px);box-shadow:0 0 20px rgba(255,204,0,0.1);}
+        .btn-mech::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:var(--accent-yellow);transition:0.4s;z-index:-1;transform:skewX(-15deg);}
+        .btn-mech:hover::after{left:100%;}.btn-mech:hover{color:var(--deep-black);box-shadow:0 0 30px rgba(255,204,0,0.4);}
+        .btn-vid{font-family:var(--font-mono);font-size:clamp(0.65rem,1.2vw,0.85rem);font-weight:700;padding:clamp(0.7rem,1.5vh,1rem) clamp(1.2rem,3vw,2.5rem);border:none;outline:none;background:rgba(14,14,26,0.6);color:rgb(234,234,234);cursor:pointer;text-transform:uppercase;letter-spacing:2px;transition:0.6s;box-shadow:0px 0px 40px rgba(31,215,232,0.2);text-decoration:none;display:inline-block;backdrop-filter:blur(10px);}
+        .btn-vid:hover{background:linear-gradient(270deg,rgba(2,29,78,0.681) 0%,rgba(31,215,232,0.873) 60%);color:rgb(4,4,38);box-shadow:0px 0px 60px rgba(31,215,232,0.4);}
+        .hero-content{width:100%;max-width:900px;position:relative;display:flex;flex-direction:column;align-items:center;}
+        .hero-profile-orb{width:clamp(100px,18vw,180px);height:clamp(100px,18vw,180px);margin:0 auto clamp(20px,4vh,40px) auto;position:relative;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+        .hero-profile-orb::before{content:'';position:absolute;inset:-4px;border-radius:50%;background:conic-gradient(from 0deg,var(--accent-yellow),var(--accent-green),var(--accent-cyan),var(--accent-yellow));animation:spin 6s linear infinite;z-index:-1;filter:blur(8px);opacity:0.8;}
+        .hero-profile-orb::after{content:'';position:absolute;inset:0;border-radius:50%;background:var(--deep-black);z-index:-1;}
+        @keyframes spin{100%{transform:rotate(360deg)}}
+        .hero-profile-img{width:100%;height:100%;border-radius:50%;object-fit:cover;z-index:1;pointer-events:none;}
+        .hero-kicker{font-family:var(--font-mono);font-size:clamp(0.6rem,1.2vw,0.8rem);text-transform:uppercase;letter-spacing:clamp(3px,0.8vw,5px);margin-bottom:clamp(10px,2vh,20px);display:block;color:var(--accent-green);}
+        .hero h1{font-family:var(--font-main);font-size:clamp(2rem,7vw,5rem);line-height:1;margin-bottom:clamp(15px,2.5vh,25px);text-shadow:0 20px 50px rgba(0,0,0,0.8);font-weight:700;text-align:center;}
+        .hero h1 span{color:var(--accent-yellow);font-weight:300;font-style:italic;}
+        .hero-subtitle{font-size:clamp(0.8rem,1.4vw,1.1rem);color:var(--text-grey);max-width:700px;margin:0 auto clamp(15px,3vh,30px) auto;font-weight:300;text-align:center;line-height:1.6;}
+        .hero-content .init-btn-group{margin-top:clamp(10px,2vh,20px);}
+        .scroll-indicator{position:absolute;bottom:clamp(20px,5vh,40px);left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.4);text-transform:uppercase;font-family:var(--font-mono);font-size:clamp(0.5rem,0.9vw,0.65rem);letter-spacing:3px;z-index:10;animation:bounce 2s infinite;user-select:none;-webkit-user-select:none;}
+        @keyframes bounce{0%,20%,50%,80%,100%{transform:translateY(0) translateX(-50%);}40%{transform:translateY(-10px) translateX(-50%);}60%{transform:translateY(-5px) translateX(-50%);}}
+        .hero-slideshow,.section-slideshow{position:absolute;top:0;left:0;width:100%;height:100%;height:100dvh;background:#000;opacity:0;visibility:hidden;pointer-events:none;overflow:hidden;}
+        .section-slideshow{z-index:30;}.hero-slideshow{z-index:20;}
+        .ss-slide{position:absolute;top:0;left:0;width:100%;height:100%;background-size:cover;background-position:center;background-color:#050508;opacity:0;transition:opacity 1s ease;}
+        .ss-slide.active{opacity:1;}
+        .ss-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.7) 100%);z-index:1;}
+        .ss-info{position:absolute;bottom:0;left:0;right:0;padding:clamp(15px,3vh,40px) clamp(15px,3vw,40px);background:linear-gradient(transparent,rgba(0,0,0,0.9));display:flex;justify-content:space-between;align-items:flex-end;z-index:2;}
+        .ss-label{font-family:var(--font-mono);font-size:clamp(0.5rem,0.9vw,0.65rem);color:var(--text-grey);letter-spacing:3px;text-transform:uppercase;}
+        .ss-counter{font-family:var(--font-mono);font-size:clamp(0.6rem,1vw,0.75rem);color:var(--accent-yellow);letter-spacing:2px;}
+        .ss-progress{position:absolute;bottom:0;left:0;width:100%;height:3px;background:rgba(255,255,255,0.1);z-index:3;}
+        .ss-bar{height:100%;width:0%;background:var(--accent-yellow);}
+        .ss-skip{position:absolute;top:clamp(12px,2vh,20px);right:clamp(12px,2vw,20px);background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);font-family:var(--font-mono);font-size:clamp(0.5rem,0.8vw,0.65rem);padding:clamp(6px,1vh,8px) clamp(10px,1.5vw,16px);cursor:pointer;text-transform:uppercase;letter-spacing:2px;transition:0.3s;z-index:3;backdrop-filter:blur(10px);}
+        .ss-skip:hover{border-color:var(--accent-yellow);color:var(--accent-yellow);}
+        .hero-video-overlay{position:absolute;top:0;left:0;width:100%;height:100%;z-index:20;opacity:0;visibility:hidden;pointer-events:none;display:flex;align-items:center;justify-content:center;}
+        .hero-video-container{width:clamp(85vw,90vw,80vw);max-width:1000px;aspect-ratio:16/9;position:relative;background-color:rgb(14,14,26);border-radius:8px;overflow:hidden;box-shadow:0px 0px 80px rgba(31,215,232,0.3);transform:scale(0.8);}
+        .hero-video-container iframe{width:100%;height:100%;border:none;}
+        .close-btn{position:absolute;top:clamp(15px,4vh,40px);right:clamp(15px,4vw,40px);width:clamp(36px,5vw,50px);height:clamp(36px,5vw,50px);background:rgba(0,0,0,0.6);border:none;color:var(--accent-yellow);font-size:clamp(1rem,2vw,1.5rem);cursor:pointer;border-radius:50%;display:grid;place-items:center;transition:0.3s;font-family:var(--font-mono);z-index:25;backdrop-filter:blur(10px);}
+        .close-btn:hover{background:var(--accent-yellow);color:#000;transform:rotate(90deg);}
+
+        .showcase{position:relative;z-index:5;padding-bottom:clamp(80px,12vh,150px);background:var(--deep-black);font-family:var(--font-sans);}
+        .story-section{position:relative;margin-top:clamp(-80px,-12vh,-200px);padding-top:clamp(120px,20vh,250px);min-height:100vh;display:flex;align-items:center;perspective:1000px;}
+        .story-section.align-right{justify-content:flex-end;padding-right:clamp(20px,12%,calc(12% + 40px));padding-left:clamp(15px,5%,calc(5% + 40px));}
+        .story-section.align-left{justify-content:flex-start;padding-left:clamp(20px,12%,calc(12% + 40px));padding-right:clamp(15px,5%,calc(5% + 40px));}
+        .story-image-wrapper{position:absolute;top:0;left:0;width:100%;height:110vh;z-index:-1;overflow:hidden;filter:brightness(0.6) contrast(1.1);}
+        .story-img{width:100%;height:100%;object-fit:cover;will-change:transform;transform:scale(1.15);}
+        .parent-wrapper{opacity:0;transform:translateY(50px);transition:opacity 1s var(--ease-out-expo),transform 1s var(--ease-out-expo);}
+        .parent-wrapper.visible{opacity:1;transform:translateY(0);}
+        .parent{width:clamp(260px,30vw,350px);max-width:100%;padding:clamp(12px,1.5vw,20px);perspective:1000px;}
+        .card{padding-top:clamp(35px,5vw,50px);border:clamp(2px,0.3vw,3px) solid var(--card-dark);transform-style:preserve-3d;background:linear-gradient(135deg,#0000 18.75%,#f3f3f3 0 31.25%,#0000 0),repeating-linear-gradient(45deg,#f3f3f3 -6.25% 6.25%,var(--card-dark) 0 18.75%);background-size:60px 60px;background-position:0 0,0 0;background-color:var(--card-dark);width:100%;box-shadow:rgba(142,142,142,0.3) 0px 30px 30px -10px;transition:all 0.5s ease-in-out;position:relative;}
+        .card:hover{background-position:-100px 100px,-100px 100px;transform:rotate3d(0.5,1,0,30deg);}
+        .content-box{background:var(--card-lime);transition:all 0.5s ease-in-out;padding:clamp(35px,5vw,60px) clamp(15px,2vw,25px) clamp(15px,2vw,25px) clamp(15px,2vw,25px);transform-style:preserve-3d;}
+        .content-box .card-title{display:inline-block;color:var(--card-dark);font-family:var(--font-main);font-size:clamp(1.2rem,2.5vw,28px);font-weight:900;transition:all 0.5s ease-in-out;transform:translate3d(0,0,50px);margin-bottom:clamp(8px,1.5vw,15px);}
+        .content-box .card-title:hover{transform:translate3d(0,0,60px);}
+        .content-box .card-content{margin-top:10px;font-size:clamp(0.7rem,1.1vw,14px);font-weight:400;line-height:1.6;color:var(--card-dark);transition:all 0.5s ease-in-out;transform:translate3d(0,0,30px);}
+        .content-box .card-content:hover{transform:translate3d(0,0,60px);}
+        .card-actions{margin-top:clamp(10px,1.5vw,24px);display:flex;flex-wrap:wrap;gap:8px;}
+        .content-box .see-more{cursor:pointer;display:inline-block;font-weight:900;font-size:clamp(0.45rem,0.75vw,10px);text-transform:uppercase;color:var(--card-lime);background:var(--card-dark);padding:clamp(0.4rem,0.8vh,0.7rem) clamp(0.5rem,1vw,1rem);transition:all 0.5s ease-in-out;transform:translate3d(0,0,20px);font-family:var(--font-mono);letter-spacing:2px;border:none;}
+        .content-box .see-more:hover{transform:translate3d(0,0,60px);background:#fff;color:var(--card-dark);}
+        .date-box{position:absolute;top:clamp(12px,1.8vw,20px);right:clamp(12px,1.8vw,20px);height:clamp(45px,6vw,60px);width:clamp(45px,6vw,60px);background:var(--card-dark);border:1px solid var(--card-lime);padding:clamp(6px,0.8vw,10px);transform:translate3d(0,0,80px);box-shadow:rgba(100,100,111,0.2) 0px 17px 10px -10px;}
+        .date-box span{display:block;text-align:center;font-family:var(--font-mono);}
+        .date-box .month{color:var(--card-lime);font-size:clamp(0.45rem,0.7vw,9px);font-weight:700;}
+        .date-box .date{font-size:clamp(0.9rem,1.8vw,20px);font-weight:900;color:var(--card-lime);}
+
+        #transition-overlay{position:fixed;top:0;left:0;width:100vw;height:100dvh;background:var(--deep-black);z-index:100000;opacity:0;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--font-mono);color:var(--accent-yellow);}
+        #transition-overlay.active{pointer-events:auto;}
+        .trans-box{border:1px solid rgba(255,204,0,0.3);padding:clamp(20px,4vw,40px);background:rgba(0,0,0,0.8);text-align:center;position:relative;box-shadow:0 0 50px rgba(255,204,0,0.1);}
+        .trans-status{font-size:clamp(0.7rem,1.2vw,0.9rem);letter-spacing:2px;margin-bottom:20px;text-transform:uppercase;}
+        .trans-loader{width:clamp(120px,25vw,200px);height:2px;background:rgba(255,255,255,0.1);margin:0 auto;overflow:hidden;}
+        .trans-loader::after{content:'';display:block;width:40%;height:100%;background:var(--accent-yellow);animation:loadAnim 1s infinite linear;}
+        @keyframes loadAnim{0%{transform:translateX(-100%)}100%{transform:translateX(350%)}}
+
+        /* World transition line — independent fixed element */
+        .trans-line{position:fixed;top:50%;left:50%;width:0;height:1px;background:var(--accent-yellow);transform:translate(-50%,-50%);box-shadow:0 0 8px var(--accent-yellow),0 0 25px rgba(255,204,0,0.25);z-index:100001;pointer-events:none;opacity:0;will-change:transform,width,opacity;}
+
+        #experience-wrapper{position:fixed;top:0;left:0;width:100vw;height:100dvh;background:var(--deep-black);z-index:99995;opacity:0;pointer-events:none;display:flex;flex-direction:column;}
+        #experience-wrapper.active{pointer-events:auto;}
+        .exp-header{padding:clamp(8px,1.5vh,15px) clamp(12px,2.5vw,30px);display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.9);border-bottom:1px solid var(--accent-yellow);flex-shrink:0;z-index:100000;}
+        .exp-title{font-family:var(--font-mono);color:var(--accent-yellow);font-size:clamp(0.6rem,1.1vw,0.9rem);letter-spacing:2px;text-transform:uppercase;}
+        .exit-btn{background:transparent;border:1px solid var(--accent-yellow);color:var(--accent-yellow);padding:clamp(4px,0.8vh,8px) clamp(8px,1.5vw,20px);font-family:var(--font-mono);cursor:pointer;transition:0.3s;text-transform:uppercase;font-size:clamp(0.55rem,0.9vw,0.75rem);letter-spacing:1px;}
+        .exit-btn:hover{background:var(--accent-yellow);color:var(--deep-black);}
+        .iframe-container{flex:1;position:relative;width:100%;height:100%;overflow:hidden;background:#000;}
+        .iframe-container iframe{width:100%;height:100%;border:none;opacity:0;}
+
+        footer{background-color:var(--deep-black);color:white;padding:clamp(60px,12vh,120px) clamp(15px,3vw,20px) clamp(40px,8vh,80px) clamp(15px,3vw,20px);text-align:center;position:relative;z-index:20;border-top:clamp(6px,1vw,10px) solid var(--natgeo-yellow);font-family:var(--font-sans);}
+        footer h2{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,3rem);margin-bottom:20px;color:var(--text-white);}
+        footer p{font-size:clamp(0.75rem,1.1vw,0.9rem);}
+        .contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,1.5vw,20px);max-width:800px;margin:clamp(20px,4vh,40px) auto 0 auto;}
+        .contact-card{padding:clamp(15px,2.5vw,30px);border:1px solid rgba(255,255,255,0.1);transition:0.4s;text-decoration:none;color:var(--text-white);display:flex;flex-direction:column;align-items:center;gap:10px;}
+        .contact-card:hover{border-color:var(--natgeo-yellow);background:rgba(255,204,0,0.05);}
+        .contact-card i{font-size:clamp(1rem,2vw,1.5rem);color:var(--natgeo-yellow);}
+        .contact-card h4{font-size:clamp(0.7rem,1vw,0.9rem);text-transform:uppercase;letter-spacing:1px;}
+        .contact-card p{font-size:clamp(0.6rem,0.8vw,0.75rem);color:#888;}
+
+        @media(max-width:680px){.nav-links{display:none;}.hamburger{display:flex;}.mobile-dropdown{display:flex;}.contact-grid{grid-template-columns:1fr;max-width:300px;}}
+        @media(max-width:900px){.story-section{justify-content:center!important;padding-left:clamp(15px,4vw,20px)!important;padding-right:clamp(15px,4vw,20px)!important;margin-top:clamp(-40px,-6vh,-50px);padding-top:clamp(80px,14vh,150px);}.parent{width:clamp(240px,55vw,320px);}.hero-video-container{width:95vw;}}
+        @media(max-width:500px){.parent{width:clamp(220px,80vw,300px);}.story-section{padding-top:clamp(60px,12vh,80px);}}
     </style>
 </head>
 <body>
+    <div class="noise-overlay" aria-hidden="true"></div>
+    <div class="global-scan" aria-hidden="true"></div>
+    <div class="progress-bar" id="progressBar"></div>
+    <canvas id="network-canvas" aria-hidden="true"></canvas>
 
-    <div id="toast-container"></div>
-    <div id="warp-overlay"></div>
-
-    <div id="bg-slider"></div>
-    <div class="grain"></div>
-
-    <!-- COMPONENT: SMART NAVBAR -->
-    <nav id="main-nav">
-        <canvas id="fluid-nav-canvas"></canvas>
-        <div class="nav-brand">Thabang Tony Ngoepe</div>
-        
-        <div class="nav-center nav-links">
-            <a href="#experience">Experience</a>
-            <a href="#architecture">Architecture</a>
-            <a href="#flagship">Flagship</a>
-            <a href="#contact">Contact</a>
+    <nav>
+        <div class="logo">TTN</div>
+        <div class="nav-links">
+            <a href="#intro" class="menu-btn">Intro</a>
+            <a href="#mission" class="menu-btn">Mission</a>
+            <a href="#systems" class="menu-btn">Systems</a>
+            <a href="#universe" class="menu-btn">Universe</a>
+            <a href="#contact" class="menu-btn">Contact</a>
         </div>
-
-        <div class="news-wrapper">
-            <span class="news-label">LIVE FEED</span>
-            <div class="news-ticker-container">
-                <div class="news-ticker" id="news-content">CONNECTING TO GOOGLE NEWS...</div>
-            </div>
-        </div>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
     </nav>
+    <div class="mobile-dropdown" id="mobileMenu">
+        <a href="#intro" class="menu-btn">Intro</a>
+        <a href="#mission" class="menu-btn">Mission</a>
+        <a href="#systems" class="menu-btn">Systems</a>
+        <a href="#universe" class="menu-btn">Universe</a>
+        <a href="#contact" class="menu-btn">Contact</a>
+    </div>
 
-    <!-- SECTION: HERO -->
-    <section class="section-hero" data-bg="https://picsum.photos/seed/tech_arch/1920/1080">
-        <div class="hero-container">
-           <div class="hero-content">
-    <!-- 1. Subtitle (Status) -->
-    <h2 id="hero-h2" class="hero-subtitle"></h2>
-    
-    <!-- 2. Main Title (Typewriter Effect) -->
-    <h1 id="hero-h1" class="hero-title"></h1>
-    
-    <!-- 3. NEW: MP3 PLAYER (Inserted Here) -->
-    <div class="vn-player-wrapper">
-        <div class="vn-track-info">
-            <span class="vn-label">AUDIO_STREAM_01</span>
-            <div class="vn-title-marquee">
-                <span id="track-name">INITIATING_AUDIO_LINK...</span>
-            </div>
-        </div>
-        
-        <!-- The Audio Element -->
-        <!-- Update src to your file, e.g., 'assets/intro.mp3' -->
-        <audio id="main-audio" src="local.mp3" preload="auto"></audio>
-
-        <div class="vn-controls">
-            <button id="btn-prev" class="vn-btn" aria-label="Previous">
-                <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-            </button>
-            
-            <button id="btn-play" class="vn-btn main-action" aria-label="Play/Pause">
-                <svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                <svg id="icon-pause" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-            </button>
-            
-            <button id="btn-next" class="vn-btn" aria-label="Next">
-                <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-            </button>
-        </div>
-
-        <div class="vn-visualizer">
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div id="transition-overlay">
+        <div class="trans-box">
+            <div class="trans-status" id="trans-status">ESTABLISHING SECURE LINK</div>
+            <div class="trans-loader"></div>
         </div>
     </div>
-    <!-- END MP3 PLAYER -->
 
-    <!-- 4. Buttons (CTA Group) -->
-    <div class="cta-group">
-        <a href="https://github.com/hak3du" class="cta-petite">
-            <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-            GitHub
-        </a>
-        <a href="www.linkedin.com/in/tony-n-143420353" class="cta-petite secondary">
-            <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-            LinkedIn
-        </a>
-        <a href="ThabangTonyNgoepe@proton.me" class="cta-petite secondary">
-            <svg viewBox="0 0 24 24"><path d="M0 3v18h24v-18h-24zm6.623 7.929l-4.623 5.712v-11.174l4.623 5.462zm-4.484-6.358h19.722l-9.861 11.661-9.861-11.661zm5.694 6.837l4.337 5.127 4.337-5.127 4.824 5.828h-18.322l4.824-5.828zm9.208-6.358l4.623 5.462v-11.174l-4.623 5.712z"/></svg>
-            Email
-        </a>
-    </div>
-</div>
-            
-            <div class="profile-wrapper">
-                <!-- HIGH RESOLUTION IMAGE (1200px width) -->
-                <img src="profile-pic.png" alt="Profile" class="profile-img">
-            </div>
-        </div>
-    </section>
+    <!-- Cinematic transition line — independent from overlay for precise timing -->
+    <div class="trans-line" id="transLine"></div>
 
-    <!-- SECTION: DEPLOYMENTS -->
-    <section id="experience" class="section-deployments" data-bg="https://picsum.photos/seed/space_stars/1920/1080">
-        
-        <div class="section-header">
-            <span>02 // FIELD LOGS</span>
-            <h2>Deployments & Operations</h2>
-            <p style="color:var(--text-muted);">Select a deployment node to initialize immersive portal.</p>
+    <div id="experience-wrapper">
+        <div class="exp-header">
+            <div class="exp-title" id="exp-title">INNER_WORLD_INIT</div>
+            <button class="exit-btn" onclick="exitExperience()">Exit Experience [X]</button>
         </div>
-
-        <div class="experience-grid">
-            
-            <div class="preview-video-container">
-                <div class="video-wrapper-inner">
-                    <div class="scanlines"></div>
-                    <iframe id="preview-frame" src="" title="Preview" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                </div>
-            </div>
-
-            <div class="carousel-wrapper">
-                <div class="carousel-3d-container">
-                    <div class="carousel-track" id="track"></div>
-                </div>
-                <div class="carousel-controls">
-                    <button class="nav-arrow" onclick="rotateCarousel(-1)">←</button>
-                    <button class="nav-arrow" onclick="rotateCarousel(1)">→</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION: ARCHITECTURE -->
-  <!-- SECTION: ARCHITECTURE -->
-<section id="architecture" class="section-architecture" data-bg="https://picsum.photos/seed/cyber_city/1920/1080">
-    <div class="section-header">
-        <span>03 // BLUEPRINT</span>
-        <h2>System Architecture</h2>
-    </div>
-    <div class="neural-grid">
-        <div class="neuron-card">
-            <div class="neuron-icon">⚙️</div>
-            <h3>Orchestration</h3>
-            <p>Kubernetes clusters managing containerized workloads at scale.</p>
-            <div class="neuron-status"><span class="dot"></span> Active</div>
-        </div>
-        <div class="neuron-card">
-            <div class="neuron-icon">🔒</div>
-            <h3>Security</h3>
-            <p>Zero-trust network architecture with end-to-end encryption.</p>
-            <div class="neuron-status"><span class="dot"></span> Active</div>
-        </div>
-        <div class="neuron-card">
-            <div class="neuron-icon">💻</div>
-            <h3>Edge Compute</h3>
-            <p>Lambda functions deployed to 40+ global edge nodes.</p>
-            <div class="neuron-status"><span class="dot"></span> Active</div>
-        </div>
-        <div class="neuron-card">
-            <div class="neuron-icon">📊</div>
-            <h3>Data Lakes</h3>
-            <p>Petabyte-scale analytics with real-time stream processing.</p>
-            <div class="neuron-status"><span class="dot"></span> Active</div>
+        <div class="iframe-container">
+            <iframe id="exp-iframe" src="about:blank" sandbox="allow-scripts" onload="onIframeLoad()"></iframe>
         </div>
     </div>
-</section>
-    <!-- SECTION: FLAGSHIP -->
-    <section id="flagship" class="section-flagship" data-bg="https://picsum.photos/seed/network_code/1920/1080">
-        <div class="section-header">
-            <span>04 // LIVE SYSTEM</span>
-            <h2>AHE Encryption Service</h2>
-        </div>
-        <div class="api-interface">
-            <div class="api-controls">
-                <div class="input-group"><label>PAYLOAD</label><textarea id="apiMessage" rows="4" class="api-input" placeholder="Data..."></textarea></div>
-                <div class="input-group"><label>KEY</label><input type="password" id="apiPassword" class="api-input" placeholder="Passphrase"></div>
-                <div class="btn-group">
-                    <button class="action-btn" onclick="handleApiCall('encrypt')">ENCRYPT</button>
-                    <button class="action-btn" onclick="handleApiCall('decrypt')" style="border-color:var(--text-muted); color:var(--text-muted);">DECRYPT</button>
+
+    <audio id="slideshowAudio" preload="none"></audio>
+
+    <main>
+        <section class="hero">
+            <div class="hero-bg" id="heroBg"></div>
+            <div class="hero-overlay"></div>
+            <div class="cinematic-intro" id="cinematicIntro">
+                <div class="intro-panel intro-panel-left" id="panelLeft"></div>
+                <div class="intro-panel intro-panel-right" id="panelRight"></div>
+                <svg class="intro-seam" id="introSeam" viewBox="0 0 100 100" preserveAspectRatio="none"><line x1="100" y1="0" x2="0" y2="100" stroke="#FFCC00" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>
+                <div class="intro-tagline" id="introTagline">THABANG TONY NGOEPE<span>SYSTEMS ARCHITECT // INITIALIZING</span></div>
+            </div>
+            <div class="hero-mechanisms" id="mechLayer">
+                <div class="mech-gear" style="width:400px;height:400px;border-style:dashed;"></div>
+                <div class="mech-gear" style="width:200px;height:200px;border-color:rgba(1,169,130,0.4);border-style:dotted;"></div>
+                <div class="mech-circle" style="width:600px;height:600px;"></div>
+                <div class="mech-circle" style="width:800px;height:800px;border-style:solid;border-color:rgba(255,255,255,0.05);"></div>
+                <div class="mech-arm" style="width:300px;"></div>
+                <div class="mech-arm" style="width:450px;transform:rotate(90deg);"></div>
+                <div class="mech-arm" style="width:350px;transform:rotate(45deg);border-color:rgba(255,204,0,0.3);"></div>
+                <div class="mech-arm" style="width:350px;transform:rotate(-45deg);border-color:rgba(255,204,0,0.3);"></div>
+            </div>
+            <div class="hero-layer is-hidden" id="heroInit">
+                <div class="init-logo">TTN</div>
+                <div class="init-btn-group">
+                    <button class="btn-mech" onclick="goToState('content')">Initialize Sequence</button>
+                    <button class="btn-vid" onclick="goToState('video')">View Briefing</button>
                 </div>
             </div>
-            <div class="api-display" id="apiOutput">// AWAITING INPUT_STREAM...</div>
-        </div>
-    </section>
-
-    <!-- SECTION: CONTACT -->
-    <section id="contact" class="section-contact" data-bg="https://picsum.photos/seed/abstract_waves/1920/1080">
-        <div class="section-header">
-            <span>05 // UPLINK</span>
-            <h2>Initiate Handshake</h2>
-            <p style="color:var(--text-muted);">Secure channel open for collaboration.</p>
-        </div>
-        
-        <div class="contact-container">
-            <form id="contactForm" class="contact-form-grid" onsubmit="handleContactSubmit(event)">
-                <div class="form-group">
-                    <label class="contact-label">Identity (Name)</label>
-                    <input type="text" class="contact-input" placeholder="John Doe" required>
-                </div>
-                <div class="form-group">
-                    <label class="contact-label">Return Frequency (Email)</label>
-                    <input type="email" class="contact-input" placeholder="john@example.com" required>
-                </div>
-                <div class="form-group full-width">
-                    <label class="contact-label">Subject Header</label>
-                    <input type="text" class="contact-input" placeholder="Project Proposal" required>
-                </div>
-                <div class="form-group full-width">
-                    <label class="contact-label">Data Payload (Message)</label>
-                    <textarea class="contact-input" rows="5" placeholder="Enter transmission details..." required></textarea>
-                </div>
-                <button type="submit" class="submit-btn" id="submitBtn">
-                    <span>Transmit Data</span>
-                    <div class="spinner"></div>
-                </button>
-            </form>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer>
-        <p>© 2024 ADAPTIVE ENGINEER. SYSTEMS NOMINAL.</p>
-    </footer>
-
-    <!-- AETHER PORTAL -->
-    <div id="aether-portal">
-        <div class="noise-overlay"></div>
-        <nav id="portalNavbar">
-            <div class="logo">AETHER.</div>
-            <div class="nav-links">
-                <div class="nav-link" onclick="smoothScrollTo('#p-work')">Work</div>
-                <div class="nav-link" onclick="smoothScrollTo('#p-studio')">Studio</div>
-                <div class="nav-link" onclick="closePortal()">Close</div>
-            </div>
-        </nav>
-        <div class="viewport">
-            <div class="scroll-container" id="portalScrollContainer">
-                <section class="hero container">
-                    <img id="p-hero-bg" class="hero-bg" data-speed="0.3" src="" alt="">
-                    <div class="hero-content" data-speed="0.05">
-                        <h1 id="p-hero-title">Design<br>Motion<br>Emotion.</h1>
-                        <p id="p-hero-desc">We craft digital experiences that transcend the ordinary. Blending high-end aesthetics with fluid, physics-based interaction.</p>
-                        
+            <div class="hero-layer is-hidden" id="heroContent" style="display:none;">
+                <div class="hero-content">
+                    <div class="hero-profile-orb" onclick="goToState('init')" title="Return to start">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&auto=format&fit=crop" alt="Thabang Tony Ngoepe" class="hero-profile-img">
                     </div>
-                </section>
-                <section class="video-section" id="p-work">
-                    <div class="container">
-                        <div class="text-content">
-                            <span class="section-label">Showcase</span>
-                            <h2 id="p-video-title">Adaptive Hashing Encryption</h2>
-                            <p class="lead">The Encryption that knows the difference between AI and humans. Data is even invisible from even from the Adm</p>
-                        </div>
-                        <div class="video-wrapper" style="margin-top: 4rem;" data-speed="0.1">
-                            <iframe id="p-video-iframe" src="https://youtu.be/EYFDnstHQ6A" title="Video Showcase" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
+                    <span class="hero-kicker">Software Engineer // Systems Architect</span>
+                    <h1>Thabang Tony<br><span>Ngoepe</span></h1>
+                    <p class="hero-subtitle">Architecting secure, scalable backend systems, distributed infrastructure, and verification-first security platforms.</p>
+                    <div class="init-btn-group">
+                        <button class="btn-mech" onclick="enterPortfolio()">Enter Portfolio</button>
+                        <button class="btn-vid" onclick="goToState('video')">Video Briefing</button>
                     </div>
-                </section>
-                <section class="container" id="p-gallery">
-                    <div class="text-content">
-                        <span class="section-label">Selected Works</span>
-                        <h2>Visual Archive</h2>
-                    </div>
-                    <div class="gallery-grid" id="p-gallery-grid"></div>
-                </section>
-                <section class="container" id="p-studio">
-                    <div class="text-content" data-speed="0.05">
-                        <span class="section-label">Philosophy</span>
-                        <h2>Beyond the Grid</h2>
-                        <p class="lead">Adopt AHE and protect your data with encryption that has no fixed pattern, whilecontinuously adapting and staying ahead of modern threats</p>
-                        <a href="#p-contact" class="btn">Hackers are harvesting data today to decrpyt when Quantum computers come</a>
-                    </div>
-                </section>
-                <footer class="container" id="p-contact">
-                    <h2>Let's Talk</h2>
-                    <p style="margin: 1rem 0 3rem; color: var(--text-muted);">Don't wait for Quantum Computers, AHE is ready for Quantum Migration Today</p>
-                    <div style="display: flex; justify-content: center; gap: 2rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em;">
-                        <a href="#">Instagram</a><a href="#">Twitter</a><a href="#">LinkedIn</a>
-                    </div>
-                    <p style="margin-top: 4rem; font-size: 0.8rem; color: #ccc;">&copy; 2024 Aether Studio.</p>
-                </footer>
+                </div>
+                <div class="scroll-indicator">Initialize Systems</div>
             </div>
-        </div>
-    </div>
-
-    <!-- SYSTEM OVERLAY (IFRAME VERSION) -->
-    <div id="system-overlay">
-        
-        <div class="sys-overlay-header">
-            <div class="sys-title">
-                <span class="status-dot" style="width:6px; height:6px; margin:0; background:var(--accent-cyan);"></span>
-                <span id="sys-page-title">SYSTEM_VIEWER</span>
+            <div class="hero-slideshow" id="heroSlideshow">
+                <div class="ss-slide"></div><div class="ss-slide"></div><div class="ss-slide"></div><div class="ss-slide"></div><div class="ss-slide"></div>
+                <div class="ss-overlay"></div>
+                <div class="ss-info"><span class="ss-label">INITIALIZING PORTFOLIO SYSTEMS</span><span class="ss-counter">01 / 05</span></div>
+                <div class="ss-progress"><div class="ss-bar"></div></div>
+                <button class="ss-skip">Skip</button>
             </div>
-            <button class="sys-close-btn" onclick="toggleSystemOverlay(false)">Terminate Session [X]</button>
-        </div>
-
-        <div class="iframe-wrapper">
-            <div class="iframe-loader" id="sys-loader">
-                <div class="spinner-ring"></div>
-                <div>INITIALIZING SUBSYSTEM...</div>
+            <div class="hero-video-overlay" id="heroVideo">
+                <button class="close-btn" onclick="closeVideo()">&times;</button>
+                <div class="hero-video-container">
+                    <iframe id="heroVidFrame" src="" title="System Briefing Video" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
+                </div>
             </div>
-            <!-- The src will be set by JavaScript when you click a card -->
-            <iframe id="system-iframe" src="" onload="hideLoader()"></iframe>
-        </div>
+        </section>
 
-    </div>
+        <div class="showcase" id="showcase"></div>
+
+        <footer id="contact">
+            <span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--natgeo-yellow);letter-spacing:3px;text-transform:uppercase;">15 // Contact</span>
+            <h2>Let's Build Something Verifiable.</h2>
+            <p style="max-width:600px;margin:0 auto;color:#888;">Open to collaborations on security engineering, distributed systems, and verification-first architecture.</p>
+            <div class="contact-grid">
+                <a href="mailto:hello@example.com" class="contact-card"><i class="fa-solid fa-envelope"></i><h4>Email</h4><p>hello@example.com</p></a>
+                <a href="https://github.com" target="_blank" class="contact-card"><i class="fa-brands fa-github"></i><h4>GitHub</h4><p>/thabang-tony</p></a>
+                <a href="https://linkedin.com" target="_blank" class="contact-card"><i class="fa-brands fa-linkedin"></i><h4>LinkedIn</h4><p>/in/ttngeoep</p></a>
+            </div>
+            <p style="font-size:0.75rem;opacity:0.4;text-transform:uppercase;letter-spacing:2px;margin-top:60px;">&copy; 2024 THABANG TONY NGOEPE. ALL SYSTEMS RESERVED.</p>
+        </footer>
+    </main>
+
+    <audio id="voiceIntro" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
 
     <script>
-    
+    /* ================================================================
+       IMAGE POOL
+       ================================================================ */
+    var IMG={
+        earth:'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop',
+        circuit:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop',
+        code:'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&auto=format&fit=crop',
+        neon:'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=1200&auto=format&fit=crop',
+        nebula:'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1200&auto=format&fit=crop',
+        server:'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop',
+        cyber:'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1200&auto=format&fit=crop',
+        dash:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop',
+        particles:'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&auto=format&fit=crop',
+        grad:'https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?w=1200&auto=format&fit=crop',
+        library:'https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?w=1200&auto=format&fit=crop',
+        app:'https://images.unsplash.com/photo-1605379399642-870262d3d051?w=1200&auto=format&fit=crop',
+        network:'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop',
+        lab:'https://images.unsplash.com/photo-1581090700227-1e37b190418e?w=1200&auto=format&fit=crop',
+        terminal:'https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=1200&auto=format&fit=crop',
+        portrait:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&auto=format&fit=crop',
+        team:'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&auto=format&fit=crop',
+        laptop:'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&auto=format&fit=crop',
+        datacenter:'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=1200&auto=format&fit=crop',
+        abstract3d:'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=1200&auto=format&fit=crop'
+    };
 
+    var heroSlides=[IMG.earth,IMG.circuit,IMG.code,IMG.neon,IMG.nebula];
+    var AUDIO_TRACK='https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3';
 
-        // --- 1. SYSTEM IFRAME LOGIC ---
-        // Map each card (by index 0, 1, 2, 3) to its specific file
-        const systemPages = [
-            { file: 'orchestration.html', title: 'ORCHESTRATION' },      // Card 1
-            { file: 'security.html', title: 'SECURITY' },              // Card 2
-            { file: 'edge-compute.html', title: 'EDGE_COMPUTE' },       // Card 3
-            { file: 'data-lakes.html', title: 'DATA_LAKES' }            // Card 4
-        ];
+    /* ================================================================
+       WORLD REGISTRY
 
-        function toggleSystemOverlay(show, index = null) {
-            const overlay = document.getElementById('system-overlay');
-            const iframe = document.getElementById('system-iframe');
-            const loader = document.getElementById('sys-loader');
-            const titleEl = document.getElementById('sys-page-title');
+       Each world has:
+         url         — the real filesystem path where the world lives
+         placeholder — true = show generated placeholder; false = load real url
+         title       — displayed in the experience header bar
 
-            if (show) {
-                // If an index is provided, load that specific page
-                if (index !== null && systemPages[index]) {
-                    loader.style.display = 'block';
-                    titleEl.innerText = systemPages[index].title;
-                    // Add a timestamp to prevent caching issues during development
-                    iframe.src = systemPages[index].file + '?t=' + new Date().getTime();
-                }
-                
-                overlay.classList.add('active');
-                document.body.style.overflow = 'hidden'; 
-            } else {
-                // Close overlay and clear iframe to stop sounds/videos
-                overlay.classList.remove('active');
-                document.body.style.overflow = 'auto';
-                setTimeout(() => {
-                    iframe.src = ''; 
-                }, 500); // Wait for transition to finish
+       TO DEPLOY A REAL WORLD:
+         1. Place your world's index.html at the url path
+         2. Set placeholder: false
+         No other changes needed anywhere.
+       ================================================================ */
+    var WORLDS = {
+        'intro':         { url: '/projects/portfolio/index.html',        placeholder: false, title: 'PROFILE_INNER_WORLD' },
+        'mission':       { url: '/projects/ahe/index.html',              placeholder: true, title: 'MISSION_INNER_WORLD' },
+        'systems':       { url: '/projects/exposure-relief/index.html',  placeholder: true, title: 'SYSTEMS_INNER_WORLD' },
+        'universe':      { url: '/projects/ar/index.html',               placeholder: true, title: 'UNIVERSE_INNER_WORLD' },
+        'process':       { url: '/projects/tradingos/index.html',        placeholder: true, title: 'PROCESS_INNER_WORLD' },
+        'stack':         { url: '/projects/stack/index.html',            placeholder: true, title: 'STACK_INNER_WORLD' },
+        'gallery':       { url: '/projects/gallery/index.html',          placeholder: true, title: 'GALLERY_INNER_WORLD' },
+        'security':      { url: '/projects/security/index.html',         placeholder: true, title: 'SECURITY_INNER_WORLD' },
+        'product':       { url: '/projects/product/index.html',          placeholder: true, title: 'PRODUCT_INNER_WORLD' },
+        'research':      { url: '/projects/research/index.html',         placeholder: true, title: 'RESEARCH_INNER_WORLD' },
+        'journey':       { url: '/projects/journey/index.html',          placeholder: true, title: 'JOURNEY_INNER_WORLD' },
+        'publications':  { url: '/projects/publications/index.html',     placeholder: true, title: 'PUBLICATIONS_INNER_WORLD' },
+        'live':          { url: '/projects/live/index.html',             placeholder: true, title: 'LIVE_APPS_INNER_WORLD' }
+    };
+
+    /* ================================================================
+       PLACEHOLDER WORLD GENERATOR
+       Creates a self-contained HTML document as a Blob URL.
+       Uses PostMessage to communicate exit intent to the parent shell.
+       ================================================================ */
+    function createPlaceholderWorld(title, path) {
+        var safeTitle = title.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        var safePath = path.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        return '<!DOCTYPE html>' +
+            '<html><head><meta charset="UTF-8">' +
+            '<meta name="viewport" content="width=device-width,initial-scale=1.0">' +
+            '<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;400;700&display=swap" rel="stylesheet">' +
+            '<style>' +
+            '*{margin:0;padding:0;box-sizing:border-box}' +
+            'body{background:#000;color:#fff;font-family:"Space Grotesk",sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;overflow:hidden}' +
+            '.wl{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:6px;text-transform:uppercase;color:#444;margin-bottom:24px}' +
+            '.ln{width:60px;height:1px;background:#FFCC00;margin-bottom:32px;animation:pulse 3s ease-in-out infinite}' +
+            '@keyframes pulse{0%,100%{opacity:.25}50%{opacity:.7}}' +
+            '.wt{font-size:clamp(1.4rem,4vw,2.4rem);font-weight:700;color:#FFCC00;margin-bottom:12px;text-align:center;padding:0 20px}' +
+            '.wp{font-family:"JetBrains Mono",monospace;font-size:clamp(.5rem,.9vw,.6rem);color:#2a2a2a;letter-spacing:2px;margin-bottom:50px;text-align:center;padding:0 20px;word-break:break-all;max-width:90vw}' +
+            '.eb{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:#FFCC00;background:0 0;border:1px solid rgba(255,204,0,.25);padding:14px 32px;cursor:pointer;transition:.3s}' +
+            '.eb:hover{background:#FFCC00;color:#000;border-color:#FFCC00}' +
+            '</style></head><body>' +
+            '<div class="wl">World // Placeholder</div>' +
+            '<div class="ln"></div>' +
+            '<div class="wt">' + safeTitle + '</div>' +
+            '<div class="wp">' + safePath + '</div>' +
+            '<button class="eb" onclick="window.parent.postMessage({type:\'EXIT_WORLD\'},\'*\')">Exit World</button>' +
+            '</body></html>';
+    }
+
+    /* ================================================================
+       WORLD LAUNCHER
+
+       Handles enter/exit lifecycle with cinematic transitions.
+       Uses sandboxed iframes for CSS/JS isolation.
+       Communicates with worlds via PostMessage.
+       ================================================================ */
+    var WorldLauncher = {
+        _active: false,
+        _scrollPos: 0,
+        _currentBlobUrl: null,
+        _worldId: null,
+
+        enter: function(worldId) {
+            if (this._active) return;
+
+            var config = WORLDS[worldId];
+            if (!config) return;
+
+            this._active = true;
+            this._worldId = worldId;
+
+            // Save scroll position and freeze homepage
+            this._scrollPos = window.scrollY;
+            document.body.style.overflow = 'hidden';
+
+            // Close any active slideshow
+            if (typeof currentSSTimer !== 'undefined' && currentSSTimer) {
+                clearInterval(currentSSTimer);
+                currentSSTimer = null;
             }
-        }
-
-        // Helper to hide loader when iframe loads
-     function hideLoader() {
-    const loader = document.getElementById('sys-loader');
-    const iframe = document.getElementById('system-iframe');
-    
-    // Remove the spinner
-    if(loader) loader.style.display = 'none';
-    
-    // MAKE IFRAME VISIBLE (This line was missing)
-    if(iframe) iframe.style.opacity = '1'; 
-}
-
-// --- ADD CLICK LISTENERS TO CARDS (CRITICAL) ---
-document.addEventListener('DOMContentLoaded', () => {
-    const cards = document.querySelectorAll('.neuron-card');
-    cards.forEach((card, index) => {
-        // Make it look clickable
-        card.style.cursor = 'pointer';
-        
-        // When clicked, run the toggle function with the specific index
-        card.addEventListener('click', () => {
-            toggleSystemOverlay(true, index);
-        });
-    });
-});
-        // --- 2. TYPEWRITER EFFECT ---
-        window.addEventListener('DOMContentLoaded', () => {
-            const h2 = document.getElementById('hero-h2');
-            const h1 = document.getElementById('hero-h1');
-            const textToType = "ARCHITECTING RESILIENCE";
-            let charIndex = 0;
-
-            h2.innerHTML = '<span class="status-dot"></span> SYSTEM STATUS: ONLINE';
-            h1.style.width = '0'; 
-
-            function typeWriter() {
-                if (charIndex < textToType.length) {
-                    h1.textContent += textToType.charAt(charIndex);
-                    charIndex++;
-                    h1.style.width = (charIndex + 1) + 'ch'; 
-                    setTimeout(typeWriter, 50);
-                } else {
-                    h1.style.width = 'fit-content';
-                }
-            }
-            setTimeout(typeWriter, 300);
-        });
-
-        // --- 3. SMART NAVBAR LOGIC ---
-        let lastScrollTop = 0;
-        const nav = document.getElementById('main-nav');
-        
-        window.addEventListener('scroll', () => {
-            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            if (scrollTop > lastScrollTop && scrollTop > 100) {
-                nav.classList.add('nav-hidden');
-            } else {
-                nav.classList.remove('nav-hidden');
-            }
-            lastScrollTop = scrollTop;
-        });
-
-        // --- 4. GOOGLE NEWS FETCHER ---
-        function initRealNewsTicker() {
-            const ticker = document.getElementById('news-content');
-            const rssUrl = 'https://news.google.com/rss/search?q=technology&hl=en-US&gl=US&ceid=US:en';
-            const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'ok') {
-                        const headlines = data.items.slice(0, 8);
-                        const content = headlines.map(item => 
-                            `<a href="${item.link}" target="_blank" class="news-link">${item.title}</a>`
-                        ).join('<span style="color:#555; margin: 0 10px;">•</span>');
-                        ticker.innerHTML = content + ' &nbsp;&nbsp; • &nbsp;&nbsp; ' + content;
-                    } else { ticker.innerText = "ERROR LOADING FEED"; }
-                })
-                .catch(error => {
-                    console.error('News Fetch Error:', error);
-                    ticker.innerText = "CONNECTION ERROR";
-                });
-        }
-        initRealNewsTicker();
-
-        // --- 5. UTILITIES ---
-        const $ = (s) => document.querySelector(s);
-        const $$ = (s) => document.querySelectorAll(s);
-        function showToast(msg, isError = false) {
-            const t = document.createElement('div'); t.className = 'toast' + (isError ? ' error' : ''); t.innerText = msg;
-            $('#toast-container').appendChild(t);
-            requestAnimationFrame(() => t.classList.add('show'));
-            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3000);
-        }
-
-        // --- 6. BACKGROUND & CAROUSEL ---
-        const bgSlider = $('#bg-slider');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) {
-                    const img = new Image();
-                    img.src = e.target.getAttribute('data-bg');
-                    img.onload = () => bgSlider.style.backgroundImage = `url(${img.src})`;
+            document.querySelectorAll('.hero-slideshow, .section-slideshow').forEach(function(el) {
+                if (el.style.visibility === 'visible') {
+                    el.style.visibility = 'hidden';
+                    el.style.pointerEvents = 'none';
+                    gsap.set(el, {opacity: 0});
+                    el.querySelectorAll('.ss-slide').forEach(function(s) { s.classList.remove('active'); });
+                    var bar = el.querySelector('.ss-bar');
+                    if (bar) gsap.set(bar, {width: '0%'});
+                    var au = document.getElementById('slideshowAudio');
+                    if (au) { au.pause(); au.currentTime = 0; }
                 }
             });
-        }, { threshold: 0.3 });
-        $$('section').forEach(s => observer.observe(s));
 
-       const projects = [
-    {
-        title: "Adaptive Hash Encryption",
-        tech: "React / D3.js",
-        img: "AHEpic.png",
-        // CHANGED: mute=0, controls=1
-        previewVideo: "https://youtu.be/3zwMiJFDcGs",
-        portal: {
-                        theme: { 
-                bg: "#F9F8F4", 
-                text: "#1C1C1C", 
-                accent: "#D4AF37" 
-            },
-            // ... portal data remains the same ...
-            heroImg: "https://images.pexels.com/photos/5483051/pexels-photo-5483051.jpeg",
-            heroTitle: "Adaptive<br>Hashing<br>Encryption?",
-            desc: "Adaptive Hashing Encryption: A Living Security System, Engineered to Shield Not Just Data, But the Integrity and Freedom of the Human Mind",
-            videoTitle: "The real story, Protecting the human mind ",
-            videoSrc: "https://youtu.be/EYFDnstHQ6A",
-            gallery: [
-                { img: "2.png", col: "col-8", aspect: "aspect-landscape" },
-                { img: "3.png", col: "col-4", aspect: "aspect-h-2" },
-                { img: "4.png", col: "col-4", aspect: "aspect-h-1" },
-                { img: "5.png", col: "col-8", aspect: "aspect-h-2" }
-            ]
-        }
-    },
-    {
-        title: "Cyber Security",
-        tech: "Python / Rust",
-        img: "https://picsum.photos/seed/security_card/600/800",
-        // CHANGED: mute=0, controls=1
-        previewVideo: "https://www.youtube.com/embed/LXb3EKWsInQ?autoplay=1&mute=0&controls=1&loop=1&playlist=LXb3EKWsInQ&showinfo=0",
-        portal: {
-                        theme: { 
-                bg: "#F9F8F4", 
-                text: "#1C1C1C", 
-                accent: "#D4AF37" 
-            },
-            // ... portal data ...
-            heroImg: "https://picsum.photos/seed/server_tech/1920/1080",
-            heroTitle: "Zero<br>Trust<br>Security.",
-            desc: "Zero-trust network infrastructure visualization. Dark mode native with immersive data threat mapping.",
-            videoTitle: "Threat Analysis",
-            videoSrc: "https://www.youtube.com/embed/LXb3EKWsInQ?autoplay=1&mute=1&loop=1&playlist=LXb3EKWsInQ&controls=0",
-            gallery: [
-                { img: "https://picsum.photos/seed/cyber_1/1200/800", col: "col-6", aspect: "aspect-landscape" },
-                { img: "https://picsum.photos/seed/cyber_2/1200/800", col: "col-6", aspect: "aspect-landscape" },
-                { img: "https://picsum.photos/seed/cyber_3/800/450", col: "col-12", aspect: "aspect-landscape" }
-            ]
-        }
-    },
-    {
-        title: "Neural Net",
-        tech: "TensorFlow",
-        img: "https://picsum.photos/seed/ai_card/600/800",
-        // CHANGED: mute=0, controls=1
-        previewVideo: "https://www.youtube.com/embed/2ePf9rue1Ao?autoplay=1&mute=0&controls=1&loop=1&playlist=2ePf9rue1Ao&showinfo=0",
-        portal: {
+            // Grab DOM refs
+            var overlay = document.getElementById('transition-overlay');
+            var line = document.getElementById('transLine');
+            var status = document.getElementById('trans-status');
+            var loader = document.querySelector('.trans-loader');
+            var expTitle = document.getElementById('exp-title');
+            var wrapper = document.getElementById('experience-wrapper');
+            var iframe = document.getElementById('exp-iframe');
 
-                        theme: { 
-                bg: "#F9F8F4", 
-                text: "#1C1C1C", 
-                accent: "#D4AF37" 
-            },
-             // ... portal data ...
-            heroImg: "https://picsum.photos/seed/abstract_brain/1920/1080",
-            heroTitle: "Neural<br>Net<br>Vision.",
-            desc: "Generative AI interface design. Focusing on human-computer interaction and model interpretability.",
-            videoTitle: "Model Training",
-            videoSrc: "https://www.youtube.com/embed/2ePf9rue1Ao?autoplay=1&mute=1&loop=1&playlist=2ePf9rue1Ao&controls=0",
-            gallery: [
-                { img: "https://picsum.photos/seed/ai_1/600/800", col: "col-4", aspect: "aspect-h-2" },
-                { img: "https://picsum.photos/seed/ai_2/1200/800", col: "col-8", aspect: "aspect-landscape" },
-                { img: "https://picsum.photos/seed/ai_3/1200/1500", col: "col-12", aspect: "aspect-h-2" }
-            ]
+            // Reset state
+            expTitle.innerText = config.title;
+            status.innerText = 'ESTABLISHING SECURE LINK';
+            if (loader) loader.style.display = '';
+            gsap.set(overlay, {opacity: 0});
+            gsap.set(line, {opacity: 0, width: 0});
+            gsap.set(wrapper, {opacity: 0});
+            gsap.set(iframe, {opacity: 0});
+            overlay.classList.add('active');
+            wrapper.classList.add('active');
+
+            // ENTER TRANSITION (~800ms)
+            var self = this;
+            gsap.timeline()
+                .to(overlay, {opacity: 1, duration: 0.3, ease: 'power2.out'}, 0)
+                .set(line, {opacity: 1}, 0.15)
+                .to(line, {width: '100vw', duration: 0.25, ease: 'power2.out'}, 0.15)
+                .add(function() {
+                    // Status text sequence
+                    setTimeout(function() { status.innerText = 'DECRYPTING ASSETS...'; }, 150);
+                    setTimeout(function() { status.innerText = 'AUTHENTICATING...'; }, 350);
+
+                    // Load the world
+                    iframe.classList.remove('loaded');
+                    if (config.placeholder) {
+                        var html = createPlaceholderWorld(config.title, config.url);
+                        var blob = new Blob([html], {type: 'text/html'});
+                        self._currentBlobUrl = URL.createObjectURL(blob);
+                        iframe.src = self._currentBlobUrl;
+                    } else {
+                        iframe.src = config.url;
+                    }
+                }, 0.5);
+            // World ready is handled by _onWorldReady() triggered from onIframeLoad
+        },
+
+        _onWorldReady: function() {
+            if (!this._active) return;
+
+            var overlay = document.getElementById('transition-overlay');
+            var line = document.getElementById('transLine');
+            var status = document.getElementById('trans-status');
+            var loader = document.querySelector('.trans-loader');
+            var wrapper = document.getElementById('experience-wrapper');
+            var iframe = document.getElementById('exp-iframe');
+
+            status.innerText = 'ACCESS GRANTED';
+            if (loader) loader.style.display = 'none';
+
+            // REVEAL WORLD (~500ms)
+            gsap.timeline()
+                .to(line, {opacity: 0, duration: 0.25}, 0)
+                .to(wrapper, {opacity: 1, duration: 0.3, ease: 'power2.out'}, 0.1)
+                .to(iframe, {opacity: 1, duration: 0.4, ease: 'power2.out'}, 0.15)
+                .to(overlay, {opacity: 0, duration: 0.3, ease: 'power2.in'}, 0.2)
+                .set(line, {width: 0}, 0.5)
+                .call(function() {
+                    overlay.classList.remove('active');
+                });
+        },
+
+        exit: function() {
+            if (!this._active) return;
+
+            var overlay = document.getElementById('transition-overlay');
+            var line = document.getElementById('transLine');
+            var status = document.getElementById('trans-status');
+            var wrapper = document.getElementById('experience-wrapper');
+            var iframe = document.getElementById('exp-iframe');
+            var self = this;
+
+            overlay.classList.add('active');
+
+            // EXIT TRANSITION (~800ms)
+            gsap.timeline({
+                onComplete: function() { self._cleanup(); }
+            })
+                .to(iframe, {opacity: 0, duration: 0.2}, 0)
+                .to(wrapper, {opacity: 0, duration: 0.2}, 0)
+                .to(overlay, {opacity: 1, duration: 0.25, ease: 'power2.out'}, 0.1)
+                .set(line, {opacity: 1, width: 0}, 0.2)
+                .to(line, {width: '100vw', duration: 0.2, ease: 'power2.out'}, 0.3)
+                .add(function() {
+                    // Unload world resources
+                    iframe.src = 'about:blank';
+                    iframe.classList.remove('loaded');
+                    if (self._currentBlobUrl) {
+                        URL.revokeObjectURL(self._currentBlobUrl);
+                        self._currentBlobUrl = null;
+                    }
+                }, 0.5)
+                .to(line, {width: 0, duration: 0.2, ease: 'power2.in'}, 0.65)
+                .to(line, {opacity: 0, duration: 0.15}, 0.75)
+                .to(overlay, {opacity: 0, duration: 0.3, ease: 'power2.in'}, 0.75)
+                .set(line, {width: 0});
+        },
+
+        _cleanup: function() {
+            var overlay = document.getElementById('transition-overlay');
+            var wrapper = document.getElementById('experience-wrapper');
+            overlay.classList.remove('active');
+            wrapper.classList.remove('active');
+            document.body.style.overflow = '';
+            window.scrollTo(0, this._scrollPos);
+            this._active = false;
+            this._worldId = null;
         }
-    },
-    {
-        title: "Quantum Chat",
-        tech: "WebRTC / Node",
-        img: "https://picsum.photos/seed/chat_card/600/800",
-        // CHANGED: mute=0, controls=1
-        previewVideo: "https://www.youtube.com/embed/aircAruvnKk?autoplay=1&mute=0&controls=1&loop=1&playlist=aircAruvnKk&showinfo=0",
-        portal: {
-                theme: { 
-                bg: "#F9F8F4", 
-                text: "#1C1C1C", 
-                accent: "#D4AF37" 
-            },
-             // ... portal data ...
-            heroImg: "https://picsum.photos/seed/nature_pattern/1920/1080",
-            heroTitle: "Quantum<br>Chat<br>Protocol.",
-            desc: "Encrypted, decentralized communication protocol with nature-inspired UI elements.",
-            videoTitle: "Handshake Protocol",
-            videoSrc: "https://www.youtube.com/embed/aircAruvnKk?autoplay=1&mute=1&loop=1&playlist=aircAruvnKk&controls=0",
-            gallery: [
-                { img: "https://picsum.photos/seed/nature_1/800/450", col: "col-12", aspect: "aspect-landscape" },
-                { img: "https://picsum.photos/seed/nature_2/600/600", col: "col-6", aspect: "aspect-h-1" },
-                { img: "https://picsum.photos/seed/nature_3/600/600", col: "col-6", aspect: "aspect-h-1" }
-            ]
+    };
+
+    /* ================================================================
+       POSTMESSAGE LISTENER
+       Worlds use this to signal exit intent to the parent shell.
+       Works with sandboxed iframes (no same-origin required).
+       ================================================================ */
+    window.addEventListener('message', function(e) {
+        if (e.data && e.data.type === 'EXIT_WORLD') {
+            WorldLauncher.exit();
+        }
+    });
+
+    /* ================================================================
+       LEGACY WRAPPERS
+       Keep existing HTML onclick handlers working unchanged.
+       ================================================================ */
+    function launchExperience(url, title) {
+        // Legacy — no longer called directly from rendered cards.
+        // Kept for backward compatibility.
+    }
+    function exitExperience() {
+        WorldLauncher.exit();
+    }
+    function onIframeLoad() {
+        if (WorldLauncher._active) {
+            WorldLauncher._onWorldReady();
         }
     }
-];
 
-        const track = $('#track');
-        let carouselIndex = 0;
-
-        projects.forEach((proj, i) => {
-            const card = document.createElement('div');
-            card.className = 'carousel-card';
-            card.innerHTML = `
-                <img src="${proj.img}">
-                <div class="carousel-content">
-                    <div class="carousel-title">${proj.title}</div>
-                    <div class="carousel-tech">${proj.tech}</div>
-                </div>
-            `;
-            card.addEventListener('click', () => { rotateCarousel(0); openPortal(i); });
-            track.appendChild(card);
-        });
-
-        function rotateCarousel(dir) {
-            const max = projects.length - 1;
-            carouselIndex += dir;
-            if (carouselIndex < 0) carouselIndex = 0;
-            if (carouselIndex > max) carouselIndex = max;
-            updateCarousel();
-        }
-
-        function updateCarousel() {
-            const cards = $$('.carousel-card');
-            const previewFrame = $('#preview-frame');
-            const currentProj = projects[carouselIndex];
-
-            cards.forEach((card, i) => {
-                const diff = i - carouselIndex;
-                const absDiff = Math.abs(diff);
-                if (i === carouselIndex) {
-                    card.style.opacity = '1'; card.style.transform = `scale(1.1) translateX(0) translateZ(150px)`; card.style.zIndex = 10; card.style.filter = 'none';
-                } else {
-                    card.style.opacity = absDiff > 1 ? 0 : 0.5; 
-                    card.style.transform = `scale(0.9) translateX(${diff * 220}px) translateZ(-100px)`;
-                    card.style.zIndex = 0; card.style.filter = 'grayscale(100%)';
-                }
-            });
-
-            if (previewFrame && currentProj.previewVideo) {
-                const currentSrcBase = previewFrame.src.split('?')[0];
-                const newSrcBase = currentProj.previewVideo.split('?')[0];
-                if (currentSrcBase !== newSrcBase) {
-                    previewFrame.src = currentProj.previewVideo;
-                }
-            }
-        }
-        updateCarousel();
-
-        // --- 7. CONTACT FORM LOGIC ---
-        function handleContactSubmit(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const spinner = btn.querySelector('.spinner');
-            const btnText = btn.querySelector('span');
-
-            btn.disabled = true;
-            btnText.style.display = 'none';
-            spinner.style.display = 'block';
-
-            setTimeout(() => {
-                btn.disabled = false;
-                btnText.style.display = 'block';
-                spinner.style.display = 'none';
-                showToast("TRANSMISSION SUCCESSFUL");
-                document.getElementById('contactForm').reset();
-            }, 2000);
-        }
-
-        // --- 8. API ENCRYPTION LOGIC ---
-        async function handleApiCall(type) {
-            const msg = $('#apiMessage').value;
-            const pwd = $('#apiPassword').value;
-            const output = $('#apiOutput');
-            if(!msg || !pwd) return showToast("MISSING CREDENTIALS", true);
-            output.innerHTML = `<span style="color:#aaa">// INITIATING ${type.toUpperCase()}...</span>`;
-            await new Promise(r => setTimeout(r, 800));
-            try {
-                output.innerHTML = `<span style="color:#4ade80">// SUCCESS:</span><br>${JSON.stringify({status: "simulated", result: type === 'encrypt' ? "ENCRYPTED_DATA_HASH" : "DECRYPTED_MESSAGE"}, null, 2)}`;
-                showToast("OPERATION COMPLETE");
-            } catch (e) { showToast("ERROR", true); }
-        }
-
-        // --- 9. PORTAL ENGINE ---
-        let portalState = { active: false, req: null, target: 0, current: 0, ease: 0.075, height: 0, max: 0, keyboardStep: 150 };
-
-        function openPortal(index) {
-            const data = projects[index].portal;
-            const portalEl = $('#aether-portal');
-            const warp = $('#warp-overlay');
-            $('#p-hero-title').innerHTML = data.heroTitle;
-            $('#p-hero-desc').innerText = data.desc;
-            $('#p-video-title').innerText = data.videoTitle;
-            $('#p-hero-bg').src = data.heroImg;
-            $('#p-video-iframe').src = data.videoSrc;
-            portalEl.style.setProperty('--bg-body', data.theme.bg);
-            portalEl.style.setProperty('--text-main', data.theme.text);
-            portalEl.style.setProperty('--accent', data.theme.accent);
-            const grid = $('#p-gallery-grid'); grid.innerHTML = '';
-            data.gallery.forEach(item => {
-                const div = document.createElement('div');
-                div.className = `gallery-item ${item.col} ${item.aspect}`;
-                div.innerHTML = `<img src="${item.img}" loading="lazy" alt="Gallery Item">`;
-                div.setAttribute('data-speed', (0.1 + Math.random() * 0.2).toFixed(2));
-                grid.appendChild(div);
-            });
-            warp.classList.add('active');
-            setTimeout(() => {
-                portalEl.classList.add('active'); warp.classList.remove('active'); portalState.active = true;
-                document.body.style.overflow = 'hidden'; initPortalScroll();
-            }, 400);
-        }
-
-        function closePortal() {
-            const portalEl = $('#aether-portal'); const warp = $('#warp-overlay');
-            warp.classList.add('active');
-            setTimeout(() => {
-                portalEl.classList.remove('active'); warp.classList.remove('active'); portalState.active = false;
-                if(portalState.req) cancelAnimationFrame(portalState.req);
-                $('#p-video-iframe').src = ""; document.body.style.overflow = 'auto';
-                $('#portalScrollContainer').style.transform = `translate3d(0, 0, 0)`;
-                portalState.target = 0; portalState.current = 0; $('#portalNavbar').classList.remove('scrolled');
-            }, 400);
-        }
-
-        function initPortalScroll() {
-            const scrollContainer = document.getElementById('portalScrollContainer');
-            const navbar = document.getElementById('portalNavbar');
-            function resize() {
-                document.body.style.height = '100vh';
-                portalState.height = scrollContainer.getBoundingClientRect().height;
-                portalState.max = portalState.height - window.innerHeight;
-            }
-            window.addEventListener('resize', resize); resize();
-            const onWheel = (e) => { if(!portalState.active) return; portalState.target += e.deltaY; };
-            let touchStart = 0;
-            const onTouchStart = (e) => { if(!portalState.active) return; touchStart = e.touches[0].clientY; };
-            const onTouchMove = (e) => {
-                if(!portalState.active) return;
-                const touchY = e.touches[0].clientY;
-                const deltaY = touchStart - touchY;
-                portalState.target += deltaY;
-                touchStart = touchY;
-            };
-            const onKeyDown = (e) => {
-                if(!portalState.active) return;
-                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-                switch(e.key) {
-                    case 'ArrowDown': case 'PageDown': case ' ': e.preventDefault(); portalState.target += portalState.keyboardStep; break;
-                    case 'ArrowUp': case 'PageUp': e.preventDefault(); portalState.target -= portalState.keyboardStep; break;
-                }
-            };
-            window.addEventListener('wheel', onWheel, { passive: false });
-            window.addEventListener('touchstart', onTouchStart);
-            window.addEventListener('touchmove', onTouchMove, { passive: false });
-            window.addEventListener('keydown', onKeyDown);
-            function animate() {
-                if(!portalState.active) return;
-                portalState.current += (portalState.target - portalState.current) * portalState.ease;
-                if (portalState.current < 0) { portalState.current = portalState.current * 0.5; portalState.target = portalState.target * 0.5; }
-                if (portalState.target > portalState.max) portalState.target = portalState.max;
-                if (portalState.current > portalState.max) { portalState.current = portalState.max + (portalState.current - portalState.max) * 0.5; portalState.target = portalState.max; }
-                scrollContainer.style.transform = `translate3d(0, -${portalState.current}px, 0)`;
-                const parallaxElements = document.querySelectorAll('#aether-portal [data-speed]');
-                parallaxElements.forEach(el => {
-                    const speed = parseFloat(el.getAttribute('data-speed'));
-                    const offset = portalState.current * speed;
-                    el.style.transform = `translate3d(0, ${offset}px, 0)`;
-                });
-                if (portalState.current > 100) navbar.classList.add('scrolled');
-                else navbar.classList.remove('scrolled');
-                portalState.req = requestAnimationFrame(animate);
-            }
-            animate();
-        }
-
-        document.addEventListener('mousemove', (e) => {
-            if(!portalState.active) return;
-            const btn = e.target.closest('.btn');
-            if(btn) {
-                const rect = btn.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                btn.style.transform = `translate(${x * 0.2}px, ${y * 0.3}px)`;
-            }
-        });
-        document.addEventListener('mouseout', (e) => {
-            if(!portalState.active) return;
-            const btn = e.target.closest('.btn');
-            if(btn) btn.style.transform = `translate(0px, 0px)`;
-        });
-
-        window.smoothScrollTo = function(targetId) {
-            if(!portalState.active) return;
-            const targetSection = document.querySelector(targetId);
-            if (targetSection) {
-                const offsetTop = targetSection.offsetTop;
-                const start = portalState.target;
-                const change = offsetTop - start;
-                const duration = 1200;
-                const startTime = performance.now();
-                function slide(time) {
-                    const elapsed = time - startTime;
-                    const progress = Math.min(elapsed / duration, 1);
-                    const ease = 1 - Math.pow(1 - progress, 5);
-                    portalState.target = start + (change * ease);
-                    if (progress < 1) requestAnimationFrame(slide);
-                }
-                requestAnimationFrame(slide);
-            }
-        }
-        // --- VN AUDIO PLAYER LOGIC ---
-document.addEventListener('DOMContentLoaded', () => {
-    const audio = document.getElementById('main-audio');
-    const playBtn = document.getElementById('btn-play');
-    const iconPlay = document.getElementById('icon-play');
-    const iconPause = document.getElementById('icon-pause');
-    const playerWrapper = document.querySelector('.vn-player-wrapper');
-    const trackName = document.getElementById('track-name');
-
-    // Optional: Define a playlist if you have multiple files
-    const playlist = [
-        { title: "Main_Theme_Immersion.mp3", src: "path/to/your/local-file.mp3" },
-        // Add more tracks here if needed
+    /* ================================================================
+       SECTION DATA
+       ================================================================ */
+    var sectionsData=[
+        {id:'intro',kicker:'02 // Introduction',title:'Profile',dropCap:'I',text:'engineer systems that verify before they trust. My philosophy is built on verification-first architecture. Step into my inner world to explore the full profile and voice introduction.',bg:IMG.network,fact:{num:'02',text:'Intro'},align:'right',slides:[IMG.portrait,IMG.team,IMG.laptop],actions:[{text:'Enter World',action:'enter-world',worldId:'intro'},{text:'Play Series',action:'slideshow'}]},
+        {id:'mission',kicker:'03 // Core Mission',title:'The Plan',dropCap:'T',text:'rust at scale. I build verification-first systems that turn uncertainty into explainable, auditable intelligence across security, infrastructure, and product engineering.',bg:IMG.server,fact:{num:'03',text:'Mission'},align:'left',slides:[IMG.server,IMG.earth,IMG.neon],actions:[{text:'Enter World',action:'enter-world',worldId:'mission'},{text:'Play Series',action:'slideshow'}]},
+        {id:'systems',kicker:'04 // Featured Systems',title:'Arsenal',dropCap:'N',text:'ot every project—just the flagship systems. Exposure Intelligence validates endpoints with HTTP proof. ShareTenant 2.0 models users and infrastructure into risk scores.',bg:IMG.code,fact:{num:'04',text:'Systems'},align:'right',slides:[IMG.code,IMG.cyber,IMG.datacenter],actions:[{text:'Enter World',action:'enter-world',worldId:'systems'},{text:'Play Series',action:'slideshow'}]},
+        {id:'universe',kicker:'05 // Project Universe',title:'Inner Worlds',dropCap:'E',text:'ach project becomes its own interactive environment instead of opening another page. Walk through the reconnaissance pipeline. Explore the multi-tenant digital twin.',bg:IMG.neon,fact:{num:'05',text:'Universe'},align:'left',slides:[IMG.nebula,IMG.particles,IMG.abstract3d],actions:[{text:'Enter World',action:'enter-world',worldId:'universe'},{text:'Play Series',action:'slideshow'}]},
+        {id:'process',kicker:'06 // Engineering Process',title:'Protocol',dropCap:'R',text:'esearch defines the problem. Architecture sets the boundaries. Design creates the contracts. Validation enforces the proof. Deployment delivers the scale.',bg:IMG.lab,fact:{num:'06',text:'Process'},align:'right',slides:[IMG.lab,IMG.terminal,IMG.circuit],actions:[{text:'Enter World',action:'enter-world',worldId:'process'},{text:'Play Series',action:'slideshow'}]},
+        {id:'stack',kicker:'07 // Technical Stack',title:'Ecosystem',dropCap:'L',text:'anguages connect to frameworks. Frameworks connect to projects. Projects connect to deployments. An interactive ecosystem map rather than a list of icons.',bg:IMG.terminal,fact:{num:'07',text:'Stack'},align:'left',slides:[IMG.terminal,IMG.code,IMG.circuit],actions:[{text:'Enter World',action:'enter-world',worldId:'stack'},{text:'Play Series',action:'slideshow'}]},
+        {id:'gallery',kicker:'08 // CV / AR Gallery',title:'Evidence',dropCap:'L',text:'arge immersive visual gallery. Videos with Ken Burns effects. Before/After sliders for CV pipelines. Interactive showcases of spatial tracking and depth estimation.',bg:IMG.abstract3d,fact:{num:'08',text:'Gallery'},align:'right',slides:[IMG.abstract3d,IMG.particles,IMG.nebula],actions:[{text:'Enter World',action:'enter-world',worldId:'gallery'},{text:'Play Series',action:'slideshow'}]},
+        {id:'security',kicker:'09 // Security Engineering',title:'Boundary',dropCap:'E',text:'verything related to cybersecurity. Verification-first reconnaissance pipelines. Real HTTP evidence validation per endpoint. Security research, risk thinking.',bg:IMG.cyber,fact:{num:'09',text:'Security'},align:'left',slides:[IMG.cyber,IMG.code,IMG.network],actions:[{text:'Enter World',action:'enter-world',worldId:'security'},{text:'Play Series',action:'slideshow'}]},
+        {id:'product',kicker:'10 // Product Engineering',title:'Human Element',dropCap:'U',text:'I evolution across product iterations. End-to-end user journey mapping. Telemetry-driven design decisions. Interactive geospatial maps and micro-interaction engineering.',bg:IMG.dash,fact:{num:'10',text:'Product'},align:'right',slides:[IMG.dash,IMG.app,IMG.server],actions:[{text:'Enter World',action:'enter-world',worldId:'product'},{text:'Play Series',action:'slideshow'}]},
+        {id:'research',kicker:'11 // Research & Innovation',title:'Secrets',dropCap:'S',text:'acred geometry visualization. Adaptive hashing concepts. Future work in quantum risk modeling. Spatial representations of system architecture.',bg:IMG.particles,fact:{num:'11',text:'Research'},align:'left',slides:[IMG.particles,IMG.nebula,IMG.lab],actions:[{text:'Enter World',action:'enter-world',worldId:'research'},{text:'Play Series',action:'slideshow'}]},
+        {id:'journey',kicker:'12 // Education & Journey',title:'Timeline',dropCap:'F',text:'rom 2017\'s independent engineering start to 2024\'s cryptographic research. Certificates, experience, and learning progression mapped out chronologically.',bg:IMG.grad,fact:{num:'12',text:'Journey'},align:'right',slides:[IMG.grad,IMG.earth,IMG.lab],actions:[{text:'Enter World',action:'enter-world',worldId:'journey'},{text:'Play Series',action:'slideshow'}]},
+        {id:'publications',kicker:'13 // Publications',title:'Files',dropCap:'D',text:'eep dives into verification-first architecture, system design, and adaptive hashing research.',bg:IMG.library,fact:{num:'13',text:'Files'},align:'left',slides:[IMG.library,IMG.terminal,IMG.laptop],actions:[{text:'Enter World',action:'enter-world',worldId:'publications'},{text:'Play Series',action:'slideshow'}]},
+        {id:'live',kicker:'14 // Live Applications',title:'Live Ops',dropCap:'I',text:'nstead of demos embedded in the portfolio—open on Vercel. Open GitHub. Read the documentation. View the architecture. Watch the walkthrough video.',bg:IMG.app,fact:{num:'14',text:'Live'},align:'right',slides:[IMG.app,IMG.dash,IMG.datacenter],actions:[{text:'Enter World',action:'enter-world',worldId:'live'},{text:'Play Series',action:'slideshow'}]}
     ];
-    let currentTrackIndex = 0;
 
-    function togglePlay() {
-        if (audio.paused) {
-            // Check if source is empty (fallback for initial load)
-            if (!audio.src || audio.src === window.location.href) {
-                if(playlist[currentTrackIndex]) {
-                    audio.src = playlist[currentTrackIndex].src;
-                    trackName.innerText = playlist[currentTrackIndex].title;
-                } else {
-                    showToast("ERROR: NO AUDIO SOURCE", true);
-                    return;
-                }
-            }
-            
-            audio.play()
-                .then(() => {
-                    iconPlay.style.display = 'none';
-                    iconPause.style.display = 'block';
-                    playerWrapper.classList.add('playing');
-                })
-                .catch(err => {
-                    console.error("Playback failed:", err);
-                    showToast("AUDIO LOAD FAILED", true);
-                });
-        } else {
-            audio.pause();
-            iconPlay.style.display = 'block';
-            iconPause.style.display = 'none';
-            playerWrapper.classList.remove('playing');
-        }
+    /* ================================================================
+       RENDER SECTIONS
+       ================================================================ */
+    function renderSections(){
+        var sc=document.getElementById('showcase'),h='';
+        sectionsData.forEach(function(s){
+            var ac=s.align==='left'?'align-left':'align-right';
+            var mt=s.fact.text.toUpperCase(),dt=s.fact.num;
+            var ah='<div class="card-actions">';
+            s.actions.forEach(function(a){
+                if(a.action==='slideshow') ah+='<span class="see-more" style="background:var(--card-lime);color:var(--card-dark);" data-action="slideshow" data-sid="'+s.id+'">'+a.text+'</span>';
+                else if(a.action==='enter-world') ah+='<span class="see-more" data-action="enter-world" data-world="'+a.worldId+'">'+a.text+'</span>';
+                else ah+='<span class="see-more" data-action="'+a.action+'" data-url="'+(a.url||'')+'" data-title="'+(a.title||'')+'">'+a.text+'</span>';
+            });
+            ah+='</div>';
+            var ss='<div class="section-slideshow" id="ss-'+s.id+'">';
+            for(var i=0;i<4;i++) ss+='<div class="ss-slide"></div>';
+            ss+='<div class="ss-overlay"></div><div class="ss-info"><span class="ss-label">'+s.title.toUpperCase()+' // VISUAL BRIEFING</span><span class="ss-counter">01 / 03</span></div><div class="ss-progress"><div class="ss-bar"></div></div><button class="ss-skip">Skip</button></div>';
+            h+='<section class="story-section '+ac+'" id="'+s.id+'"><div class="story-image-wrapper"><img src="'+s.bg+'" class="story-img" alt="'+s.title+' BG"></div><div class="parent-wrapper"><div class="parent"><div class="card"><div class="content-box"><span class="card-title">'+s.title+'</span><p class="card-content">'+s.dropCap+s.text+'</p>'+ah+'</div><div class="date-box"><span class="month">'+mt+'</span><span class="date">'+dt+'</span></div></div></div></div>'+ss+'</section>';
+        });
+        sc.innerHTML=h;
+        document.querySelectorAll('.see-more').forEach(function(b){
+            b.addEventListener('click',function(){
+                var a=this.getAttribute('data-action'),sid=this.getAttribute('data-sid'),wid=this.getAttribute('data-world'),u=this.getAttribute('data-url'),t=this.getAttribute('data-title');
+                if(a==='slideshow') playSectionSlideshow(sid);
+                else if(a==='enter-world') WorldLauncher.enter(wid);
+                else if(a==='inner-world') launchExperience(u,t);
+            });
+        });
     }
 
-    function updateTrackInfo() {
-        if(playlist[currentTrackIndex]) {
-            trackName.innerText = playlist[currentTrackIndex].title;
-            audio.src = playlist[currentTrackIndex].src;
-            // Auto play on switch if it was already playing
-            if(!playerWrapper.classList.contains('playing')) {
-                togglePlay(); 
-            } else {
-                audio.play();
-            }
-        }
+    /* ================================================================
+       SLIDESHOW ENGINE
+       ================================================================ */
+    var currentSSTimer=null;
+    function playSlideshow(cid,imgs,label,audioUrl,onDone){
+        var c=document.getElementById(cid);if(!c)return;
+        var sl=c.querySelectorAll('.ss-slide'),ct=c.querySelector('.ss-counter'),bar=c.querySelector('.ss-bar'),lb=c.querySelector('.ss-label'),sk=c.querySelector('.ss-skip');
+        sl.forEach(function(s,i){s.classList.remove('active');if(imgs[i]) s.style.backgroundImage='url('+imgs[i]+')';});
+        lb.textContent=label;
+        c.style.visibility='visible';c.style.pointerEvents='auto';
+        gsap.to(c,{opacity:1,duration:0.5});
+        var au=document.getElementById('slideshowAudio');
+        if(audioUrl){au.src=audioUrl;au.play().catch(function(){});}
+        var cur=0,tot=Math.min(imgs.length,sl.length),dur=3000;
+        function show(i){sl.forEach(function(s){s.classList.remove('active');});if(sl[i])sl[i].classList.add('active');ct.textContent=String(i+1).padStart(2,'0')+' / '+String(tot).padStart(2,'0');gsap.fromTo(bar,{width:'0%'},{width:'100%',duration:dur/1000,ease:'none'});}
+        show(0);
+        currentSSTimer=setInterval(function(){cur++;if(cur>=tot){clearInterval(currentSSTimer);currentSSTimer=null;setTimeout(function(){closeSlideshow(cid,onDone);},dur);return;}show(cur);},dur);
+        sk.onclick=function(){if(currentSSTimer){clearInterval(currentSSTimer);currentSSTimer=null;}closeSlideshow(cid,onDone);};
+    }
+    function closeSlideshow(cid,onDone){
+        var c=document.getElementById(cid);if(!c)return;
+        var au=document.getElementById('slideshowAudio');if(au){au.pause();au.currentTime=0;}
+        gsap.to(c,{opacity:0,duration:0.4,onComplete:function(){c.style.visibility='hidden';c.style.pointerEvents='none';c.querySelectorAll('.ss-slide').forEach(function(s){s.classList.remove('active');});gsap.set(c.querySelector('.ss-bar'),{width:'0%'});if(onDone)onDone();}});
     }
 
-    // Event Listeners
-    playBtn.addEventListener('click', togglePlay);
+    /* ================================================================
+       HERO: ENTER PORTFOLIO
+       ================================================================ */
+    function enterPortfolio(){
+        var hc=document.getElementById('heroContent');
+        gsap.to(hc,{opacity:0,duration:0.3,onComplete:function(){hc.style.visibility='hidden';playSlideshow('heroSlideshow',heroSlides,'INITIALIZING PORTFOLIO SYSTEMS',AUDIO_TRACK,function(){hc.style.visibility='visible';gsap.to(hc,{opacity:1,duration:0.5});scrollToSection('intro');});}});
+    }
+    function playSectionSlideshow(sid){var s=sectionsData.find(function(x){return x.id===sid;});if(!s||!s.slides)return;playSlideshow('ss-'+sid,s.slides,s.title.toUpperCase()+' // VISUAL BRIEFING',AUDIO_TRACK,null);}
 
-    document.getElementById('btn-next').addEventListener('click', () => {
-        if (currentTrackIndex < playlist.length - 1) {
-            currentTrackIndex++;
-        } else {
-            currentTrackIndex = 0; // Loop back to start
-        }
-        updateTrackInfo();
+    /* ================================================================
+       HERO STATE MANAGEMENT
+       ================================================================ */
+    function goToState(st){
+        var hi=document.getElementById('heroInit'),hc=document.getElementById('heroContent');
+        if(st==='content'){gsap.to(hi,{opacity:0,visibility:'hidden',duration:0.4,onComplete:function(){hi.style.display='none';hi.classList.add('is-hidden');}});hc.style.display='';hc.classList.remove('is-hidden');gsap.fromTo(hc,{opacity:0,visibility:'hidden',y:30},{opacity:1,visibility:'visible',y:0,duration:0.8,ease:'power2.out'});}
+        else if(st==='init'){gsap.to(hc,{opacity:0,visibility:'hidden',duration:0.4,onComplete:function(){hc.style.display='none';hc.classList.add('is-hidden');}});hi.style.display='';hi.classList.remove('is-hidden');gsap.fromTo(hi,{opacity:0,visibility:'hidden'},{opacity:1,visibility:'visible',duration:0.6,ease:'power2.out'});}
+        else if(st==='video'){var vo=document.getElementById('heroVideo');document.getElementById('heroVidFrame').src='https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1';vo.style.visibility='visible';vo.style.pointerEvents='auto';gsap.fromTo(vo,{opacity:0},{opacity:1,duration:0.5,ease:'power2.out'});gsap.fromTo('.hero-video-container',{scale:0.8},{scale:1,duration:0.6,ease:'back.out(1.4)'});}
+    }
+    function closeVideo(){var vo=document.getElementById('heroVideo');gsap.to('.hero-video-container',{scale:0.8,duration:0.3,ease:'power2.in'});gsap.to(vo,{opacity:0,duration:0.4,ease:'power2.in',onComplete:function(){vo.style.visibility='hidden';vo.style.pointerEvents='none';document.getElementById('heroVidFrame').src='';}});}
+    function scrollToSection(id){var el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+
+    /* ================================================================
+       MOBILE MENU
+       ================================================================ */
+    var mmO=false;
+    document.getElementById('hamburger').addEventListener('click',function(){mmO=!mmO;this.classList.toggle('active',mmO);document.getElementById('mobileMenu').classList.toggle('open',mmO);document.body.style.overflow=mmO?'hidden':'';});
+    document.querySelectorAll('.mobile-dropdown .menu-btn').forEach(function(l){l.addEventListener('click',function(){mmO=false;document.getElementById('hamburger').classList.remove('active');document.getElementById('mobileMenu').classList.remove('open');document.body.style.overflow='';});});
+
+    /* ================================================================
+       INITIALIZATION
+       ================================================================ */
+    document.addEventListener("DOMContentLoaded",function(){
+        gsap.registerPlugin(ScrollTrigger);
+        renderSections();
+
+        var cv=document.getElementById('network-canvas'),cx=cv.getContext('2d'),w,h,ps=[];
+        function rz(){w=cv.width=window.innerWidth;h=cv.height=window.innerHeight;}
+        window.addEventListener('resize',rz);rz();
+        function Pt(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-0.5)*0.3;this.vy=(Math.random()-0.5)*0.3;this.s=Math.random()*1.5;}
+        Pt.prototype.up=function(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>w)this.vx*=-1;if(this.y<0||this.y>h)this.vy*=-1;};
+        Pt.prototype.dr=function(){cx.beginPath();cx.arc(this.x,this.y,this.s,0,Math.PI*2);cx.fillStyle='rgba(1,169,130,0.4)';cx.fill();};
+        for(var i=0;i<40;i++)ps.push(new Pt());
+        (function an(){cx.clearRect(0,0,w,h);for(var i=0;i<ps.length;i++){ps[i].up();ps[i].dr();for(var j=i;j<ps.length;j++){var dx=ps[i].x-ps[j].x,dy=ps[i].y-ps[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<150){cx.beginPath();cx.strokeStyle='rgba(1,169,130,'+(0.1-d/1500)+')';cx.moveTo(ps[i].x,ps[i].y);cx.lineTo(ps[j].x,ps[j].y);cx.stroke();}}}requestAnimationFrame(an);})();
+
+        var hBg=document.getElementById('heroBg'),sImgs=document.querySelectorAll('.story-img');
+        window.addEventListener('scroll',function(){
+            var sy=window.scrollY,wh=window.innerHeight,ms=document.body.scrollHeight-wh;
+            gsap.to('#progressBar',{width:((sy/ms)*100)+'%',duration:0.1,ease:'none'});
+            if(hBg)hBg.style.transform='translateY('+(sy*0.3)+'px)';
+            sImgs.forEach(function(img){var sec=img.closest('.story-section');if(!sec)return;var st=sec.offsetTop,rs=sy-st+wh;if(rs>-wh&&rs<sec.offsetHeight+wh)img.style.transform='translateY('+((rs*0.15)-200)+'px) scale(1.15)';});
+        });
+
+        var ob=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');ob.unobserve(e.target);}});},{threshold:0.15,rootMargin:"0px 0px -100px 0px"});
+        document.querySelectorAll('.parent-wrapper').forEach(function(c){ob.observe(c);});
+
+        /* CINEMATIC INTRO */
+        var pL=document.getElementById('panelLeft'),pR=document.getElementById('panelRight'),seam=document.getElementById('introSeam'),tag=document.getElementById('introTagline');
+        var tl=gsap.timeline({
+            onComplete:function(){
+                var hi=document.getElementById('heroInit');
+                hi.style.display='';hi.classList.remove('is-hidden');
+                gsap.to(hi,{opacity:1,visibility:'visible',duration:0.6,ease:'power2.out'});
+                gsap.to('nav',{opacity:1,visibility:'visible',duration:0.5,ease:'power2.out'},'+=0.2');
+                gsap.to('#mechLayer',{opacity:0.3,duration:1.2,ease:'power2.out'},'-=0.3');
+                gsap.to('.mech-gear',{rotation:360,duration:30,repeat:-1,ease:'none'});
+                gsap.to('.mech-gear:nth-child(2)',{rotation:-360,duration:20,repeat:-1,ease:'none'});
+                gsap.to('.mech-arm',{rotation:'+=360',duration:15,repeat:-1,ease:'none',transformOrigin:'0% 50%'});
+                gsap.to('.mech-circle',{scale:1,duration:2,ease:'power2.out',stagger:0.3});
+                gsap.set('.cinematic-intro',{display:'none',delay:0.3});
+            }
+        });
+        tl.to(seam,{opacity:1,duration:0.4},0.5).fromTo(tag,{opacity:0,scale:0.8},{opacity:1,scale:1,duration:0.5,ease:'back.out(1.7)'},0.8).to(tag,{opacity:0,scale:0.95,duration:0.3},2.2).to(seam,{opacity:0,duration:0.2},2.2).to(pL,{xPercent:-100,duration:0.8,ease:'power2.in'},2.5).to(pR,{xPercent:100,duration:0.8,ease:'power2.in'},2.5);
     });
-
-    document.getElementById('btn-prev').addEventListener('click', () => {
-        if (currentTrackIndex > 0) {
-            currentTrackIndex--;
-        } else {
-            currentTrackIndex = playlist.length - 1;
-        }
-        updateTrackInfo();
-    });
-
-    // Optional: Reset player state when song ends
-    audio.addEventListener('ended', () => {
-        iconPlay.style.display = 'block';
-        iconPause.style.display = 'none';
-        playerWrapper.classList.remove('playing');
-    });
-});
-
     </script>
-</body> 
+</body>
 </html>

@@ -192,7 +192,7 @@
             <button class="exit-btn" onclick="exitExperience()">Exit Experience [X]</button>
         </div>
         <div class="iframe-container">
-            <iframe id="exp-iframe" src="about:blank" sandbox="allow-scripts" onload="onIframeLoad()"></iframe>
+            <iframe id="exp-iframe" src="about:blank" onload="onIframeLoad()"></iframe>
         </div>
     </div>
 
@@ -555,7 +555,7 @@
     /* ================================================================
        SECTION DATA
        ================================================================ */
-    var sectionsData=[
+   var sectionsData=[
         {id:'intro',kicker:'02 // Introduction',title:'Profile',dropCap:'I',text:'engineer systems that verify before they trust. My philosophy is built on verification-first architecture. Step into my inner world to explore the full profile and voice introduction.',bg:IMG.network,fact:{num:'02',text:'Intro'},align:'right',slides:[IMG.portrait,IMG.team,IMG.laptop],actions:[{text:'Enter World',action:'enter-world',worldId:'intro'},{text:'Play Series',action:'slideshow'}]},
         {id:'mission',kicker:'03 // Core Mission',title:'The Plan',dropCap:'T',text:'rust at scale. I build verification-first systems that turn uncertainty into explainable, auditable intelligence across security, infrastructure, and product engineering.',bg:IMG.server,fact:{num:'03',text:'Mission'},align:'left',slides:[IMG.server,IMG.earth,IMG.neon],actions:[{text:'Enter World',action:'enter-world',worldId:'mission'},{text:'Play Series',action:'slideshow'}]},
         {id:'systems',kicker:'04 // Featured Systems',title:'Arsenal',dropCap:'N',text:'ot every project—just the flagship systems. Exposure Intelligence validates endpoints with HTTP proof. ShareTenant 2.0 models users and infrastructure into risk scores.',bg:IMG.code,fact:{num:'04',text:'Systems'},align:'right',slides:[IMG.code,IMG.cyber,IMG.datacenter],actions:[{text:'Enter World',action:'enter-world',worldId:'systems'},{text:'Play Series',action:'slideshow'}]},
@@ -563,143 +563,135 @@
         {id:'process',kicker:'06 // Engineering Process',title:'Protocol',dropCap:'R',text:'esearch defines the problem. Architecture sets the boundaries. Design creates the contracts. Validation enforces the proof. Deployment delivers the scale.',bg:IMG.lab,fact:{num:'06',text:'Process'},align:'right',slides:[IMG.lab,IMG.terminal,IMG.circuit],actions:[{text:'Enter World',action:'enter-world',worldId:'process'},{text:'Play Series',action:'slideshow'}]},
         {id:'stack',kicker:'07 // Technical Stack',title:'Ecosystem',dropCap:'L',text:'anguages connect to frameworks. Frameworks connect to projects. Projects connect to deployments. An interactive ecosystem map rather than a list of icons.',bg:IMG.terminal,fact:{num:'07',text:'Stack'},align:'left',slides:[IMG.terminal,IMG.code,IMG.circuit],actions:[{text:'Enter World',action:'enter-world',worldId:'stack'},{text:'Play Series',action:'slideshow'}]},
         {id:'gallery',kicker:'08 // CV / AR Gallery',title:'Evidence',dropCap:'L',text:'arge immersive visual gallery. Videos with Ken Burns effects. Before/After sliders for CV pipelines. Interactive showcases of spatial tracking and depth estimation.',bg:IMG.abstract3d,fact:{num:'08',text:'Gallery'},align:'right',slides:[IMG.abstract3d,IMG.particles,IMG.nebula],actions:[{text:'Enter World',action:'enter-world',worldId:'gallery'},{text:'Play Series',action:'slideshow'}]},
-        {id:'security',kicker:'09 // Security Engineering',title:'Boundary',dropCap:'E',text:'verything related to cybersecurity. Verification-first reconnaissance pipelines. Real HTTP evidence validation per endpoint. Security research, risk thinking.',bg:IMG.cyber,fact:{num:'09',text:'Security'},align:'left',slides:[IMG.cyber,IMG.code,IMG.network],actions:[{text:'Enter World',action:'enter-world',worldId:'security'},{text:'Play Series',action:'slideshow'}]},
-        {id:'product',kicker:'10 // Product Engineering',title:'Human Element',dropCap:'U',text:'I evolution across product iterations. End-to-end user journey mapping. Telemetry-driven design decisions. Interactive geospatial maps and micro-interaction engineering.',bg:IMG.dash,fact:{num:'10',text:'Product'},align:'right',slides:[IMG.dash,IMG.app,IMG.server],actions:[{text:'Enter World',action:'enter-world',worldId:'product'},{text:'Play Series',action:'slideshow'}]},
-        {id:'research',kicker:'11 // Research & Innovation',title:'Secrets',dropCap:'S',text:'acred geometry visualization. Adaptive hashing concepts. Future work in quantum risk modeling. Spatial representations of system architecture.',bg:IMG.particles,fact:{num:'11',text:'Research'},align:'left',slides:[IMG.particles,IMG.nebula,IMG.lab],actions:[{text:'Enter World',action:'enter-world',worldId:'research'},{text:'Play Series',action:'slideshow'}]},
-        {id:'journey',kicker:'12 // Education & Journey',title:'Timeline',dropCap:'F',text:'rom 2017\'s independent engineering start to 2024\'s cryptographic research. Certificates, experience, and learning progression mapped out chronologically.',bg:IMG.grad,fact:{num:'12',text:'Journey'},align:'right',slides:[IMG.grad,IMG.earth,IMG.lab],actions:[{text:'Enter World',action:'enter-world',worldId:'journey'},{text:'Play Series',action:'slideshow'}]},
-        {id:'publications',kicker:'13 // Publications',title:'Files',dropCap:'D',text:'eep dives into verification-first architecture, system design, and adaptive hashing research.',bg:IMG.library,fact:{num:'13',text:'Files'},align:'left',slides:[IMG.library,IMG.terminal,IMG.laptop],actions:[{text:'Enter World',action:'enter-world',worldId:'publications'},{text:'Play Series',action:'slideshow'}]},
-        {id:'live',kicker:'14 // Live Applications',title:'Live Ops',dropCap:'I',text:'nstead of demos embedded in the portfolio—open on Vercel. Open GitHub. Read the documentation. View the architecture. Watch the walkthrough video.',bg:IMG.app,fact:{num:'14',text:'Live'},align:'right',slides:[IMG.app,IMG.dash,IMG.datacenter],actions:[{text:'Enter World',action:'enter-world',worldId:'live'},{text:'Play Series',action:'slideshow'}]}
+        {id:'security',kicker:'09 // Security Engineering',title:'Boundary',dropCap:'E',text:'very system has an attack surface. I engineer boundaries that verify before they trust. Explore the threat models and verification protocols.',bg:IMG.circuit,fact:{num:'09',text:'Security'},align:'left',slides:[IMG.circuit,IMG.terminal,IMG.server],actions:[{text:'Enter World',action:'enter-world',worldId:'security'},{text:'Play Series',action:'slideshow'}]},
+        {id:'product',kicker:'10 // Product Engineering',title:'Digital Products',dropCap:'D',text:'igital products built with infrastructure DNA. Not just interfaces, but systems with verifiable backends and scalable architectures.',bg:IMG.app,fact:{num:'10',text:'Product'},align:'right',slides:[IMG.app,IMG.laptop,IMG.dash],actions:[{text:'Enter World',action:'enter-world',worldId:'product'},{text:'Play Series',action:'slideshow'}]},
+        {id:'research',kicker:'11 // Research & Dev',title:'R&D Lab',dropCap:'R',text:'esearch threads that feed into production systems. From distributed consensus to zero-knowledge proofs.',bg:IMG.lab,fact:{num:'11',text:'Research'},align:'left',slides:[IMG.lab,IMG.datacenter,IMG.code],actions:[{text:'Enter World',action:'enter-world',worldId:'research'},{text:'Play Series',action:'slideshow'}]},
+        {id:'journey',kicker:'12 // The Journey',title:'The Path',dropCap:'T',text:'he path from curious developer to systems architect. A timeline of pivotal moments and paradigm shifts.',bg:IMG.grad,fact:{num:'12',text:'Journey'},align:'right',slides:[IMG.grad,IMG.library,IMG.team],actions:[{text:'Enter World',action:'enter-world',worldId:'journey'},{text:'Play Series',action:'slideshow'}]},
+        {id:'publications',kicker:'13 // Publications',title:'Written Works',dropCap:'W',text:'ritten proofs, technical articles, and architecture decision records. If it isn\'t documented, it doesn\'t exist.',bg:IMG.library,fact:{num:'13',text:'Publications'},align:'left',slides:[IMG.library,IMG.terminal,IMG.code],actions:[{text:'Enter World',action:'enter-world',worldId:'publications'},{text:'Play Series',action:'slideshow'}]},
+        {id:'live',kicker:'14 // Live Systems',title:'Active Systems',dropCap:'A',text:'ctive deployments running right now. Live monitoring, real-time verification, and production metrics.',bg:IMG.dash,fact:{num:'14',text:'Live'},align:'right',slides:[IMG.dash,IMG.server,IMG.datacenter],actions:[{text:'Enter World',action:'enter-world',worldId:'live'},{text:'Play Series',action:'slideshow'}]}
     ];
 
     /* ================================================================
-       RENDER SECTIONS
+       DOM RENDERER
+       Builds the 3D herringbone cards and hooks them to WorldLauncher
        ================================================================ */
-    function renderSections(){
-        var sc=document.getElementById('showcase'),h='';
-        sectionsData.forEach(function(s){
-            var ac=s.align==='left'?'align-left':'align-right';
-            var mt=s.fact.text.toUpperCase(),dt=s.fact.num;
-            var ah='<div class="card-actions">';
-            s.actions.forEach(function(a){
-                if(a.action==='slideshow') ah+='<span class="see-more" style="background:var(--card-lime);color:var(--card-dark);" data-action="slideshow" data-sid="'+s.id+'">'+a.text+'</span>';
-                else if(a.action==='enter-world') ah+='<span class="see-more" data-action="enter-world" data-world="'+a.worldId+'">'+a.text+'</span>';
-                else ah+='<span class="see-more" data-action="'+a.action+'" data-url="'+(a.url||'')+'" data-title="'+(a.title||'')+'">'+a.text+'</span>';
+    function renderSections() {
+        var showcase = document.getElementById('showcase');
+        if (!showcase) return;
+
+        var html = '';
+        sectionsData.forEach(function(sec) {
+            var actionsHtml = '';
+            sec.actions.forEach(function(act) {
+                if (act.action === 'enter-world') {
+                    actionsHtml += '<button class="see-more" data-world-id="' + act.worldId + '">' + act.text + '</button>';
+                } else if (act.action === 'slideshow') {
+                    actionsHtml += '<button class="see-more" data-play-slideshow="' + sec.id + '">' + act.text + '</button>';
+                }
             });
-            ah+='</div>';
-            var ss='<div class="section-slideshow" id="ss-'+s.id+'">';
-            for(var i=0;i<4;i++) ss+='<div class="ss-slide"></div>';
-            ss+='<div class="ss-overlay"></div><div class="ss-info"><span class="ss-label">'+s.title.toUpperCase()+' // VISUAL BRIEFING</span><span class="ss-counter">01 / 03</span></div><div class="ss-progress"><div class="ss-bar"></div></div><button class="ss-skip">Skip</button></div>';
-            h+='<section class="story-section '+ac+'" id="'+s.id+'"><div class="story-image-wrapper"><img src="'+s.bg+'" class="story-img" alt="'+s.title+' BG"></div><div class="parent-wrapper"><div class="parent"><div class="card"><div class="content-box"><span class="card-title">'+s.title+'</span><p class="card-content">'+s.dropCap+s.text+'</p>'+ah+'</div><div class="date-box"><span class="month">'+mt+'</span><span class="date">'+dt+'</span></div></div></div></div>'+ss+'</section>';
-        });
-        sc.innerHTML=h;
-        document.querySelectorAll('.see-more').forEach(function(b){
-            b.addEventListener('click',function(){
-                var a=this.getAttribute('data-action'),sid=this.getAttribute('data-sid'),wid=this.getAttribute('data-world'),u=this.getAttribute('data-url'),t=this.getAttribute('data-title');
-                if(a==='slideshow') playSectionSlideshow(sid);
-                else if(a==='enter-world') WorldLauncher.enter(wid);
-                else if(a==='inner-world') launchExperience(u,t);
-            });
-        });
-    }
 
-    /* ================================================================
-       SLIDESHOW ENGINE
-       ================================================================ */
-    var currentSSTimer=null;
-    function playSlideshow(cid,imgs,label,audioUrl,onDone){
-        var c=document.getElementById(cid);if(!c)return;
-        var sl=c.querySelectorAll('.ss-slide'),ct=c.querySelector('.ss-counter'),bar=c.querySelector('.ss-bar'),lb=c.querySelector('.ss-label'),sk=c.querySelector('.ss-skip');
-        sl.forEach(function(s,i){s.classList.remove('active');if(imgs[i]) s.style.backgroundImage='url('+imgs[i]+')';});
-        lb.textContent=label;
-        c.style.visibility='visible';c.style.pointerEvents='auto';
-        gsap.to(c,{opacity:1,duration:0.5});
-        var au=document.getElementById('slideshowAudio');
-        if(audioUrl){au.src=audioUrl;au.play().catch(function(){});}
-        var cur=0,tot=Math.min(imgs.length,sl.length),dur=3000;
-        function show(i){sl.forEach(function(s){s.classList.remove('active');});if(sl[i])sl[i].classList.add('active');ct.textContent=String(i+1).padStart(2,'0')+' / '+String(tot).padStart(2,'0');gsap.fromTo(bar,{width:'0%'},{width:'100%',duration:dur/1000,ease:'none'});}
-        show(0);
-        currentSSTimer=setInterval(function(){cur++;if(cur>=tot){clearInterval(currentSSTimer);currentSSTimer=null;setTimeout(function(){closeSlideshow(cid,onDone);},dur);return;}show(cur);},dur);
-        sk.onclick=function(){if(currentSSTimer){clearInterval(currentSSTimer);currentSSTimer=null;}closeSlideshow(cid,onDone);};
-    }
-    function closeSlideshow(cid,onDone){
-        var c=document.getElementById(cid);if(!c)return;
-        var au=document.getElementById('slideshowAudio');if(au){au.pause();au.currentTime=0;}
-        gsap.to(c,{opacity:0,duration:0.4,onComplete:function(){c.style.visibility='hidden';c.style.pointerEvents='none';c.querySelectorAll('.ss-slide').forEach(function(s){s.classList.remove('active');});gsap.set(c.querySelector('.ss-bar'),{width:'0%'});if(onDone)onDone();}});
-    }
-
-    /* ================================================================
-       HERO: ENTER PORTFOLIO
-       ================================================================ */
-    function enterPortfolio(){
-        var hc=document.getElementById('heroContent');
-        gsap.to(hc,{opacity:0,duration:0.3,onComplete:function(){hc.style.visibility='hidden';playSlideshow('heroSlideshow',heroSlides,'INITIALIZING PORTFOLIO SYSTEMS',AUDIO_TRACK,function(){hc.style.visibility='visible';gsap.to(hc,{opacity:1,duration:0.5});scrollToSection('intro');});}});
-    }
-    function playSectionSlideshow(sid){var s=sectionsData.find(function(x){return x.id===sid;});if(!s||!s.slides)return;playSlideshow('ss-'+sid,s.slides,s.title.toUpperCase()+' // VISUAL BRIEFING',AUDIO_TRACK,null);}
-
-    /* ================================================================
-       HERO STATE MANAGEMENT
-       ================================================================ */
-    function goToState(st){
-        var hi=document.getElementById('heroInit'),hc=document.getElementById('heroContent');
-        if(st==='content'){gsap.to(hi,{opacity:0,visibility:'hidden',duration:0.4,onComplete:function(){hi.style.display='none';hi.classList.add('is-hidden');}});hc.style.display='';hc.classList.remove('is-hidden');gsap.fromTo(hc,{opacity:0,visibility:'hidden',y:30},{opacity:1,visibility:'visible',y:0,duration:0.8,ease:'power2.out'});}
-        else if(st==='init'){gsap.to(hc,{opacity:0,visibility:'hidden',duration:0.4,onComplete:function(){hc.style.display='none';hc.classList.add('is-hidden');}});hi.style.display='';hi.classList.remove('is-hidden');gsap.fromTo(hi,{opacity:0,visibility:'hidden'},{opacity:1,visibility:'visible',duration:0.6,ease:'power2.out'});}
-        else if(st==='video'){var vo=document.getElementById('heroVideo');document.getElementById('heroVidFrame').src='https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1';vo.style.visibility='visible';vo.style.pointerEvents='auto';gsap.fromTo(vo,{opacity:0},{opacity:1,duration:0.5,ease:'power2.out'});gsap.fromTo('.hero-video-container',{scale:0.8},{scale:1,duration:0.6,ease:'back.out(1.4)'});}
-    }
-    function closeVideo(){var vo=document.getElementById('heroVideo');gsap.to('.hero-video-container',{scale:0.8,duration:0.3,ease:'power2.in'});gsap.to(vo,{opacity:0,duration:0.4,ease:'power2.in',onComplete:function(){vo.style.visibility='hidden';vo.style.pointerEvents='none';document.getElementById('heroVidFrame').src='';}});}
-    function scrollToSection(id){var el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
-
-    /* ================================================================
-       MOBILE MENU
-       ================================================================ */
-    var mmO=false;
-    document.getElementById('hamburger').addEventListener('click',function(){mmO=!mmO;this.classList.toggle('active',mmO);document.getElementById('mobileMenu').classList.toggle('open',mmO);document.body.style.overflow=mmO?'hidden':'';});
-    document.querySelectorAll('.mobile-dropdown .menu-btn').forEach(function(l){l.addEventListener('click',function(){mmO=false;document.getElementById('hamburger').classList.remove('active');document.getElementById('mobileMenu').classList.remove('open');document.body.style.overflow='';});});
-
-    /* ================================================================
-       INITIALIZATION
-       ================================================================ */
-    document.addEventListener("DOMContentLoaded",function(){
-        gsap.registerPlugin(ScrollTrigger);
-        renderSections();
-
-        var cv=document.getElementById('network-canvas'),cx=cv.getContext('2d'),w,h,ps=[];
-        function rz(){w=cv.width=window.innerWidth;h=cv.height=window.innerHeight;}
-        window.addEventListener('resize',rz);rz();
-        function Pt(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-0.5)*0.3;this.vy=(Math.random()-0.5)*0.3;this.s=Math.random()*1.5;}
-        Pt.prototype.up=function(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>w)this.vx*=-1;if(this.y<0||this.y>h)this.vy*=-1;};
-        Pt.prototype.dr=function(){cx.beginPath();cx.arc(this.x,this.y,this.s,0,Math.PI*2);cx.fillStyle='rgba(1,169,130,0.4)';cx.fill();};
-        for(var i=0;i<40;i++)ps.push(new Pt());
-        (function an(){cx.clearRect(0,0,w,h);for(var i=0;i<ps.length;i++){ps[i].up();ps[i].dr();for(var j=i;j<ps.length;j++){var dx=ps[i].x-ps[j].x,dy=ps[i].y-ps[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<150){cx.beginPath();cx.strokeStyle='rgba(1,169,130,'+(0.1-d/1500)+')';cx.moveTo(ps[i].x,ps[i].y);cx.lineTo(ps[j].x,ps[j].y);cx.stroke();}}}requestAnimationFrame(an);})();
-
-        var hBg=document.getElementById('heroBg'),sImgs=document.querySelectorAll('.story-img');
-        window.addEventListener('scroll',function(){
-            var sy=window.scrollY,wh=window.innerHeight,ms=document.body.scrollHeight-wh;
-            gsap.to('#progressBar',{width:((sy/ms)*100)+'%',duration:0.1,ease:'none'});
-            if(hBg)hBg.style.transform='translateY('+(sy*0.3)+'px)';
-            sImgs.forEach(function(img){var sec=img.closest('.story-section');if(!sec)return;var st=sec.offsetTop,rs=sy-st+wh;if(rs>-wh&&rs<sec.offsetHeight+wh)img.style.transform='translateY('+((rs*0.15)-200)+'px) scale(1.15)';});
+            html += '<div class="story-section align-' + sec.align + '" id="section-' + sec.id + '">' +
+                '<div class="story-image-wrapper"><img class="story-img" src="' + sec.bg + '" alt="' + sec.title + '"></div>' +
+                '<div class="parent-wrapper">' +
+                    '<div class="parent">' +
+                        '<div class="card">' +
+                            '<div class="date-box"><span class="month">' + sec.kicker.split(' // ')[0] + '</span><span class="date">' + sec.fact.num + '</span></div>' +
+                            '<div class="content-box">' +
+                                '<div class="card-title">' + sec.title + '</div>' +
+                                '<div class="card-content"><span style="color:var(--accent-yellow);font-size:3rem;float:left;margin-right:10px;line-height:0.8;font-family:var(--font-serif)">' + sec.dropCap + '</span>' + sec.text + '</div>' +
+                                '<div class="card-actions">' + actionsHtml + '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
         });
 
-        var ob=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');ob.unobserve(e.target);}});},{threshold:0.15,rootMargin:"0px 0px -100px 0px"});
-        document.querySelectorAll('.parent-wrapper').forEach(function(c){ob.observe(c);});
+        showcase.innerHTML = html;
+        initScrollObservers();
+    }
 
-        /* CINEMATIC INTRO */
-        var pL=document.getElementById('panelLeft'),pR=document.getElementById('panelRight'),seam=document.getElementById('introSeam'),tag=document.getElementById('introTagline');
-        var tl=gsap.timeline({
-            onComplete:function(){
-                var hi=document.getElementById('heroInit');
-                hi.style.display='';hi.classList.remove('is-hidden');
-                gsap.to(hi,{opacity:1,visibility:'visible',duration:0.6,ease:'power2.out'});
-                gsap.to('nav',{opacity:1,visibility:'visible',duration:0.5,ease:'power2.out'},'+=0.2');
-                gsap.to('#mechLayer',{opacity:0.3,duration:1.2,ease:'power2.out'},'-=0.3');
-                gsap.to('.mech-gear',{rotation:360,duration:30,repeat:-1,ease:'none'});
-                gsap.to('.mech-gear:nth-child(2)',{rotation:-360,duration:20,repeat:-1,ease:'none'});
-                gsap.to('.mech-arm',{rotation:'+=360',duration:15,repeat:-1,ease:'none',transformOrigin:'0% 50%'});
-                gsap.to('.mech-circle',{scale:1,duration:2,ease:'power2.out',stagger:0.3});
-                gsap.set('.cinematic-intro',{display:'none',delay:0.3});
-            }
-        });
-        tl.to(seam,{opacity:1,duration:0.4},0.5).fromTo(tag,{opacity:0,scale:0.8},{opacity:1,scale:1,duration:0.5,ease:'back.out(1.7)'},0.8).to(tag,{opacity:0,scale:0.95,duration:0.3},2.2).to(seam,{opacity:0,duration:0.2},2.2).to(pL,{xPercent:-100,duration:0.8,ease:'power2.in'},2.5).to(pR,{xPercent:100,duration:0.8,ease:'power2.in'},2.5);
+    /* ================================================================
+       SCROLL ANIMATIONS FOR CARDS
+       ================================================================ */
+    function initScrollObservers() {
+        var wrappers = document.querySelectorAll('.parent-wrapper');
+        if ('IntersectionObserver' in window) {
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15 });
+            wrappers.forEach(function(w) { observer.observe(w); });
+        } else {
+            wrappers.forEach(function(w) { w.classList.add('visible'); });
+        }
+    }
+
+    /* ================================================================
+       EVENT DELEGATION FOR CARDS
+       Connects the generated buttons to WorldLauncher
+       ================================================================ */
+    document.addEventListener('click', function(e) {
+        var worldBtn = e.target.closest('[data-world-id]');
+        if (worldBtn) {
+            e.preventDefault();
+            WorldLauncher.enter(worldBtn.getAttribute('data-world-id'));
+            return;
+        }
+
+        var slideshowBtn = e.target.closest('[data-play-slideshow]');
+        if (slideshowBtn) {
+            console.log('Play slideshow for:', slideshowBtn.getAttribute('data-play-slideshow'));
+        }
     });
-    </script>
+
+    /* ================================================================
+       HERO STATE MACHINE
+       ================================================================ */
+    function goToState(state) {
+        var initLayer = document.getElementById('heroInit');
+        var contentLayer = document.getElementById('heroContent');
+        var videoOverlay = document.getElementById('heroVideo');
+        var nav = document.querySelector('nav');
+
+        if (state === 'content') {
+            if(initLayer) { initLayer.style.visibility = 'hidden'; initLayer.style.opacity = '0'; }
+            if(contentLayer) { contentLayer.style.display = 'flex'; contentLayer.style.visibility = 'visible'; contentLayer.style.opacity = '1'; }
+            if(nav) { nav.style.visibility = 'visible'; nav.style.opacity = '1'; }
+            enterPortfolio();
+        } else if (state === 'video') {
+            if(videoOverlay) { videoOverlay.style.visibility = 'visible'; videoOverlay.style.opacity = '1'; videoOverlay.style.pointerEvents = 'auto'; }
+        } else if (state === 'init') {
+            if(contentLayer) { contentLayer.style.display = 'none'; contentLayer.style.visibility = 'hidden'; contentLayer.style.opacity = '0'; }
+            if(initLayer) { initLayer.style.visibility = 'visible'; initLayer.style.opacity = '1'; }
+            if(nav) { nav.style.visibility = 'hidden'; nav.style.opacity = '0'; }
+        }
+    }
+
+    function closeVideo() {
+        var videoOverlay = document.getElementById('heroVideo');
+        var vidFrame = document.getElementById('heroVidFrame');
+        if(videoOverlay) { videoOverlay.style.opacity = '0'; videoOverlay.style.pointerEvents = 'none'; setTimeout(function(){ videoOverlay.style.visibility = 'hidden'; }, 400); }
+        if(vidFrame) { vidFrame.src = ''; }
+    }
+
+    function enterPortfolio() {
+        console.log('Portfolio initialized');
+    }
+
+    /* ================================================================
+       INIT ON LOAD
+       ================================================================ */
+    window.addEventListener('DOMContentLoaded', function() {
+        renderSections();
+        setTimeout(function() {
+            goToState('init');
+        }, 100);
+    });
+</script>
 </body>
 </html>

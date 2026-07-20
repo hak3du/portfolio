@@ -1223,7 +1223,247 @@ qsa('.story-section').forEach(function(s) { s.classList.remove('in-view'); });
 <script
   src="https://cloud.livekit.io/embed-popup.js"
   data-lk-agent="CA_heYshkDBsBYM"
-  data-lk-logo="Atlas.png"
+  data-lk-logo="<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+
+<defs>
+
+<linearGradient id="edge" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#6CFFFF"/>
+<stop offset=".18" stop-color="#00E7FF"/>
+<stop offset=".55" stop-color="#00B7FF"/>
+<stop offset=".82" stop-color="#7A5CFF"/>
+<stop offset="1" stop-color="#FF3BD5"/>
+</linearGradient>
+
+<linearGradient id="glass" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#ffffff" stop-opacity=".55"/>
+<stop offset=".18" stop-color="#B8FFFF" stop-opacity=".18"/>
+<stop offset=".55" stop-color="#6FD8FF" stop-opacity=".08"/>
+<stop offset="1" stop-color="#ffffff" stop-opacity=".22"/>
+</linearGradient>
+
+<linearGradient id="reflection" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#fff"/>
+<stop offset=".15" stop-color="#fff" stop-opacity=".45"/>
+<stop offset=".5" stop-color="#fff" stop-opacity=".05"/>
+<stop offset="1" stop-color="#fff" stop-opacity="0"/>
+</linearGradient>
+
+<filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+<feGaussianBlur stdDeviation="10"/>
+</filter>
+
+<filter id="softGlow">
+<feGaussianBlur stdDeviation="4"/>
+</filter>
+
+</defs>
+
+<rect width="1024" height="1024" fill="#05070A"/>
+
+<!-- grid -->
+
+<g opacity=".08" stroke="#14ffff">
+
+<path d="M0 128H1024"/>
+<path d="M0 256H1024"/>
+<path d="M0 384H1024"/>
+<path d="M0 512H1024"/>
+<path d="M0 640H1024"/>
+<path d="M0 768H1024"/>
+<path d="M128 0V1024"/>
+<path d="M256 0V1024"/>
+<path d="M384 0V1024"/>
+<path d="M512 0V1024"/>
+<path d="M640 0V1024"/>
+<path d="M768 0V1024"/>
+<path d="M896 0V1024"/>
+
+</g>
+
+<!-- outer glow -->
+
+<polygon
+points="
+512,90
+790,250
+790,610
+512,770
+234,610
+234,250"
+fill="none"
+stroke="#00E7FF"
+stroke-width="26"
+opacity=".15"
+filter="url(#glow)"/>
+
+<!-- glass frame -->
+
+<polygon
+points="
+512,90
+790,250
+790,610
+512,770
+234,610
+234,250"
+fill="url(#glass)"
+stroke="url(#edge)"
+stroke-width="16"/>
+
+<!-- inner bevel -->
+
+<polygon
+points="
+512,125
+760,267
+760,593
+512,735
+264,593
+264,267"
+fill="none"
+stroke="#ffffff33"
+stroke-width="4"/>
+
+<!-- impossible atlas A -->
+
+<g>
+
+<path
+d="
+M360 630
+L512 205
+L664 630
+L600 630
+L552 490
+L470 490
+L424 630Z"
+fill="url(#glass)"
+stroke="url(#edge)"
+stroke-width="11"/>
+
+<polygon
+points="
+452,488
+570,488
+545,418
+475,418"
+fill="#05070A"/>
+
+<polygon
+points="
+435,418
+548,418
+514,335
+470,335"
+fill="url(#glass)"
+stroke="url(#edge)"
+stroke-width="6"/>
+
+<!-- impossible cut -->
+
+<polygon
+points="
+510,208
+545,252
+490,392
+455,352"
+fill="#05070A"/>
+
+<path
+d="
+M512 205
+550 252
+512 340
+475 294Z"
+fill="url(#glass)"
+stroke="#ffffff55"
+stroke-width="2"/>
+
+</g>
+
+<!-- floating circuits -->
+
+<g
+stroke="#22EFFF"
+stroke-width="2"
+opacity=".25">
+
+<path d="M330 310H690"/>
+<path d="M360 360H660"/>
+<path d="M340 420H690"/>
+<path d="M360 470H650"/>
+<path d="M350 560H680"/>
+
+<circle cx="360" cy="360" r="4"/>
+<circle cx="660" cy="360" r="4"/>
+<circle cx="340" cy="420" r="4"/>
+<circle cx="690" cy="420" r="4"/>
+
+</g>
+
+<!-- reflections -->
+
+<path
+d="
+M300 170
+L730 600"
+stroke="url(#reflection)"
+stroke-width="18"
+opacity=".45"/>
+
+<path
+d="
+M360 120
+L760 520"
+stroke="#ffffff"
+stroke-opacity=".12"
+stroke-width="8"/>
+
+<!-- glow edge -->
+
+<polygon
+points="
+512,90
+790,250
+790,610
+512,770
+234,610
+234,250"
+fill="none"
+stroke="#00ffff"
+stroke-width="2"
+filter="url(#glow)"/>
+
+<!-- atlas -->
+
+<text
+x="512"
+y="905"
+text-anchor="middle"
+font-family="Orbitron,Eurostile,sans-serif"
+font-size="84"
+letter-spacing="18"
+fill="url(#edge)">
+
+ATLAS
+
+</text>
+
+<text
+x="512"
+y="955"
+text-anchor="middle"
+font-family="Arial"
+font-size="18"
+letter-spacing="8"
+fill="#7EDFFF">
+
+SECURITY • AI • SYSTEMS
+
+</text>
+
+</svg>"
   data-lk-theme="system"
   data-lk-color="#E8F6FF"
 ></script>

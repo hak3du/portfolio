@@ -992,57 +992,46 @@ async function launchWorld(worldPath){
     stopIntro();
 
     savedScrollY = window.scrollY;
-
     document.body.classList.add("scroll-locked");
 
     playWorldBloom();
 
-    await delay(10);
-
-    transitionCurtain.classList.remove("closing","opening");
-    transitionCurtain.style.transform="";
-
-    void transitionCurtain.offsetWidth;
-
+    // Close curtain
+    transitionCurtain.classList.remove("opening");
     transitionCurtain.classList.add("closing");
 
-    await waitForAnim(transitionCurtain,700);
+    await waitForAnim(transitionCurtain,1000);
 
+    // Keep curtain covering the screen
     transitionCurtain.classList.remove("closing");
+    transitionCurtain.style.transform = "scaleY(1)";
 
-  // Wait until the iframe has finished loading
-await new Promise((resolve) => {
-
-    worldIframe.onload = () => {
-
-        // Prevent this handler from firing again
-        worldIframe.onload = null;
-
-        // Small extra delay lets the browser paint one frame
-        requestAnimationFrame(() => {
-            requestAnimationFrame(resolve);
-        });
-
-    };
-
-    worldIframe.src = worldPath;
-
-});
-
+    // Show the world container behind the curtain
     worldContainer.classList.remove("exiting");
     worldContainer.classList.add("active");
 
-    transitionCurtain.style.transform="scaleY(1)";
+    // Wait until the iframe is loaded
+    await new Promise(resolve => {
+        worldIframe.onload = () => {
+            worldIframe.onload = null;
+            requestAnimationFrame(resolve);
+        };
+
+        worldIframe.src = worldPath;
+    });
+
+    // Give the browser one more frame to paint
+    await delay(30);
+
+    // Open curtain
     transitionCurtain.classList.add("opening");
 
-    await waitForAnim(transitionCurtain,700);
+    await waitForAnim(transitionCurtain,2000);
 
     transitionCurtain.classList.remove("opening");
+    transitionCurtain.style.transform = "";
 
-    transitionCurtain.style.transform="";
-
-    worldTransitioning=false;
-
+    worldTransitioning = false;
 }
 
 async function exitWorld(){

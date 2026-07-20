@@ -997,7 +997,7 @@ async function launchWorld(worldPath){
 
     playWorldBloom();
 
-    await delay(60);
+    await delay(10);
 
     transitionCurtain.classList.remove("closing","opening");
     transitionCurtain.style.transform="";
@@ -1006,7 +1006,7 @@ async function launchWorld(worldPath){
 
     transitionCurtain.classList.add("closing");
 
-    await waitForAnim(transitionCurtain,700);
+    await waitForAnim(transitionCurtain,20);
 
     transitionCurtain.classList.remove("closing");
 

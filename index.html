@@ -1010,12 +1010,27 @@ async function launchWorld(worldPath){
 
     transitionCurtain.classList.remove("closing");
 
+  // Wait until the iframe has finished loading
+await new Promise((resolve) => {
+
+    worldIframe.onload = () => {
+
+        // Prevent this handler from firing again
+        worldIframe.onload = null;
+
+        // Small extra delay lets the browser paint one frame
+        requestAnimationFrame(() => {
+            requestAnimationFrame(resolve);
+        });
+
+    };
+
     worldIframe.src = worldPath;
+
+});
 
     worldContainer.classList.remove("exiting");
     worldContainer.classList.add("active");
-
-    await delay(120);
 
     transitionCurtain.style.transform="scaleY(1)";
     transitionCurtain.classList.add("opening");

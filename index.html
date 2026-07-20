@@ -47,11 +47,60 @@ a{color:inherit;text-decoration:none}
 #audio-edge.active{opacity:1}
 #transition-curtain{position:fixed;inset:0;z-index:9999;background:var(--bg-deep);
   transform:scaleY(0);transform-origin:top;pointer-events:none}
-#transition-curtain.closing{animation:cc .7s var(--ease-expo) forwards}
-#transition-curtain.opening{transform:scaleY(1);transform-origin:bottom;animation:co .7s var(--ease-expo) forwards}
+#transition-curtain.closing{animation:cc 1s var(--ease-expo) forwards}
+#transition-curtain.opening{transform:scaleY(1);transform-origin:bottom;animation:co 1s var(--ease-expo) forwards}
 @keyframes cc{to{transform:scaleY(1);transform-origin:top}}
 @keyframes co{to{transform:scaleY(0);transform-origin:bottom}}
+/* =========================================================
+   WORLD BLOOM
+   ========================================================= */
 
+#world-bloom{
+    position:fixed;
+    inset:-20%;
+    z-index:9998;
+    pointer-events:none;
+
+    opacity:0;
+    transform:scale(.96);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(78,201,212,.18) 0%,
+            rgba(78,201,212,.08) 28%,
+            rgba(78,201,212,.03) 48%,
+            transparent 72%
+        );
+
+    filter:blur(55px);
+}
+
+#world-bloom.active{
+    animation:worldBloom .12s cubic-bezier(.22,1,.36,1);
+}
+
+@keyframes worldBloom{
+
+    0%{
+        opacity:0;
+        transform:scale(.95);
+        filter:blur(70px);
+    }
+
+    45%{
+        opacity:1;
+        transform:scale(1.02);
+        filter:blur(20px);
+    }
+
+    100%{
+        opacity:0;
+        transform:scale(1);
+        filter:blur(60px);
+    }
+
+}
 #world-container{position:fixed;inset:0;z-index:10000;opacity:0;visibility:hidden;background:var(--bg-deep);
   transition:opacity .6s var(--ease-quart),visibility .6s}
 #world-container.active{opacity:1;visibility:visible}
@@ -250,7 +299,7 @@ a{color:inherit;text-decoration:none}
 <div class="grain" aria-hidden="true"></div>
 <div id="audio-edge" aria-hidden="true"></div>
 <div id="transition-curtain" aria-hidden="true"></div>
-
+<div id="world-bloom" aria-hidden="true"></div>
 <nav id="float-nav" aria-label="Chapter navigation">
   <div class="nav-dot" data-target="ch-intro"><span class="nav-tip">Introduction</span></div>
   <div class="nav-dot" data-target="ch-mission"><span class="nav-tip">Mission</span></div>
@@ -520,6 +569,7 @@ var BRIEF_IMAGES = {
 /* =========================================================
    DOM
    ========================================================= */
+var worldBloom = document.getElementById('world-bloom');
 var heroInitial = document.getElementById('heroInitial');
 var heroExpanded = document.getElementById('heroExpanded');
 var profileRing = document.getElementById('profileRing');
@@ -563,6 +613,17 @@ var worldTransitioning = false;
 /* =========================================================
    UTILITIES
    ========================================================= */
+function playWorldBloom(){
+
+    if(!worldBloom) return;
+
+    worldBloom.classList.remove('active');
+
+    void worldBloom.offsetWidth;
+
+    worldBloom.classList.add('active');
+
+}
 function delay(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
 function waitForAnim(el, ms) {
   return new Promise(function(resolve) {
@@ -921,70 +982,105 @@ qsa('.world-trigger').forEach(function(btn) {
   });
 });
 
-function launchWorld(worldPath) {
-  if (worldTransitioning) return;
-  worldTransitioning = true;
-  stopAllBriefs();
-  stopIntro();
-  savedScrollY = window.scrollY;
-  document.body.classList.add('scroll-locked');
+async function launchWorld(worldPath){
 
-  transitionCurtain.classList.remove('closing', 'opening');
-  transitionCurtain.style.transform = '';
-  void transitionCurtain.offsetWidth;
-  transitionCurtain.classList.add('closing');
+    if(worldTransitioning) return;
 
-  waitForAnim(transitionCurtain, 720).then(function() {
-    transitionCurtain.classList.remove('closing');
+    worldTransitioning = true;
+
+    stopAllBriefs();
+    stopIntro();
+
+    savedScrollY = window.scrollY;
+
+    document.body.classList.add("scroll-locked");
+
+    playWorldBloom();
+
+    await delay(60);
+
+    transitionCurtain.classList.remove("closing","opening");
+    transitionCurtain.style.transform="";
+
+    void transitionCurtain.offsetWidth;
+
+    transitionCurtain.classList.add("closing");
+
+    await waitForAnim(transitionCurtain,700);
+
+    transitionCurtain.classList.remove("closing");
+
     worldIframe.src = worldPath;
-    worldContainer.classList.remove('exiting');
-    worldContainer.classList.add('active');
-    return delay(150);
-  }).then(function() {
-    transitionCurtain.style.transform = 'scaleY(1)';
-    transitionCurtain.style.transformOrigin = 'bottom';
-    transitionCurtain.classList.add('opening');
-    return waitForAnim(transitionCurtain, 720);
-  }).then(function() {
-    transitionCurtain.classList.remove('opening');
-    transitionCurtain.style.transform = '';
-    transitionCurtain.style.transformOrigin = '';
-    worldTransitioning = false;
-  }).catch(function() { worldTransitioning = false; });
+
+    worldContainer.classList.remove("exiting");
+    worldContainer.classList.add("active");
+
+    await delay(120);
+
+    transitionCurtain.style.transform="scaleY(1)";
+    transitionCurtain.classList.add("opening");
+
+    await waitForAnim(transitionCurtain,700);
+
+    transitionCurtain.classList.remove("opening");
+
+    transitionCurtain.style.transform="";
+
+    worldTransitioning=false;
+
 }
 
-function exitWorld() {
-  if (worldTransitioning) return;
-  worldTransitioning = true;
+async function exitWorld(){
 
-  transitionCurtain.classList.remove('opening', 'closing');
-  transitionCurtain.style.transform = '';
-  void transitionCurtain.offsetWidth;
-  transitionCurtain.classList.add('closing');
+    if(worldTransitioning) return;
 
-  waitForAnim(transitionCurtain, 720).then(function() {
-    transitionCurtain.classList.remove('closing');
-    worldContainer.classList.remove('active');
-    worldContainer.classList.add('exiting');
-    worldIframe.src = 'about:blank';
-    document.body.classList.remove('scroll-locked');
-    window.scrollTo(0, savedScrollY);
-    return delay(80);
-  }).then(function() {
-    transitionCurtain.style.transform = 'scaleY(1)';
-    transitionCurtain.style.transformOrigin = 'bottom';
-    transitionCurtain.classList.add('opening');
-    return waitForAnim(transitionCurtain, 720);
-  }).then(function() {
-    transitionCurtain.classList.remove('opening');
-    transitionCurtain.style.transform = '';
-    transitionCurtain.style.transformOrigin = '';
-    worldContainer.classList.remove('exiting');
-    worldTransitioning = false;
-  }).catch(function() { worldTransitioning = false; });
+    worldTransitioning=true;
+
+    playWorldBloom();
+
+    await delay(60);
+
+    transitionCurtain.classList.remove("closing","opening");
+    transitionCurtain.style.transform="";
+
+    void transitionCurtain.offsetWidth;
+
+    transitionCurtain.classList.add("closing");
+
+    await waitForAnim(transitionCurtain,700);
+
+    transitionCurtain.classList.remove("closing");
+
+    worldContainer.classList.add("exiting");
+
+    worldIframe.src="about:blank";
+
+    await delay(120);
+
+    worldContainer.classList.remove("active");
+    worldContainer.classList.remove("exiting");
+
+    window.scrollTo({
+        top:savedScrollY,
+        behavior:"instant"
+    });
+
+    document.body.classList.remove("scroll-locked");
+
+    transitionCurtain.style.transform="scaleY(1)";
+    transitionCurtain.classList.add("opening");
+
+    await waitForAnim(transitionCurtain,700);
+
+    transitionCurtain.classList.remove("opening");
+
+    transitionCurtain.style.transform="";
+
+    worldTransitioning=false;
+
 }
 
-worldExitBtn.addEventListener('click', exitWorld);
+worldExitBtn.addEventListener("click",exitWorld);
 
 /* =========================================================
    SCROLL ANIMATIONS + PARALLAX

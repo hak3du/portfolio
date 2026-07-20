@@ -102,7 +102,7 @@ a{color:inherit;text-decoration:none}
 
 }
 #world-container{position:fixed;inset:0;z-index:10000;opacity:0;visibility:hidden;background:var(--bg-deep);
-  transition:opacity .7s var(--ease-quart),visibility .7s}
+  transition:opacity .3618s var(--ease-quart),visibility .3618s}
 #world-container.active{opacity:1;visibility:visible}
 #world-container.exiting{opacity:0;visibility:visible}
 #world-iframe{width:100%;height:100%;border:none;background:var(--bg-deep)}
@@ -1038,52 +1038,64 @@ async function exitWorld(){
 
     if(worldTransitioning) return;
 
-    worldTransitioning=true;
+    worldTransitioning = true;
 
     playWorldBloom();
 
-    await delay(60);
-
+    // Close the curtain
     transitionCurtain.classList.remove("closing","opening");
-    transitionCurtain.style.transform="";
+    transitionCurtain.style.transform = "";
 
     void transitionCurtain.offsetWidth;
 
     transitionCurtain.classList.add("closing");
 
-    await waitForAnim(transitionCurtain,700);
+    await waitForAnim(transitionCurtain,1000);
 
+    // Keep the curtain fully closed
     transitionCurtain.classList.remove("closing");
+    transitionCurtain.style.transform = "scaleY(1)";
 
+    // Fade the world away behind the curtain
     worldContainer.classList.add("exiting");
 
-    worldIframe.src="about:blank";
+    await waitForAnim(worldContainer,700);
 
-    await delay(120);
-
+    // Hide the world completely
     worldContainer.classList.remove("active");
     worldContainer.classList.remove("exiting");
 
-    window.scrollTo({
-        top:savedScrollY,
-        behavior:"instant"
+    // Now destroy the iframe (it's no longer visible)
+    worldIframe.src = "about:blank";
+
+    // Restore scroll after layout has settled
+    requestAnimationFrame(() => {
+        window.scrollTo({
+            top: savedScrollY,
+            behavior: "instant"
+        });
     });
 
     document.body.classList.remove("scroll-locked");
 
-    transitionCurtain.style.transform="scaleY(1)";
+    // Give the browser two paint frames before revealing the portfolio
+    await new Promise(resolve => {
+        requestAnimationFrame(() => {
+            requestAnimationFrame(resolve);
+        });
+    });
+
+    // Open the curtain
     transitionCurtain.classList.add("opening");
 
-    await waitForAnim(transitionCurtain,700);
+    await waitForAnim(transitionCurtain,2000);
 
     transitionCurtain.classList.remove("opening");
+    transitionCurtain.style.transform = "";
 
-    transitionCurtain.style.transform="";
-
-    worldTransitioning=false;
+    worldTransitioning = false;
 
 }
-
 worldExitBtn.addEventListener("click",exitWorld);
 
 /* =========================================================

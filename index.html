@@ -1094,9 +1094,74 @@ document.addEventListener('keydown', function(e) {
 qsa('.story-section').forEach(function(s) { s.classList.remove('in-view'); });
 </script>
 </body>
-  <script
+<!-- TONY//OS Portfolio Assistant -->
+<script
   src="https://cloud.livekit.io/embed-popup.js"
-  data-lk-agent="CA_heYshkDBsBYM"
-  data-lk-color="#002CF2"
+  data-lk-agent="CA_abc123"
+  data-lk-color="#00E5FF"
+  data-lk-logo="https://www.datacentrix.co.za/uploads/8/3/1/1/83111140/cybersecurity-image-2_orig.jpg"
+  data-lk-theme="dark"
 ></script>
+
+<style>
+/* TONY//OS LiveKit Styling */
+:root{
+    --tron:#00E5FF;
+    --tron-soft:rgba(0,229,255,.35);
+}
+
+/* Floating launcher */
+[data-lk-launcher],
+.lk-launcher,
+.lk-widget-button{
+    border-radius:50% !important;
+    border:2px solid var(--tron-soft) !important;
+    box-shadow:
+        0 0 10px rgba(0,229,255,.30),
+        0 0 20px rgba(0,229,255,.20),
+        0 0 40px rgba(0,229,255,.12);
+    transition:
+        transform .35s ease,
+        box-shadow .35s ease,
+        border-color .35s ease;
+    overflow:hidden;
+}
+
+/* Hover effect */
+[data-lk-launcher]:hover,
+.lk-launcher:hover,
+.lk-widget-button:hover{
+    transform:scale(1.08);
+    border-color:#00F7FF !important;
+    box-shadow:
+        0 0 18px rgba(0,247,255,.55),
+        0 0 36px rgba(0,247,255,.35),
+        0 0 70px rgba(0,247,255,.18);
+}
+
+/* Gentle breathing animation */
+@keyframes tronPulse{
+    0%{
+        box-shadow:
+            0 0 8px rgba(0,229,255,.22),
+            0 0 18px rgba(0,229,255,.12);
+    }
+    50%{
+        box-shadow:
+            0 0 18px rgba(0,229,255,.45),
+            0 0 42px rgba(0,229,255,.25);
+    }
+    100%{
+        box-shadow:
+            0 0 8px rgba(0,229,255,.22),
+            0 0 18px rgba(0,229,255,.12);
+    }
+}
+
+[data-lk-launcher],
+.lk-launcher,
+.lk-widget-button{
+    animation:tronPulse 3.5s ease-in-out infinite;
+}
+</style>
 </html>

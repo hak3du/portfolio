@@ -476,7 +476,19 @@ var WORLD_REGISTRY = {
 /* =========================================================
    MEDIA CONFIG
    ========================================================= */
-var VOICE_AUDIO_SRC = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+var VOICE_AUDIO = {
+  hero:     'assets/audio/hero-narration.mp3',
+  intro:    'assets/audio/intro-narration.mp3',
+  mission:  'assets/audio/mission-narration.mp3',
+  engineering:'assets/audio/engineering-narration.mp3',
+  systems:  'assets/audio/systems-narration.mp3',
+  security: 'assets/audio/security-narration.mp3',
+  ai:       'assets/audio/ai-narration.mp3',
+  research: 'assets/audio/research-narration.mp3',
+  trading:  'assets/audio/trading-narration.mp3',
+  journey:  'assets/audio/journey-narration.mp3',
+  contact:  'assets/audio/contact-narration.mp3'
+};
 var YOUTUBE_VIDEO_ID = 'dQw4w9WgXcQ';
 var BRIEF_INTERVAL = 2400;
 
@@ -700,8 +712,9 @@ function resetAudioElement() {
 }
 
 /* Starts narration. Safe to call at any time. */
-function startNarration() {
-  if (!VOICE_AUDIO_SRC) return;
+function startNarration(audioKey) {
+  var src = audioKey ? VOICE_AUDIO[audioKey] : VOICE_AUDIO['hero'];
+  if (!src) return;
   initAudioContext();
   connectAudio();
 
@@ -710,7 +723,7 @@ function startNarration() {
 
   /* Small delay to let the reset propagate */
   setTimeout(function() {
-    narrationAudio.src = VOICE_AUDIO_SRC;
+    narrationAudio.src = src;
     narrationAudio.play().then(function() {
       audioEdge.classList.add('active');
       if (!audioAnimRunning) { audioAnimRunning = true; updateAudioReactive(); }
@@ -785,7 +798,7 @@ function startIntro() {
   btnIntro.classList.add('intro-active');
 
   /* Start audio with full reset */
-  startNarration();
+    startNarration('hero');
 
   introTimer = setInterval(function() {
     if (introIndex >= INTRO_IMAGES.length) introIndex = 0;
@@ -847,7 +860,7 @@ function startBrief(briefId) {
   if (triggerBtn) triggerBtn.classList.add('brief-playing');
 
   /* Start audio with full reset */
-  startNarration();
+startNarration(briefId);
 
   briefTimer = setInterval(function() {
     if (briefIndex >= images.length) briefIndex = 0;
@@ -1097,7 +1110,7 @@ qsa('.story-section').forEach(function(s) { s.classList.remove('in-view'); });
 <!-- TONY//OS Portfolio Assistant -->
 <script
   src="https://cloud.livekit.io/embed-popup.js"
-  data-lk-agent="CA_abc123"
+  data-lk-agent="CA_heYshkDBsBYM"
   data-lk-color="#00E5FF"
   
   data-lk-theme="dark"

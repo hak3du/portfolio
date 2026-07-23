@@ -182,17 +182,7 @@ a{color:inherit;text-decoration:none}
 .scroll-line{width:1px;height:32px;background:var(--fg-muted);position:relative;overflow:hidden}
 .scroll-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:50%;
   background:var(--cyan);animation:sp 2.4s ease-in-out infinite}
-@keyframes sp{
-0%{
- transform:translateY(-50%);
-}
-50%{
- transform:translateY(100%);
-}
-100%{
- transform:translateY(-50%);
-}
-}
+@keyframes sp{0%{top:-50%}50%{top:100%}100%{top:-50%}}
 
 .story-section{position:relative;z-index:3;min-height:100vh;min-height:100dvh;
   display:grid;grid-template-columns:1fr 1fr;align-items:center;overflow:hidden}
@@ -1202,45 +1192,13 @@ document.addEventListener('keydown', function(e) {
    INIT
    ========================================================= */
 qsa('.story-section').forEach(function(s) { s.classList.remove('in-view'); });
-  function loadImage(url){
- return new Promise(resolve=>{
-   let img=new Image();
-   img.onload=resolve;
-   img.src=url;
- });
-}
-  async function startBrief(id){
-
- let images=BRIEF_IMAGES[id];
-
- await loadImage(images[0]);
-
- ...
-}
-let liveKitLoaded = false;
-
-function loadLiveKit(){
-
-    if(liveKitLoaded) return;
-
-    liveKitLoaded = true;
-
-    const script = document.createElement("script");
-
-    script.src = "https://cloud.livekit.io/embed-popup.js";
-    script.dataset.lkAgent = "CA_TXe27caYxTUy";
-    script.dataset.lkColor = "#002CF2";
-
-    document.body.appendChild(script);
-}
-window.addEventListener("load", function(){
-
-    setTimeout(loadLiveKit, 8000);
-
-});
 </script>
 </body>
 <!-- TONY//OS Portfolio Assistant -->
-
+<script
+  src="https://cloud.livekit.io/embed-popup.js"
+  data-lk-agent="CA_TXe27caYxTUy"
+  data-lk-color="#002CF2"
+></script>
 
 </html>

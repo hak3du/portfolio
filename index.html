@@ -609,7 +609,7 @@ var audioSource = null;
 var audioConnected = false;
 var audioAnimRunning = false;
 var worldTransitioning = false;
-
+var frequencyData = null;
 /* =========================================================
    UTILITIES
    ========================================================= */
@@ -759,6 +759,7 @@ function connectAudio() {
     audioSource = audioContext.createMediaElementSource(narrationAudio);
     audioSource.connect(analyser);
     analyser.connect(audioContext.destination);
+    frequencyData = new Uint8Array(analyser.frequencyBinCount);
     audioConnected = true;
   } catch (e) { audioConnected = true; }
 }
@@ -818,14 +819,13 @@ function stopNarration() {
 function updateAudioReactive() {
   if (!audioAnimRunning || !analyser) return;
   try {
-    var bl = analyser.frequencyBinCount;
-    var d = new Uint8Array(bl);
-    analyser.getByteFrequencyData(d);
+   var bl = analyser.frequencyBinCount;
+      analyser.getByteFrequencyData(frequencyData);
     var bass = 0, mid = 0;
     var bE = Math.floor(bl * 0.15);
     var mE = Math.floor(bl * 0.5);
-    for (var i = 0; i < bE; i++) bass += d[i];
-    for (var i = bE; i < mE; i++) mid += d[i];
+    for (var i = 0; i < bE; i++) bass += frequencyData[i];
+    for (var i = bE; i < mE; i++) mid += frequencyData[i];
     bass = bass / (bE * 255);
     mid = mid / ((mE - bE) * 255);
     var vol = bass * 0.5 + mid * 0.35 + (1 - bass - mid) * 0.15;

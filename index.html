@@ -28,6 +28,17 @@
   --ease-expo:cubic-bezier(0.16,1,0.3,1);--ease-quart:cubic-bezier(0.25,1,0.5,1);--ease-sine:cubic-bezier(0.37,0,0.63,1);
   --ar-vol:0;--ar-bass:0
 }
+--font-display: 'Space Grotesk', sans-serif;
+--font-body: 'Inter', sans-serif;
+  body{
+    font-family:var(--font-body);
+}
+
+.section-title,
+.hero-title,
+.world-title{
+    font-family:var(--font-display);
+}
 html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
 body{background:var(--bg-deep);color:var(--fg);font-family:var(--font-ui);font-weight:300;line-height:1.65;overflow-x:hidden}
 body.scroll-locked{overflow:hidden}
@@ -1133,7 +1144,7 @@ window.addEventListener('scroll', function() {
         if (!s) return;
         var r = s.getBoundingClientRect();
         var o = (r.top + r.height / 2 - vh / 2) / vh;
-        bg.style.transform = 'translateY(' + (o * -31.8) + 'px)';
+        bg.style.transform = 'translateY(' + (o * -61.8) + 'px)';
       });
       pTicking = false;
     });

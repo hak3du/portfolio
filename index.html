@@ -610,6 +610,8 @@ var audioConnected = false;
 var audioAnimRunning = false;
 var worldTransitioning = false;
 var frequencyData = null;
+var lastAudioVol = -1;
+var lastAudioBass = -1;
 /* =========================================================
    UTILITIES
    ========================================================= */
@@ -830,8 +832,16 @@ function updateAudioReactive() {
     mid = mid / ((mE - bE) * 255);
     var vol = bass * 0.5 + mid * 0.35 + (1 - bass - mid) * 0.15;
     var r = document.documentElement.style;
+
+if (Math.abs(vol - lastAudioVol) > 0.02) {
+    lastAudioVol = vol;
     r.setProperty('--ar-vol', vol.toFixed(3));
+}
+
+if (Math.abs(bass - lastAudioBass) > 0.02) {
+    lastAudioBass = bass;
     r.setProperty('--ar-bass', bass.toFixed(3));
+}
   } catch (e) {}
 
   /* Check if audio naturally ended */

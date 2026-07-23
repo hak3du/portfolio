@@ -1112,36 +1112,7 @@ const parallaxSections = Array.from(document.querySelectorAll('.story-section'))
     current: section.querySelector('.section-bg'),
     next: section.querySelector('.section-bg-next')
 }));
-var pTicking = false;
 
-window.addEventListener('scroll', function () {
-
-    if (pTicking) return;
-
-    pTicking = true;
-
-    requestAnimationFrame(function () {
-
-        var vh = window.innerHeight;
-
-        for (const item of parallaxSections) {
-
-            var r = item.section.getBoundingClientRect();
-            var offset = (r.top + r.height * 0.5 - vh * 0.5) / vh;
-            var translate = 'translateY(' + (offset * -28) + 'px)';
-
-            if (item.current)
-                item.current.style.transform = translate;
-
-            if (item.next)
-                item.next.style.transform = translate;
-        }
-
-        pTicking = false;
-
-    });
-
-}, { passive: true });
 
 /* =========================================================
    AMBIENT PARTICLES + GRID

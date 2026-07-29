@@ -139,8 +139,8 @@ a{color:inherit;text-decoration:none}
 
 #hero{position:relative;z-index:3;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--space-md);overflow:hidden}
 #hero-video{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;object-position:center}
-#hero-bg{position:absolute;inset:0;z-index:1;background-size:cover;background-position:center;transition:opacity 1.6s var(--ease-sine)}
-#hero-bg-next{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;
+#hero-bg{position:absolute;inset:0;z-index:1;background-size:cover;background-position:center;background-color:var(--bg-deep);transition:opacity 1.6s var(--ease-sine)}
+#hero-bg-next{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;background-color:var(--bg-deep);
   opacity:0;transition:opacity 1.6s var(--ease-sine)}
 #hero-bg::after,#hero-bg-next::after{content:'';position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(4,5,7,.78) 0%,rgba(4,5,7,.55) 35%,rgba(4,5,7,.6) 65%,rgba(4,5,7,.92) 100%)}
@@ -510,7 +510,7 @@ var VOICE_AUDIO = {
 };
 var YOUTUBE_VIDEO_ID = 'dQw4w9WgXcQ';
 var BRIEF_INTERVAL = 2400;
-
+var INTRO_INTERVAL = 4500;
 var INTRO_IMAGES = [
   'https://images.pexels.com/photos/33798615/pexels-photo-33798615.jpeg',
   'https://images.pexels.com/photos/12899140/pexels-photo-12899140.jpeg',
@@ -899,7 +899,7 @@ img.onload = function () {
 };
 
 img.src = url;
-  }, BRIEF_INTERVAL);
+  }, INTRO_INTERVAL);;
 }
 
 function stopIntro() {

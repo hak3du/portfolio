@@ -872,6 +872,7 @@ var url = INTRO_IMAGES[introIndex];
 var img = new Image();
 
 img.onload = function () {
+  var applyFrame = function () {
 
     if (introUseNext) {
 
@@ -895,7 +896,13 @@ img.onload = function () {
 
     introUseNext = !introUseNext;
     introIndex++;
+  };
 
+  if (img.decode) {
+    img.decode().then(applyFrame).catch(applyFrame);
+  } else {
+    applyFrame();
+  }
 };
 
 img.src = url;

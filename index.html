@@ -899,9 +899,6 @@ img.onload = function () {
 };
 
 img.src = url;
-
-    introUseNext = !introUseNext;
-    introIndex++;
   }, BRIEF_INTERVAL);
 }
 
@@ -910,10 +907,11 @@ function stopIntro() {
   introPlaying = false;
   btnIntro.classList.remove('intro-active');
   heroBg.style.opacity = '1';
+  heroBg.style.backgroundImage = '';
   heroBgNext.style.opacity = '0';
+  heroBgNext.style.backgroundImage = '';
   stopNarration();
 }
-
 btnIntro.addEventListener('click', startIntro);
 
 /* =========================================================

@@ -510,6 +510,7 @@ var VOICE_AUDIO = {
 };
 var YOUTUBE_VIDEO_ID = 'dQw4w9WgXcQ';
 var BRIEF_INTERVAL = 3168;
+var INTRO_INTERVAL = 8000;
 
 var INTRO_IMAGES = [
   'https://images.pexels.com/photos/33798615/pexels-photo-33798615.jpeg',
@@ -906,7 +907,7 @@ img.onload = function () {
 };
 
 img.src = url;
-  }, BRIEF_INTERVAL);
+  }, INTRO_INTERVAL);
 }
 
 function stopIntro() {

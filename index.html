@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=5.0">
-<title>Portfolio OS</title>
+<meta name="description" content="Thabang Tony Ngoepe — Systems Engineer, Ethical Hacker, Builder.">
+<meta name="theme-color" content="#040507">
+<title>Portfolio OS — Thabang Tony Ngoepe</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
+<link rel="preconnect" href="https://images.pexels.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print"onload="this.media='all'">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -23,35 +24,27 @@
   --orange:#d47a3a;--orange-soft:rgba(212,122,58,0.12);
   --border:rgba(78,201,212,0.07);--border-hover:rgba(78,201,212,0.22);--border-active:rgba(78,201,212,0.4);
   --glow-sm:0 0 10px rgba(78,201,212,0.04);--glow-md:0 0 22px rgba(78,201,212,0.08);--glow-lg:0 0 36px rgba(78,201,212,0.12);
-  --font-display:'Cormorant Garamond',Georgia,serif;--font-ui:'Space Grotesk',system-ui,sans-serif;
+  --font-display:'Space Grotesk',system-ui,sans-serif;
+  --font-ui:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Inter',system-ui,sans-serif;
   --fs-hero:clamp(2.4rem,6.5vw,5.5rem);--fs-h2:clamp(1.6rem,3.8vw,3.2rem);
   --fs-body:clamp(0.82rem,1.2vw,0.95rem);--fs-small:clamp(0.65rem,0.95vw,0.78rem);--fs-btn:clamp(0.64rem,1vw,0.76rem);
   --space-sm:clamp(0.7rem,2vw,1.5rem);--space-md:clamp(1.5rem,5vw,4rem);--space-lg:clamp(2.2rem,7vw,6rem);
   --ease-expo:cubic-bezier(0.16,1,0.3,1);--ease-quart:cubic-bezier(0.25,1,0.5,1);--ease-sine:cubic-bezier(0.37,0,0.63,1);
-  --ar-vol:0;--ar-bass:0
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --ar-vol:0;--ar-bass:0;
 }
-  body{
-    font-family:var(--font-body);
-}
-
-.section-title,
-.world-title{
-    font-family:var(--font-display);
-}
-html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
-body{background:var(--bg-deep);color:var(--fg);font-family:var(--font-ui);font-weight:300;line-height:1.65;overflow-x:hidden}
+html{overflow-anchor:none;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{background:var(--bg-deep);color:var(--fg);font-family:var(--font-body);font-weight:300;line-height:1.65;overflow-x:hidden}
 body.scroll-locked{overflow:hidden}
 img{display:block;max-width:100%}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;-webkit-tap-highlight-color:transparent}
 a{color:inherit;text-decoration:none}
+:focus{outline:none}
+:focus-visible{outline:1px solid var(--cyan);outline-offset:3px;border-radius:2px}
 ::selection{background:var(--cyan);color:var(--bg-deep)}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg-deep)}
 ::-webkit-scrollbar-thumb{background:var(--fg-muted);border-radius:2px}
-@font-face {
-  font-display: swap;
-}
+
 #ambient-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.6}
 .grain{position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.018;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:128px}
@@ -59,21 +52,34 @@ a{color:inherit;text-decoration:none}
   box-shadow:inset 0 0 calc(50px + var(--ar-vol,0)*70px) rgba(78,201,212,calc(var(--ar-vol,0)*0.06));
   opacity:0;transition:opacity .8s ease}
 #audio-edge.active{opacity:1}
+
+#scroll-progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:300;pointer-events:none;
+  background:linear-gradient(90deg,var(--cyan),var(--blue));opacity:.65;
+  transform:scaleX(0);transform-origin:0 0}
+#brand{position:fixed;top:1.1rem;left:clamp(1rem,3vw,1.8rem);z-index:150;display:flex;align-items:center;gap:.55em;
+  font-family:var(--font-display);font-size:.7rem;font-weight:500;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--fg-dim);cursor:pointer;opacity:0;visibility:hidden;transform:translateY(-8px);
+  transition:opacity .5s ease,transform .5s var(--ease-expo),visibility .5s,color .3s ease}
+#brand.visible{opacity:1;visibility:visible;transform:translateY(0)}
+#brand:hover{color:var(--cyan)}
+#brand .brand-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px rgba(78,201,212,.5)}
+
 #transition-curtain{position:fixed;inset:0;z-index:9999;background:var(--bg-deep);
   transform:scaleY(0);transform-origin:top;pointer-events:none}
-#transition-curtain.closing{animation:cc 1s var(--ease-expo) forwards}
-#transition-curtain.opening{transform:scaleY(1);transform-origin:bottom;animation:co 2s var(--ease-expo) forwards}
-@keyframes cc{to{transform:scaleY(1);transform-origin:top}}
-@keyframes co{to{transform:scaleY(0);transform-origin:bottom}}
-/* =========================================================
-   WORLD BLOOM
-   ========================================================= */
+#transition-curtain.closing{transform-origin:top;animation:cc .9s var(--ease-expo) forwards}
+#transition-curtain.opening{transform-origin:bottom;animation:co 1.1s var(--ease-expo) forwards}
+@keyframes cc{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes co{from{transform:scaleY(1)}to{transform:scaleY(0)}}
 
+#world-bloom{position:fixed;inset:0;z-index:10002;pointer-events:none;opacity:0}
+#world-bloom::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 50%,rgba(78,201,212,.22),transparent 62%)}
+#world-bloom.active{animation:wb 1s var(--ease-expo)}
+@keyframes wb{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
 
 #world-container{position:fixed;inset:0;z-index:10000;opacity:0;visibility:hidden;background:var(--bg-deep);
-  transition:opacity .3618s var(--ease-quart),visibility .3618s}
+  transition:opacity .36s var(--ease-quart),visibility .36s}
 #world-container.active{opacity:1;visibility:visible}
-#world-container.exiting{opacity:0;visibility:visible}
 #world-iframe{width:100%;height:100%;border:none;background:var(--bg-deep)}
 #world-exit-btn{position:fixed;top:clamp(1rem,3vw,2rem);right:clamp(1rem,3vw,2rem);z-index:10001;
   width:44px;height:44px;display:flex;align-items:center;justify-content:center;
@@ -99,9 +105,9 @@ a{color:inherit;text-decoration:none}
 
 .btn{position:relative;display:inline-flex;align-items:center;gap:.5em;
   padding:clamp(.55rem,1.4vw,.8rem) clamp(1.2rem,3vw,1.8rem);
-  font-size:var(--fs-btn);font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+  font-family:var(--font-ui);font-size:var(--fs-btn);font-weight:500;letter-spacing:.12em;text-transform:uppercase;
   border-radius:4px;overflow:hidden;
-  transition:transform .2s var(--ease-sine),box-shadow .4s ease,border-color .4s ease,opacity .4s ease}
+  transition:transform .2s var(--ease-sine),box-shadow .4s ease,border-color .4s ease,color .4s ease,opacity .4s ease}
 .btn:active{transform:scale(.97)}
 .btn::before{content:'';position:absolute;inset:0;
   background:linear-gradient(100deg,transparent 0%,rgba(78,201,212,.1) 25%,rgba(58,143,212,.13) 50%,rgba(78,201,212,.1) 75%,transparent 100%);
@@ -121,7 +127,6 @@ a{color:inherit;text-decoration:none}
 .btn-ghost{border:1px solid transparent;color:var(--fg-dim);padding:clamp(.4rem,1vw,.6rem) clamp(.8rem,2vw,1.2rem)}
 .btn-ghost:hover{color:var(--cyan);border-color:var(--border)}
 .btn-small{font-size:clamp(.6rem,.9vw,.7rem);padding:clamp(.4rem,1vw,.55rem) clamp(.8rem,2vw,1.3rem)}
-.btn.audio-react::before{animation-duration: 0.8s);opacity:calc(.5 + var(1,0)*.4)}
 .btn.brief-playing{border-color:var(--gold)!important;color:var(--gold)!important;box-shadow:0 0 16px rgba(200,164,92,.08)!important}
 .btn.brief-playing::before{background:linear-gradient(100deg,transparent,rgba(200,164,92,.18),transparent)!important;background-size:300% 100%!important}
 .btn.intro-active{border-color:var(--cyan)!important;color:var(--cyan)!important;box-shadow:0 0 16px rgba(78,201,212,.1)!important}
@@ -130,23 +135,25 @@ a{color:inherit;text-decoration:none}
   border:1px solid var(--border);border-radius:8px;box-shadow:var(--glow-sm);
   transition:transform .5s var(--ease-expo),box-shadow .5s ease,border-color .5s ease,background .3s ease}
 .glow-card:hover{transform:translateY(-2px);
-  box-shadow:0 0 16px rgba(78,201,212,.08),
-           0 6px 28px rgba(0,0,0,.25);
+  box-shadow:0 0 16px rgba(78,201,212,.08),0 6px 28px rgba(0,0,0,.25);
   border-color:var(--border-hover);background:var(--bg-card-hover)}
 .glow-card.audio-active{
   box-shadow:0 0 calc(16px + var(--ar-bass,0)*20px) rgba(78,201,212,calc(.04 + var(--ar-vol,0)*.08)),0 6px 28px rgba(0,0,0,.25);
   border-color:rgba(78,201,212,calc(.12 + var(--ar-vol,0)*.25))}
 
-#hero{position:relative;z-index:3;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--space-md);overflow:hidden}
-#hero-video{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;object-position:center}
-#hero-bg{position:absolute;inset:0;z-index:1;background-size:cover;background-position:center;transition:opacity 0.618s var(--ease-expo)}
-#hero-bg-next{position:absolute;inset:0;z-index:1;background-size:cover;background-position:center;
-  opacity:0;transition:opacity 0.618s var(--ease-expo)}
+#hero{position:relative;z-index:3;min-height:100vh;min-height:100dvh;overflow:hidden}
+#hero-media{position:absolute;inset:0;z-index:0;will-change:transform}
+#hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+#hero-bg,#hero-bg-next{position:absolute;inset:0;background-size:cover;background-position:center;
+  transition:opacity .9s var(--ease-sine)}
+#hero-bg{opacity:1}#hero-bg-next{opacity:0}
 #hero-bg::after,#hero-bg-next::after{content:'';position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(4,5,7,.78) 0%,rgba(4,5,7,.55) 35%,rgba(4,5,7,.6) 65%,rgba(4,5,7,.92) 100%)}
-.hero-initial{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;
-  gap:clamp(.6rem,1.6vw,1.2rem);transition:opacity .5s ease,transform .5s var(--ease-expo)}
-.hero-initial.hidden{opacity:0;transform:translateY(-22px);pointer-events:none;position:absolute}
+#hero-content{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;will-change:transform,opacity}
+.hero-initial{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:clamp(.6rem,1.6vw,1.2rem);padding:var(--space-md);
+  transition:opacity .5s ease,transform .5s var(--ease-expo)}
+.hero-initial.hidden{opacity:0;transform:translateY(-22px);pointer-events:none;position:absolute;inset:0}
 .hero-expanded{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;
   align-items:center;justify-content:center;padding:var(--space-md);
   opacity:0;transform:translateY(22px);pointer-events:none;
@@ -155,12 +162,12 @@ a{color:inherit;text-decoration:none}
 .hero-expanded.hiding{opacity:0;transform:translateY(-22px);pointer-events:none;
   transition:opacity .35s ease,transform .35s var(--ease-expo)}
 .profile-ring{position:relative;width:clamp(85px,15vw,140px);height:clamp(85px,15vw,140px);
-  margin-bottom:var(--space-sm);cursor:pointer;opacity:0;transform:scale(.7);
+  margin-bottom:var(--space-sm);cursor:pointer;border-radius:50%;opacity:0;transform:scale(.7);
   transition:opacity .8s ease .2s,transform .8s var(--ease-expo) .2s}
 .hero-expanded.visible .profile-ring{opacity:1;transform:scale(1)}
 .profile-ring::before{content:'';position:absolute;inset:-3px;border-radius:50%;
   border:1px solid var(--border-hover);box-shadow:0 0 18px rgba(78,201,212,.05);transition:all .4s ease}
-.profile-ring:hover::before{border-color:var(--cyan);box-shadow:var(--glow-md)}
+.profile-ring:hover::before,.profile-ring:focus-visible::before{border-color:var(--cyan);box-shadow:var(--glow-md)}
 .profile-ring::after{content:'';position:absolute;inset:-12px;border-radius:50%;
   border:1px solid var(--border);opacity:0;transform:scale(.9);transition:opacity .4s ease,transform .4s ease}
 .profile-ring:hover::after{opacity:.5;transform:scale(1)}
@@ -195,10 +202,9 @@ a{color:inherit;text-decoration:none}
 .story-section{position:relative;z-index:3;min-height:100vh;min-height:100dvh;
   display:grid;grid-template-columns:1fr 1fr;align-items:center;overflow:hidden}
 .story-section:nth-child(even){direction:rtl}.story-section:nth-child(even)>*{direction:ltr}
-.section-bg{position:absolute;inset:-50px;z-index:0;background-size:cover;background-position:center;
-  will-change:transform;transition:opacity 1.4s var(--ease-sine);opacity:1}
-.section-bg-next{position:absolute;inset:-50px;z-index:0;background-size:cover;background-position:center;
-  will-change:transform;opacity:0;transition:opacity 1.4s var(--ease-sine)}
+.section-bg,.section-bg-next{position:absolute;inset:-50px;z-index:0;background-size:cover;background-position:center;
+  transition:opacity 1.2s var(--ease-sine)}
+.section-bg{opacity:1}.section-bg-next{opacity:0}
 .section-bg::after,.section-bg-next::after{content:'';position:absolute;inset:50px;
   background:linear-gradient(to right,rgba(4,5,7,.96) 0%,rgba(4,5,7,.84) 28%,rgba(4,5,7,.58) 50%,rgba(4,5,7,.84) 72%,rgba(4,5,7,.96) 100%)}
 .story-section:nth-child(even) .section-bg::after,.story-section:nth-child(even) .section-bg-next::after{
@@ -209,13 +215,12 @@ a{color:inherit;text-decoration:none}
 .story-section.in-view .section-card-inner{opacity:1;transform:translateY(0)}
 .section-number{font-family:var(--font-display);font-size:clamp(2rem,4vw,3.2rem);
   font-weight:300;color:var(--cyan);opacity:.15;line-height:1;margin-bottom:clamp(.15rem,.6vw,.4rem)}
-.section-label{font-size:var(--fs-small);font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+.section-label{font-family:var(--font-ui);font-size:var(--fs-small);font-weight:500;letter-spacing:.16em;text-transform:uppercase;
   color:var(--cyan);margin-bottom:clamp(.35rem,1vw,.6rem);opacity:.65}
 .section-title{font-family:var(--font-display);font-size:var(--fs-h2);font-weight:400;
   line-height:1.15;color:var(--fg);margin-bottom:clamp(.4rem,1.2vw,.7rem)}
-.section-text{font-size:var(--fs-body);color:var(--fg-dim);line-height:1.8;margin-bottom:clamp(.7rem,2vw,1.1rem)}
+.section-text{font-family:var(--font-body);font-size:var(--fs-body);color:var(--fg-dim);line-height:1.8;margin-bottom:clamp(.7rem,2vw,1.1rem)}
 .section-buttons{display:flex;gap:clamp(.35rem,.9vw,.6rem);flex-wrap:wrap}
-
 .story-section[data-theme="gold"] .section-label{color:var(--gold)}
 .story-section[data-theme="emerald"] .section-label{color:var(--emerald)}
 .story-section[data-theme="orange"] .section-label{color:var(--orange)}
@@ -236,7 +241,7 @@ a{color:inherit;text-decoration:none}
 .brief-close:hover{color:var(--cyan);border-color:var(--border-hover)}
 
 #footer{position:relative;z-index:3;border-top:1px solid var(--border);
-  padding:var(--space-lg) var(--space-md) var(--space-md);text-align:center}
+  padding:var(--space-lg) var(--space-md) var(--space-md);text-align:center;background:var(--bg-deep)}
 .footer-links{display:flex;justify-content:center;gap:clamp(.8rem,2.5vw,2rem);margin-bottom:var(--space-sm);flex-wrap:wrap}
 .footer-link{display:flex;align-items:center;gap:.4em;font-size:var(--fs-small);
   color:var(--fg-dim);letter-spacing:.06em;transition:color .3s ease}
@@ -265,8 +270,11 @@ a{color:inherit;text-decoration:none}
 <canvas id="ambient-canvas" aria-hidden="true"></canvas>
 <div class="grain" aria-hidden="true"></div>
 <div id="audio-edge" aria-hidden="true"></div>
+<div id="scroll-progress" aria-hidden="true"></div>
+<button id="brand" aria-label="Back to top"><span class="brand-dot"></span>T. Ngoepe</button>
 <div id="transition-curtain" aria-hidden="true"></div>
 <div id="world-bloom" aria-hidden="true"></div>
+
 <nav id="float-nav" aria-label="Chapter navigation">
   <div class="nav-dot" data-target="ch-intro"><span class="nav-tip">Introduction</span></div>
   <div class="nav-dot" data-target="ch-mission"><span class="nav-tip">Mission</span></div>
@@ -281,29 +289,33 @@ a{color:inherit;text-decoration:none}
 </nav>
 
 <header id="hero" role="banner">
-  <video autoplay muted loop playsinline id="hero-video" aria-hidden="true">
-    <source src="herovid.mp4" type="video/mp4">
-  </video>
-  <div id="hero-bg" aria-hidden="true"></div>
-  <div id="hero-bg-next" aria-hidden="true"></div>
-  <div class="hero-initial" id="heroInitial">
-    <div class="btn-group" id="heroBtnGroup">
-      <button class="btn btn-primary" id="btnInitialize">Initialize</button>
-      <button class="btn btn-outline" id="btnViewBrief">View Brief</button>
-    </div>
+  <div id="hero-media" aria-hidden="true">
+    <video autoplay muted loop playsinline id="hero-video">
+      <source src="herovid.mp4" type="video/mp4">
+    </video>
+    <div id="hero-bg"></div>
+    <div id="hero-bg-next"></div>
   </div>
-  <div class="hero-expanded" id="heroExpanded">
-    <div class="profile-ring" id="profileRing" role="button" tabindex="0" aria-label="Reset">
-      <img class="profile-img" src="profile-pic.png" alt="Profile">
+  <div id="hero-content">
+    <div class="hero-initial" id="heroInitial">
+      <div class="btn-group" id="heroBtnGroup">
+        <button class="btn btn-primary" id="btnInitialize">Initialize</button>
+        <button class="btn btn-outline" id="btnViewBrief">View Brief</button>
+      </div>
     </div>
-    <h1 class="hero-name">Thabang Tony Ngoepe</h1>
-    <p class="hero-title">Systems Engineer &middot; Ethical Hacker &middot; Builder</p>
-    <p class="hero-intro">I architect resilient systems, dissect vulnerabilities before they become breaches, and build products that turn complex capability into meaningful experience.</p>
-    <div class="hero-actions">
-      <button class="btn btn-outline btn-small" id="btnIntro"><i class="fas fa-play" style="font-size:.6em"></i> Intro</button>
-      <a href="#ch-intro" class="btn btn-ghost btn-small">Explore <i class="fas fa-arrow-down" style="font-size:.6em"></i></a>
+    <div class="hero-expanded" id="heroExpanded">
+      <div class="profile-ring" id="profileRing" role="button" tabindex="0" aria-label="Reset">
+        <img class="profile-img" src="profile-pic.png" alt="Profile">
+      </div>
+      <h1 class="hero-name">Thabang Tony Ngoepe</h1>
+      <p class="hero-title">Systems Engineer &middot; Ethical Hacker &middot; Builder</p>
+      <p class="hero-intro">I architect resilient systems, dissect vulnerabilities before they become breaches, and build products that turn complex capability into meaningful experience.</p>
+      <div class="hero-actions">
+        <button class="btn btn-outline btn-small" id="btnIntro"><i class="fas fa-play" style="font-size:.6em"></i> Intro</button>
+        <a href="#ch-intro" class="btn btn-ghost btn-small">Explore <i class="fas fa-arrow-down" style="font-size:.6em"></i></a>
+      </div>
+      <div class="scroll-indicator" aria-hidden="true"><span>Scroll</span><div class="scroll-line"></div></div>
     </div>
-    <div class="scroll-indicator" aria-hidden="true"><span>Scroll</span><div class="scroll-line"></div></div>
   </div>
 </header>
 
@@ -453,11 +465,11 @@ a{color:inherit;text-decoration:none}
   <nav class="footer-links" aria-label="Links">
     <a href="https://github.com" target="_blank" rel="noopener" class="footer-link"><i class="fab fa-github"></i> GitHub</a>
     <a href="https://linkedin.com" target="_blank" rel="noopener" class="footer-link"><i class="fab fa-linkedin"></i> LinkedIn</a>
-    <a href="mailto:contact@alexandervoss.dev" class="footer-link"><i class="fas fa-envelope"></i> Email</a>
+    <a href="mailto:contact@thabang.dev" class="footer-link"><i class="fas fa-envelope"></i> Email</a>
     <a href="#" class="footer-link"><i class="fas fa-file-alt"></i> Resume</a>
     <span class="footer-link" style="cursor:default;opacity:.5"><i class="fas fa-map-marker-alt"></i> Berlin</span>
   </nav>
-  <p class="footer-copy">&copy; 2025 Alexander Voss. All rights reserved.</p>
+  <p class="footer-copy">&copy; 2025 Thabang Tony Ngoepe. All rights reserved.</p>
   <p class="footer-closing">"This isn't someone showing projects. This is someone inviting you into the way they think."</p>
 </footer>
 
@@ -476,242 +488,312 @@ a{color:inherit;text-decoration:none}
 <audio id="narrationAudio" crossorigin="anonymous" preload="none"></audio>
 
 <script>
+'use strict';
 /* =========================================================
-   WORLD REGISTRY
+   CONFIG / REGISTRY (assets preserved)
    ========================================================= */
-var WORLD_REGISTRY = {
-  intro:      { name:'Introduction',     file:'intro.html' },
-  mission:    { name:'Mission',          file:'worlds/mission.html' },
-  engineering:{ name:'Engineering',       file:'worlds/engineering.html' },
-  systems:    { name:'Featured Systems',  file:'worlds/systems.html' },
-  security:   { name:'Security',          file:'worlds/security.html' },
-  ai:         { name:'AI Engineering',    file:'worlds/ai.html' },
-  research:   { name:'Research',          file:'worlds/research.html' },
-  trading:    { name:'TradingOS',         file:'worlds/trading.html' },
-  journey:    { name:'Journey',           file:'worlds/journey.html' },
-  contact:    { name:'Contact',           file:'worlds/contact.html' }
+const WORLD_REGISTRY = {
+  intro:      { name:'Introduction',    file:'worlds/intro.html' },
+  mission:    { name:'Mission',         file:'worlds/mission.html' },
+  engineering:{ name:'Engineering',     file:'worlds/engineering.html' },
+  systems:    { name:'Featured Systems',file:'worlds/systems.html' },
+  security:   { name:'Security',        file:'worlds/security.html' },
+  ai:         { name:'AI Engineering',  file:'worlds/ai.html' },
+  research:   { name:'Research',        file:'worlds/research.html' },
+  trading:    { name:'TradingOS',       file:'worlds/trading.html' },
+  journey:    { name:'Journey',         file:'worlds/journey.html' },
+  contact:    { name:'Contact',         file:'worlds/contact.html' }
 };
-
-/* =========================================================
-   MEDIA CONFIG
-   ========================================================= */
-var VOICE_AUDIO = {
-  hero:     'voice/Official.mp4',
-  intro:    'voice/NewIntro.mp3',
-  mission:  'voice/Mission.mp3',
-  engineering:'voice/Engineering.mp3',
-  systems:  'voice/Systems.mp3',
-  security: 'voice/Security.mp3',
-  ai:       'voice/Artificial.mp3',
-  research: 'voice/Research.mp3',
-  trading:  'voice/Trading.mp3',
-  journey:  'voice/Journey.mp4',
-  contact:  'voice/Contact.mp3'
+const VOICE_AUDIO = {
+  hero:'voice/Official.mp4', intro:'voice/NewIntro.mp3', mission:'voice/Mission.mp3',
+  engineering:'voice/Engineering.mp3', systems:'voice/Systems.mp3', security:'voice/Security.mp3',
+  ai:'voice/Artificial.mp3', research:'voice/Research.mp3', trading:'voice/Trading.mp3',
+  journey:'voice/Journey.mp4', contact:'voice/Contact.mp3'
 };
-var YOUTUBE_VIDEO_ID = 'dQw4w9WgXcQ';
-var BRIEF_INTERVAL = 3168;
-var INTRO_INTERVAL = 3333;
-
-var INTRO_IMAGES = [
+const YOUTUBE_VIDEO_ID = 'dQw4w9WgXcQ';
+const BRIEF_INTERVAL = 3168, INTRO_INTERVAL = 3333;
+const INTRO_IMAGES = [
   'https://images.pexels.com/photos/33798615/pexels-photo-33798615.jpeg',
   'https://images.pexels.com/photos/12899140/pexels-photo-12899140.jpeg',
   'https://images.pexels.com/photos/16361673/pexels-photo-16361673.jpeg',
   'https://images.pexels.com/photos/6843125/pexels-photo-6843125.jpeg',
   'https://www.mandela.ac.za/getmedia/13b94a42-27d3-466a-a206-f0436b7bc18a/02George?width=&height=&resizemode=1'
 ];
-
-var BRIEF_IMAGES = {
-  intro:['https://images.pexels.com/photos/5380642/pexels-photo-5380642.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/2589457/pexels-photo-2589457.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/577585/pexels-photo-577585.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/213162/pexels-photo-213162.jpeg?auto=compress&cs=tinysrgb&w=1400'],
-  mission:['assets/space.gif',,'https://images.pexels.com/photos/1092644/pexels-photo-1092644.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/1590618/pexels-photo-1590618.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1400'],
-  engineering:['https://images.pexels.com/photos/8294564/pexels-photo-8294564.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/577585/pexels-photo-577585.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/392018/pexels-photo-392018.jpeg?auto=compress&cs=tinysrgb&w=1400'],
-  systems:['https://images.pexels.com/photos/1590618/pexels-photo-1590618.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/5335379/pexels-photo-5335379.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/707579/pexels-photo-707579.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/669615/pexels-photo-669615.jpeg?auto=compress&cs=tinysrgb&w=1400'],
-  security:['https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/4108715/pexels-photo-4108715.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/5335379/pexels-photo-5335379.jpeg?auto=compress&cs=tinysrgb&w=1400'],
-  ai:['https://images.pexels.com/photos/856898/pexels-photo-856898.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/326333/pexels-photo-326333.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/730547/pexels-photo-730547.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/5185437/pexels-photo-5185437.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/669615/pexels-photo-669615.jpeg?auto=compress&cs=tinysrgb&w=1400'],
-  research:['https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/3735709/pexels-photo-3735709.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/707579/pexels-photo-707579.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/1092644/pexels-photo-1092644.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/392018/pexels-photo-392018.jpeg?auto=compress&cs=tinysrgb&w=1400'],
-  trading:['https://images.pexels.com/photos/5185437/pexels-photo-5185437.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/2589457/pexels-photo-2589457.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/325229/pexels-photo-325229.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/856898/pexels-photo-856898.jpeg?auto=compress&cs=tinysrgb&w=1400'],
-  journey:['https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/213162/pexels-photo-213162.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/196645/pexels-photo-196645.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/5380642/pexels-photo-5380642.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/3735709/pexels-photo-3735709.jpeg?auto=compress&cs=tinysrgb&w=1400'],
-  contact:['https://images.pexels.com/photos/3735709/pexels-photo-3735709.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/707579/pexels-photo-707579.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=1400']
+const BRIEF_IMAGES = {
+  intro:['https://images.pexels.com/photos/5380642/pexels-photo-5380642.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/2589457/pexels-photo-2589457.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/577585/pexels-photo-577585.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/213162/pexels-photo-213162.jpeg?auto=compress&cs=tinysrgb&w=1400'].filter(Boolean),
+  mission:['assets/space.gif','https://images.pexels.com/photos/1092644/pexels-photo-1092644.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/1590618/pexels-photo-1590618.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1400'].filter(Boolean),
+  engineering:['https://images.pexels.com/photos/8294564/pexels-photo-8294564.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/577585/pexels-photo-577585.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/392018/pexels-photo-392018.jpeg?auto=compress&cs=tinysrgb&w=1400'].filter(Boolean),
+  systems:['https://images.pexels.com/photos/1590618/pexels-photo-1590618.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/5335379/pexels-photo-5335379.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/707579/pexels-photo-707579.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/669615/pexels-photo-669615.jpeg?auto=compress&cs=tinysrgb&w=1400'].filter(Boolean),
+  security:['https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/4108715/pexels-photo-4108715.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/5335379/pexels-photo-5335379.jpeg?auto=compress&cs=tinysrgb&w=1400'].filter(Boolean),
+  ai:['https://images.pexels.com/photos/856898/pexels-photo-856898.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/326333/pexels-photo-326333.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/730547/pexels-photo-730547.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/5185437/pexels-photo-5185437.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/669615/pexels-photo-669615.jpeg?auto=compress&cs=tinysrgb&w=1400'].filter(Boolean),
+  research:['https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/3735709/pexels-photo-3735709.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/707579/pexels-photo-707579.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/1092644/pexels-photo-1092644.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/392018/pexels-photo-392018.jpeg?auto=compress&cs=tinysrgb&w=1400'].filter(Boolean),
+  trading:['https://images.pexels.com/photos/5185437/pexels-photo-5185437.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/2589457/pexels-photo-2589457.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/325229/pexels-photo-325229.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/856898/pexels-photo-856898.jpeg?auto=compress&cs=tinysrgb&w=1400'].filter(Boolean),
+  journey:['https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/213162/pexels-photo-213162.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/196645/pexels-photo-196645.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/5380642/pexels-photo-5380642.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/3735709/pexels-photo-3735709.jpeg?auto=compress&cs=tinysrgb&w=1400'].filter(Boolean),
+  contact:['https://images.pexels.com/photos/3735709/pexels-photo-3735709.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/707579/pexels-photo-707579.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1400','https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=1400'].filter(Boolean)
 };
 
 /* =========================================================
    DOM
    ========================================================= */
-var worldBloom = document.getElementById('world-bloom');
-var heroInitial = document.getElementById('heroInitial');
-var heroExpanded = document.getElementById('heroExpanded');
-var profileRing = document.getElementById('profileRing');
-var btnInitialize = document.getElementById('btnInitialize');
-var btnViewBrief = document.getElementById('btnViewBrief');
-var btnIntro = document.getElementById('btnIntro');
-var briefModal = document.getElementById('brief-modal');
-var briefIframe = document.getElementById('briefIframe');
-var briefCloseEl = document.getElementById('briefClose');
-var worldContainer = document.getElementById('world-container');
-var worldIframe = document.getElementById('world-iframe');
-var worldExitBtn = document.getElementById('world-exit-btn');
-var transitionCurtain = document.getElementById('transition-curtain');
-var audioEdge = document.getElementById('audio-edge');
-var narrationAudio = document.getElementById('narrationAudio');
-var ambientCanvas = document.getElementById('ambient-canvas');
-var heroBg = document.getElementById('hero-bg');
-var heroBgNext = document.getElementById('hero-bg-next');
-var floatNav = document.getElementById('float-nav');
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const heroInitial = $('#heroInitial'), heroExpanded = $('#heroExpanded');
+const heroMedia = $('#hero-media'), heroContent = $('#hero-content');
+const heroBg = $('#hero-bg'), heroBgNext = $('#hero-bg-next');
+const profileRing = $('#profileRing'), btnInitialize = $('#btnInitialize');
+const btnViewBrief = $('#btnViewBrief'), btnIntro = $('#btnIntro');
+const briefModal = $('#brief-modal'), briefIframe = $('#briefIframe'), briefCloseEl = $('#briefClose');
+const worldContainer = $('#world-container'), worldIframe = $('#world-iframe'), worldExitBtn = $('#world-exit-btn');
+const curtain = $('#transition-curtain'), worldBloomEl = $('#world-bloom');
+const audioEdge = $('#audio-edge'), narrationAudio = $('#narrationAudio');
+const ambientCanvas = $('#ambient-canvas'), floatNav = $('#float-nav');
+const progressBar = $('#scroll-progress'), brand = $('#brand');
+const sections = $$('.story-section');
+const navDots = $$('#float-nav .nav-dot');
 
 /* =========================================================
-   STATE
+   ENV
    ========================================================= */
-var heroState = 'initial';
-var savedScrollY = 0;
-var activeBriefId = null;
-var briefTimer = null;
-var briefIndex = 0;
-var briefUseNext = true;
-var introPlaying = false;
-var introTimer = null;
-var introIndex = 0;
-var introUseNext = true;
-var audioContext = null;
-var analyser = null;
-var audioSource = null;
-var audioConnected = false;
-var audioAnimRunning = false;
-var worldTransitioning = false;
-var frequencyData = null;
-var lastAudioVol = -1;
-var lastAudioBass = -1;
-/* =========================================================
-   UTILITIES
-   ========================================================= */
-function playWorldBloom(){
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isCoarse = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+const parallaxOn = !reducedMotion && !isCoarse;
 
-    if(!worldBloom) return;
-
-    worldBloom.classList.remove('active');
-
-    void worldBloom.offsetWidth;
-
-    worldBloom.classList.add('active');
-
-}
-function delay(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const delay = ms => new Promise(r => setTimeout(r, ms));
 function waitForAnim(el, ms) {
-  return new Promise(function(resolve) {
-    var done = false;
-    function f() { if (!done) { done = true; el.removeEventListener('animationend', f); resolve(); } }
+  return new Promise(resolve => {
+    let done = false;
+    const f = () => { if (!done) { done = true; el.removeEventListener('animationend', f); resolve(); } };
     el.addEventListener('animationend', f);
-    setTimeout(f, ms + 100);
+    setTimeout(f, ms + 120);
   });
 }
-function qsa(s) { return document.querySelectorAll(s); }
-function qs(s) { return document.querySelector(s); }
 
 /* =========================================================
-   BUTTON FOCUS ENERGY
+   SMOOTH SCROLL ENGINE
+   Native scroll stays in charge (accessibility, scrollbar,
+   keyboard, find-in-page all keep working). Wheel input is
+   hijacked and re-driven through a lerped value, so every
+   scroll — and everything derived from it — glides.
    ========================================================= */
-qsa('.btn-group').forEach(function(g) {
-  var bs = g.querySelectorAll('.btn');
-  bs.forEach(function(b) {
-    b.addEventListener('mouseenter', function() {
-      g.classList.add('has-focus');
-      bs.forEach(function(x) { x.classList.remove('focused'); });
-      b.classList.add('focused');
-    });
-    b.addEventListener('mouseleave', function() {
-      g.classList.remove('has-focus');
-      b.classList.remove('focused');
-    });
-    b.addEventListener('focus', function() {
-      g.classList.add('has-focus');
-      bs.forEach(function(x) { x.classList.remove('focused'); });
-      b.classList.add('focused');
-    });
-    b.addEventListener('blur', function() {
-      g.classList.remove('has-focus');
-      b.classList.remove('focused');
-    });
+const SS = {
+  enabled: !reducedMotion && !isCoarse,
+  target: window.pageYOffset,
+  current: window.pageYOffset,
+  max: 0,
+  measure() {
+    this.max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    this.target = clamp(this.target, 0, this.max);
+  },
+  update() {
+    if (!this.enabled) this.target = window.pageYOffset;
+    const d = this.target - this.current;
+    if (Math.abs(d) < 0.05) this.current = this.target;
+    else this.current += d * 0.105; /* the glide */
+    if (this.enabled && !document.body.classList.contains('scroll-locked') &&
+        Math.abs(window.pageYOffset - this.current) >= 0.5) {
+      window.scrollTo(0, this.current);
+    }
+  },
+  scrollToY(y, immediate) {
+    y = clamp(y, 0, this.max);
+    this.target = y;
+    if (!this.enabled || immediate) {
+      if (this.enabled) { this.current = y; window.scrollTo(0, y); }
+      else window.scrollTo({ top: y, behavior: reducedMotion ? 'auto' : 'smooth' });
+    }
+  },
+  jump(y) { this.current = this.target = y; window.scrollTo(0, y); }
+};
+
+if (SS.enabled) {
+  window.addEventListener('wheel', e => {
+    if (e.ctrlKey) return; /* pinch-zoom */
+    if (document.body.classList.contains('scroll-locked')) return;
+    let d = e.deltaY;
+    if (e.deltaMode === 1) d *= 33;
+    else if (e.deltaMode === 2) d *= window.innerHeight;
+    d = clamp(d, -320, 320);
+    e.preventDefault();
+    SS.target = clamp(SS.target + d, 0, SS.max);
+  }, { passive: false });
+
+  /* Keyboard, scrollbar drag, find-in-page → resync */
+  window.addEventListener('scroll', () => {
+    if (document.body.classList.contains('scroll-locked')) return;
+    if (Math.abs(window.pageYOffset - SS.current) > 1.5) {
+      SS.current = SS.target = window.pageYOffset;
+    }
+  }, { passive: true });
+}
+
+/* =========================================================
+   MEASUREMENT (cached offsets — no per-frame layout reads)
+   ========================================================= */
+let vh = window.innerHeight;
+const parallaxLayers = [];
+
+function measureParallax() {
+  parallaxLayers.length = 0;
+  sections.forEach(sec => {
+    const a = sec.querySelector('.section-bg');
+    const b = sec.querySelector('.section-bg-next');
+    if (!a) return;
+    parallaxLayers.push({ el: sec, a, b, top: 0, h: 0, strength: 0, last: null, active: false });
+  });
+  measureOffsets();
+}
+function measureOffsets() {
+  const sy = window.pageYOffset;
+  parallaxLayers.forEach(p => {
+    const r = p.el.getBoundingClientRect();
+    p.top = r.top + sy;
+    p.h = r.height;
+    p.strength = Math.min(46, p.h * 0.06); /* stays inside the 50px overflow buffer — no edge gaps */
+  });
+  SS.measure();
+  vh = window.innerHeight;
+}
+let measureT;
+function queueMeasure() { clearTimeout(measureT); measureT = setTimeout(measureOffsets, 160); }
+window.addEventListener('resize', queueMeasure);
+window.addEventListener('load', () => setTimeout(measureOffsets, 100));
+if (window.ResizeObserver) new ResizeObserver(queueMeasure).observe(document.body);
+
+/* =========================================================
+   MASTER rAF LOOP — one loop drives everything:
+   scroll smoothing, progress bar, hero parallax, section
+   parallax, brand visibility. Lerped source ⇒ zero jitter.
+   ========================================================= */
+let heroPast = false, brandVisible = false;
+function tick() {
+  SS.update();
+  const y = SS.current;
+
+  /* progress bar */
+  if (SS.max > 0) progressBar.style.transform = 'scaleX(' + clamp(y / SS.max, 0, 1).toFixed(4) + ')';
+
+  /* hero depth: background slower than scroll, content drifts + fades */
+  if (y <= vh * 1.2) {
+    heroPast = false;
+    heroMedia.style.transform = 'translate3d(0,' + (y * 0.3).toFixed(2) + 'px,0)';
+    heroContent.style.transform = 'translate3d(0,' + (y * 0.16).toFixed(2) + 'px,0)';
+    heroContent.style.opacity = clamp(1 - y / (vh * 0.85), 0, 1).toFixed(3);
+  } else if (!heroPast) {
+    heroPast = true;
+    heroMedia.style.transform = 'translate3d(0,' + (vh * 0.36).toFixed(1) + 'px,0)';
+    heroContent.style.opacity = '0';
+  }
+
+  /* brand appears after the hero */
+  const wantBrand = y > vh * 0.7;
+  if (wantBrand !== brandVisible) { brandVisible = wantBrand; brand.classList.toggle('visible', wantBrand); }
+
+  /* section parallax */
+  if (parallaxOn) {
+    for (let i = 0; i < parallaxLayers.length; i++) {
+      const p = parallaxLayers[i];
+      const near = p.top < y + vh * 1.25 && p.top + p.h > y - vh * 0.25;
+      if (!near) {
+        if (p.active) { p.active = false; p.a.style.willChange = p.b.style.willChange = ''; }
+        continue;
+      }
+      if (!p.active) { p.active = true; p.a.style.willChange = p.b.style.willChange = 'transform'; }
+      const progress = clamp(((y + vh * 0.5) - (p.top + p.h * 0.5)) / ((p.h + vh) * 0.5), -1, 1);
+      const off = (progress * p.strength).toFixed(1);
+      if (off !== p.last) {
+        const t = 'translate3d(0,' + off + 'px,0) scale(1.08)';
+        p.a.style.transform = t; p.b.style.transform = t;
+        p.last = off;
+      }
+    }
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+/* =========================================================
+   ANCHORS + NAV (routed through the engine — no double-smooth)
+   ========================================================= */
+function scrollToEl(el) {
+  const y = el.getBoundingClientRect().top + SS.current;
+  SS.scrollToY(y);
+}
+ $$('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const el = document.getElementById(a.getAttribute('href').slice(1));
+    if (!el) return;
+    e.preventDefault();
+    scrollToEl(el);
   });
 });
+navDots.forEach(d => d.addEventListener('click', () => {
+  const t = document.getElementById(d.getAttribute('data-target'));
+  if (t) scrollToEl(t);
+}));
+brand.addEventListener('click', () => SS.scrollToY(0));
+
+const navObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    navDots.forEach(d => d.classList.remove('active'));
+    const dot = navDots.find(d => d.getAttribute('data-target') === e.target.id);
+    if (dot) dot.classList.add('active');
+  });
+}, { threshold: 0.3, rootMargin: '-10% 0px -10% 0px' });
+sections.forEach(s => navObs.observe(s));
+
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in-view'); revealObs.unobserve(e.target); }
+  });
+}, { threshold: 0.22 });
+sections.forEach(s => revealObs.observe(s));
 
 /* =========================================================
    HERO
    ========================================================= */
-btnInitialize.addEventListener('click', function() {
-  if (heroState === 'expanded') return;
-  heroState = 'expanded';
+btnInitialize.addEventListener('click', () => {
+  if (heroExpanded.classList.contains('visible')) return;
   heroInitial.classList.add('hidden');
   heroExpanded.classList.add('visible');
   heroExpanded.classList.remove('hiding');
   floatNav.classList.add('visible');
 });
-
 function resetHero() {
-  if (heroState === 'initial') return;
-  stopAllBriefs();
-  stopIntro();
-  heroState = 'initial';
+  if (!heroExpanded.classList.contains('visible')) return;
+  stopAllPlayback();
   heroExpanded.classList.remove('visible');
   heroExpanded.classList.add('hiding');
   floatNav.classList.remove('visible');
-  setTimeout(function() {
-    heroExpanded.classList.remove('hiding');
-    heroInitial.classList.remove('hidden');
-  }, 400);
+  setTimeout(() => { heroExpanded.classList.remove('hiding'); heroInitial.classList.remove('hidden'); }, 400);
 }
-
 profileRing.addEventListener('click', resetHero);
-profileRing.addEventListener('keydown', function(e) {
+profileRing.addEventListener('keydown', e => {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); resetHero(); }
 });
 
 /* =========================================================
-   FLOATING NAV
+   BUTTON FOCUS ENERGY
    ========================================================= */
-var navDots = floatNav.querySelectorAll('.nav-dot');
-navDots.forEach(function(d) {
-  d.addEventListener('click', function() {
-    var t = document.getElementById(d.getAttribute('data-target'));
-    if (t) t.scrollIntoView({ behavior: 'smooth' });
+ $$('.btn-group').forEach(g => {
+  const bs = Array.from(g.querySelectorAll('.btn'));
+  bs.forEach(b => {
+    const focus = () => { g.classList.add('has-focus'); bs.forEach(x => x.classList.remove('focused')); b.classList.add('focused'); };
+    const blur  = () => { g.classList.remove('has-focus'); b.classList.remove('focused'); };
+    b.addEventListener('mouseenter', focus);
+    b.addEventListener('mouseleave', blur);
+    b.addEventListener('focus', focus);
+    b.addEventListener('blur', blur);
   });
 });
 
-var navObs = new IntersectionObserver(function(entries) {
-  entries.forEach(function(e) {
-    if (e.isIntersecting) {
-      navDots.forEach(function(d) { d.classList.remove('active'); });
-      var dot = qs('.nav-dot[data-target="' + e.target.id + '"]');
-      if (dot) dot.classList.add('active');
-    }
-  });
-}, { threshold: 0.3, rootMargin: '-10% 0px -10% 0px' });
-
-navDots.forEach(function(d) {
-  var el = document.getElementById(d.getAttribute('data-target'));
-  if (el) navObs.observe(el);
-});
-
 /* =========================================================
-   BRIEF MODAL (YouTube)
+   AUDIO + ANALYSER
    ========================================================= */
-btnViewBrief.addEventListener('click', function() {
-  briefIframe.src = 'https://www.youtube.com/embed/' + YOUTUBE_VIDEO_ID + '?autoplay=1&rel=0&modestbranding=1';
-  briefModal.classList.add('active');
-  document.body.classList.add('scroll-locked');
-});
+let audioContext = null, analyser = null, audioConnected = false;
+let audioAnimRunning = false, frequencyData = null, lastVol = 0, lastBass = 0;
 
-function closeBriefModal() {
-  briefModal.classList.remove('active');
-  document.body.classList.remove('scroll-locked');
-  setTimeout(function() { briefIframe.src = 'about:blank'; }, 400);
-}
-
-briefCloseEl.addEventListener('click', closeBriefModal);
-briefModal.addEventListener('click', function(e) {
-  if (e.target === briefModal) closeBriefModal();
-});
-
-/* =========================================================
-   AUDIO SYSTEM — Fully hardened against rapid calls
-   ========================================================= */
 function initAudioContext() {
   if (audioContext) return;
   try {
@@ -721,539 +803,262 @@ function initAudioContext() {
     analyser.smoothingTimeConstant = 0.8;
   } catch (e) { audioContext = null; }
 }
-
 function connectAudio() {
   if (!audioContext || audioConnected) return;
   try {
-    audioSource = audioContext.createMediaElementSource(narrationAudio);
-    audioSource.connect(analyser);
-    analyser.connect(audioContext.destination);
-    frequencyData = new Uint8Array(analyser.frequencyBinCount);
+    const src = audioContext.createMediaElementSource(narrationAudio);
+    src.connect(analyser); analyser.connect(audioContext.destination);
     audioConnected = true;
-  } catch (e) { audioConnected = true; }
+  } catch (e) { /* analyser unavailable — playback still works */ }
 }
-
-/* Force-stops the audio element to a clean state */
-function resetAudioElement() {
-  try {
-    narrationAudio.pause();
-    narrationAudio.removeAttribute('src');
-    narrationAudio.load();
-  } catch (e) {}
+function startReactive() {
+  if (!analyser || audioAnimRunning) return;
+  audioAnimRunning = true;
+  frequencyData = frequencyData || new Uint8Array(analyser.frequencyBinCount);
+  audioEdge.classList.add('active');
+  (function loop() {
+    if (!audioAnimRunning) {
+      lastVol = lastBass = 0;
+      const rs = document.documentElement.style;
+      rs.setProperty('--ar-vol', '0'); rs.setProperty('--ar-bass', '0');
+      audioEdge.classList.remove('active');
+      return;
+    }
+    analyser.getByteFrequencyData(frequencyData);
+    let sum = 0; for (let i = 0; i < frequencyData.length; i++) sum += frequencyData[i];
+    const vol = sum / frequencyData.length / 255;
+    let bSum = 0; for (let i = 0; i < 8; i++) bSum += frequencyData[i];
+    const bass = bSum / 8 / 255;
+    lastVol += (vol - lastVol) * 0.18;
+    lastBass += (bass - lastBass) * 0.18;
+    const rs = document.documentElement.style;
+    rs.setProperty('--ar-vol', lastVol.toFixed(3));
+    rs.setProperty('--ar-bass', lastBass.toFixed(3));
+    requestAnimationFrame(loop);
+  })();
 }
-
-/* Starts narration. Safe to call at any time. */
-function startNarration(audioKey) {
-  var src = audioKey ? VOICE_AUDIO[audioKey] : VOICE_AUDIO['hero'];
+function playNarration(id) {
+  const src = VOICE_AUDIO[id];
   if (!src) return;
-  initAudioContext();
-  connectAudio();
-
-  /* Always force-reset so we never hit the "already playing" guard */
-  resetAudioElement();
-
-  /* Small delay to let the reset propagate */
-  setTimeout(function() {
-    narrationAudio.src = src;
-    narrationAudio.play().then(function() {
-      audioEdge.classList.add('active');
-
-
-if (!audioAnimRunning) {
-    audioAnimRunning = true;
-    updateAudioReactive();
+  initAudioContext(); connectAudio();
+  if (audioContext && audioContext.state === 'suspended') audioContext.resume();
+  narrationAudio.src = src;
+  narrationAudio.currentTime = 0;
+  const p = narrationAudio.play();
+  if (p && p.catch) p.catch(() => {});
+  startReactive();
 }
-
-      qsa('.btn').forEach(function(b) { b.classList.add('audio-react'); });
-      qsa('.glow-card').forEach(function(c) { c.classList.add('audio-active'); });
-    }).catch(function() {
-      /* Autoplay blocked — fail silently, images still work */
-    });
-  }, 50);
-}
-
-/* Stops narration and resets all audio-reactive UI */
-function stopNarration() {
-  resetAudioElement();
-  audioEdge.classList.remove('active');
-  audioAnimRunning = false;
-  var r = document.documentElement.style;
-  r.setProperty('--ar-vol', '0');
-  r.setProperty('--ar-bass', '0');
-  qsa('.btn').forEach(function(b) { b.classList.remove('audio-react'); });
-  qsa('.glow-card').forEach(function(c) { c.classList.remove('audio-active'); });
-}
-
-/* Audio analysis loop */
-let lastUpdate = 0;
-
-function updateAudioReactive(time) {
-
-    if (!audioAnimRunning || !analyser) return;
-
-    /* Limit updates to ~30 FPS */
-    if (time - lastUpdate < 33) {
-        requestAnimationFrame(updateAudioReactive);
-        return;
-    }
-
-    lastUpdate = time;
-
-    try {
-
-        var bl = analyser.frequencyBinCount;
-        analyser.getByteFrequencyData(frequencyData);
-
-        var bass = 0;
-        var mid = 0;
-
-        var bE = Math.floor(bl * 0.15);
-        var mE = Math.floor(bl * 0.5);
-
-        for (var i = 0; i < bE; i++) bass += frequencyData[i];
-        for (var i = bE; i < mE; i++) mid += frequencyData[i];
-
-        bass = bass / (bE * 255);
-        mid = mid / ((mE - bE) * 255);
-
-        var vol = bass * 0.5 + mid * 0.35 + (1 - bass - mid) * 0.15;
-
-        var r = document.documentElement.style;
-
-        if (Math.abs(vol - lastAudioVol) > 0.05) {
-            lastAudioVol = vol;
-            r.setProperty('--ar-vol', vol.toFixed(3));
-        }
-
-        if (Math.abs(bass - lastAudioBass) > 0.05) {
-            lastAudioBass = bass;
-            r.setProperty('--ar-bass', bass.toFixed(3));
-        }
-
-    } catch (e) {}
-
-    /* Audio ended */
-    if (narrationAudio.ended) {
-        stopNarration();
-        stopIntro();
-        stopAllBriefs();
-        return;
-    }
-
-    /* Audio paused */
-    if (narrationAudio.paused && narrationAudio.currentTime > 0) {
-        stopNarration();
-        return;
-    }
-
-    requestAnimationFrame(updateAudioReactive);
-}
-
-/* Remove the ended listener — updateAudioReactive handles it now */
-/* (no listener needed, the loop self-terminates) */
 
 /* =========================================================
-   HERO INTRO — Background image crossfade + audio
+   PLAYBACK STATE (briefs + intro share one owner)
    ========================================================= */
-function startIntro() {
-  if (introPlaying) { stopIntro(); return; }
-  if (!INTRO_IMAGES || INTRO_IMAGES.length < 2) return;
+let activeBriefId = null, briefTimer = null, briefSection = null, briefBtn = null;
+let introPlaying = false, introTimer = null;
 
-  introPlaying = true;
-  introIndex = 1;
-  introUseNext = true;
-  btnIntro.classList.add('intro-active');
-
-  /* Start audio with full reset */
-    startNarration('hero');
-
-  introTimer = setInterval(function() {
-    if (introIndex >= INTRO_IMAGES.length) introIndex = 0;
-var url = INTRO_IMAGES[introIndex];
-var img = new Image();
-
-img.onload = function () {
-  var applyFrame = function () {
-
-    if (introUseNext) {
-
-        heroBgNext.style.backgroundImage = "url('" + url + "')";
-
-        requestAnimationFrame(function () {
-            heroBgNext.style.opacity = "1";
-            heroBg.style.opacity = "0";
-        });
-
-    } else {
-
-        heroBg.style.backgroundImage = "url('" + url + "')";
-
-        requestAnimationFrame(function () {
-            heroBg.style.opacity = "1";
-            heroBgNext.style.opacity = "0";
-        });
-
-    }
-
-    introUseNext = !introUseNext;
-    introIndex++;
-  };
-
-  if (img.decode) {
-    img.decode().then(applyFrame).catch(applyFrame);
-  } else {
-    applyFrame();
-  }
-};
-
-img.src = url;
-  }, INTRO_INTERVAL);
+function setSectionImage(sec, url) {
+  const a = sec.querySelector('.section-bg'), b = sec.querySelector('.section-bg-next');
+  const showNext = a.style.opacity !== '0';
+  const target = showNext ? b : a, other = showNext ? a : b;
+  target.style.backgroundImage = 'url("' + url + '")';
+  target.style.opacity = '1';
+  other.style.opacity = '0';
 }
-
-function stopIntro() {
+function setHeroImage(url) {
+  const showNext = heroBg.style.opacity !== '0';
+  const target = showNext ? heroBgNext : heroBg, other = showNext ? heroBg : heroBgNext;
+  target.style.backgroundImage = 'url("' + url + '")';
+  target.style.opacity = '1';
+  other.style.opacity = '0';
+}
+function stopAllPlayback() {
+  if (briefTimer) { clearInterval(briefTimer); briefTimer = null; }
+  if (briefSection) {
+    const c = briefSection.querySelector('.glow-card');
+    if (c) c.classList.remove('audio-active');
+    briefSection = null;
+  }
+  if (briefBtn) { briefBtn.classList.remove('brief-playing'); briefBtn = null; }
+  activeBriefId = null;
   if (introTimer) { clearInterval(introTimer); introTimer = null; }
   introPlaying = false;
   btnIntro.classList.remove('intro-active');
-  heroBg.style.opacity = '1';
-  heroBg.style.backgroundImage = '';
-  heroBgNext.style.opacity = '0';
-  heroBgNext.style.backgroundImage = '';
-  stopNarration();
+  narrationAudio.pause();
+  audioAnimRunning = false;
 }
-btnIntro.addEventListener('click', startIntro);
+narrationAudio.addEventListener('ended', stopAllPlayback);
+narrationAudio.addEventListener('error', stopAllPlayback);
 
-/* =========================================================
-   SECTION BRIEFS — Background image crossfade + audio
-   ========================================================= */
-/* Preload all images */
-/*Object.keys(BRIEF_IMAGES).forEach(function(id) {
-  BRIEF_IMAGES[id].forEach(function(u) { var i = new Image(); i.src = u; });
-});
-INTRO_IMAGES.forEach(function(u) { var i = new Image(); i.src = u; });*/
-
-function startBrief(briefId) {
-  stopAllBriefs();
-  var images = BRIEF_IMAGES[briefId];
-  if (!images || images.length < 2) return;
-
-  activeBriefId = briefId;
-  briefIndex = 1;
-  briefUseNext = true;
-
-  var section = qs('.story-section[data-brief-id="' + briefId + '"]');
-  if (!section) return;
-  var bgCur = section.querySelector('.section-bg');
-  var bgNxt = section.querySelector('.section-bg-next');
-  if (!bgCur || !bgNxt) return;
-
-  var triggerBtn = qs('.brief-trigger[data-brief-id="' + briefId + '"]');
-  if (triggerBtn) triggerBtn.classList.add('brief-playing');
-
-  /* Start audio with full reset */
-startNarration(briefId);
-
-  briefTimer = setInterval(function() {
-    if (briefIndex >= images.length) briefIndex = 0;
-    var url = images[briefIndex];
-
-    if (briefUseNext) {
-      bgNxt.style.backgroundImage = 'url(\'' + url + '\')';
-      void bgNxt.offsetWidth;
-      bgNxt.style.opacity = '1';
-      bgCur.style.opacity = '0';
-    } else {
-      bgCur.style.backgroundImage = 'url(\'' + url + '\')';
-      void bgCur.offsetWidth;
-      bgCur.style.opacity = '1';
-      bgNxt.style.opacity = '0';
+ $$('.brief-trigger').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.getAttribute('data-brief-id');
+    if (activeBriefId === id) { stopAllPlayback(); return; }
+    stopAllPlayback();
+    activeBriefId = id;
+    const sec = document.querySelector('.story-section[data-brief-id="' + id + '"]');
+    const imgs = BRIEF_IMAGES[id] || [];
+    if (sec && imgs.length) {
+      briefSection = sec;
+      const card = sec.querySelector('.glow-card');
+      if (card) card.classList.add('audio-active');
+      let i = 0;
+      setSectionImage(sec, imgs[0]);
+      briefTimer = setInterval(() => { i = (i + 1) % imgs.length; setSectionImage(sec, imgs[i]); }, BRIEF_INTERVAL);
     }
-
-    briefUseNext = !briefUseNext;
-    briefIndex++;
-  }, BRIEF_INTERVAL);
-}
-
-function stopAllBriefs() {
-  if (briefTimer) { clearInterval(briefTimer); briefTimer = null; }
-  if (activeBriefId) {
-    var section = qs('.story-section[data-brief-id="' + activeBriefId + '"]');
-    if (section) {
-      var bgCur = section.querySelector('.section-bg');
-      var bgNxt = section.querySelector('.section-bg-next');
-      if (bgCur) bgCur.style.opacity = '1';
-      if (bgNxt) bgNxt.style.opacity = '0';
-    }
-    var triggerBtn = qs('.brief-trigger[data-brief-id="' + activeBriefId + '"]');
-    if (triggerBtn) triggerBtn.classList.remove('brief-playing');
-    activeBriefId = null;
-  }
-  stopNarration();
-}
-
-qsa('.brief-trigger').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    var id = btn.getAttribute('data-brief-id');
-    if (activeBriefId === id) stopAllBriefs();
-    else startBrief(id);
+    briefBtn = btn;
+    btn.classList.add('brief-playing');
+    playNarration(id);
   });
 });
 
-/* =========================================================
-   WORLD LAUNCHER
-   ========================================================= */
-qsa('.world-trigger').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    if (worldTransitioning) return;
-    var key = btn.getAttribute('data-world');
-    var path = key;
-    if (WORLD_REGISTRY[key] && WORLD_REGISTRY[key].file) path = WORLD_REGISTRY[key].file;
-    launchWorld(path);
-  });
-});
-
-async function launchWorld(worldPath){
-
-    if(worldTransitioning) return;
-
-    worldTransitioning = true;
-
-    stopAllBriefs();
-    stopIntro();
-
-    savedScrollY = window.scrollY;
-    document.body.classList.add("scroll-locked");
-
-    playWorldBloom();
-
-    // Close curtain
-    transitionCurtain.classList.remove("opening");
-    transitionCurtain.classList.add("closing");
-
-    await waitForAnim(transitionCurtain,1000);
-
-    // Keep curtain covering the screen
-    transitionCurtain.classList.remove("closing");
-    transitionCurtain.style.transform = "scaleY(1)";
-
-    // Show the world container behind the curtain
-    worldContainer.classList.remove("exiting");
-    worldContainer.classList.add("active");
-
-    // Wait until the iframe is loaded
-    await new Promise(resolve => {
-        worldIframe.onload = () => {
-            worldIframe.onload = null;
-            requestAnimationFrame(resolve);
-        };
-
-        worldIframe.src = worldPath;
-    });
-
-    // Give the browser one more frame to paint
-    await delay(30);
-
-    // Open curtain
-    transitionCurtain.classList.add("opening");
-
-    await waitForAnim(transitionCurtain,2000);
-
-    transitionCurtain.classList.remove("opening");
-    transitionCurtain.style.transform = "";
-
-    worldTransitioning = false;
-}
-
-async function exitWorld(){
-
-    if(worldTransitioning) return;
-
-    worldTransitioning = true;
-
-    playWorldBloom();
-
-    // Close the curtain
-    transitionCurtain.classList.remove("closing","opening");
-    transitionCurtain.style.transform = "";
-
-    void transitionCurtain.offsetWidth;
-
-    transitionCurtain.classList.add("closing");
-
-    await waitForAnim(transitionCurtain,1000);
-
-    // Keep the curtain fully closed
-    transitionCurtain.classList.remove("closing");
-    transitionCurtain.style.transform = "scaleY(1)";
-
-    // Fade the world away behind the curtain
-    worldContainer.classList.add("exiting");
-
-    await waitForAnim(worldContainer,700);
-
-    // Hide the world completely
-    worldContainer.classList.remove("active");
-    worldContainer.classList.remove("exiting");
-
-    // Now destroy the iframe (it's no longer visible)
-    worldIframe.src = "about:blank";
-
-    // Restore scroll after layout has settled
-    requestAnimationFrame(() => {
-        window.scrollTo({
-            top: savedScrollY,
-            behavior: "instant"
-        });
-    });
-
-    document.body.classList.remove("scroll-locked");
-
-    // Give the browser two paint frames before revealing the portfolio
-    await new Promise(resolve => {
-        requestAnimationFrame(() => {
-            requestAnimationFrame(resolve);
-        });
-    });
-
-    // Open the curtain
-    transitionCurtain.classList.add("opening");
-
-    await waitForAnim(transitionCurtain,2000);
-
-    transitionCurtain.classList.remove("opening");
-    transitionCurtain.style.transform = "";
-
-    worldTransitioning = false;
-
-}
-worldExitBtn.addEventListener("click",exitWorld);
-
-/* =========================================================
-   SCROLL ANIMATIONS + PARALLAX
-   ========================================================= */
-var sectionObs = new IntersectionObserver(function(entries) {
-  entries.forEach(function(e) {
-    if (e.isIntersecting) e.target.classList.add('in-view');
-  });
-}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-qsa('.story-section').forEach(function(s) { sectionObs.observe(s); });
-
-var pTicking = false;
-window.addEventListener('scroll', function() {
-  if (!pTicking) {
-    requestAnimationFrame(function() {
-      var vh = window.innerHeight;
-      qsa('.section-bg, .section-bg-next').forEach(function(bg) {
-        var s = bg.parentElement;
-        if (!s) return;
-        var r = s.getBoundingClientRect();
-        var o = (r.top + r.height / 2 - vh / 2) / vh;
-        bg.style.transform = 'translateY(' + (o * -61.8) + 'px)';
-      });
-      pTicking = false;
-    });
-    pTicking = true;
-  }
+btnIntro.addEventListener('click', () => {
+  if (introPlaying) { stopAllPlayback(); return; }
+  stopAllPlayback();
+  introPlaying = true;
+  btnIntro.classList.add('intro-active');
+  let i = 0;
+  setHeroImage(INTRO_IMAGES[0]);
+  introTimer = setInterval(() => { i = (i + 1) % INTRO_IMAGES.length; setHeroImage(INTRO_IMAGES[i]); }, INTRO_INTERVAL);
+  playNarration('hero');
 });
 
 /* =========================================================
-   AMBIENT PARTICLES + GRID
+   YOUTUBE BRIEF MODAL
    ========================================================= */
-(function() {
-  var c = ambientCanvas, ctx = c.getContext('2d'), particles = [], w, h, grid = [];
+btnViewBrief.addEventListener('click', () => {
+  briefIframe.src = 'https://www.youtube.com/embed/' + YOUTUBE_VIDEO_ID + '?autoplay=1&rel=0&modestbranding=1';
+  briefModal.classList.add('active');
+  document.body.classList.add('scroll-locked');
+});
+function closeBriefModal() {
+  briefModal.classList.remove('active');
+  document.body.classList.remove('scroll-locked');
+  setTimeout(() => { briefIframe.src = 'about:blank'; }, 400);
+}
+briefCloseEl.addEventListener('click', closeBriefModal);
+briefModal.addEventListener('click', e => { if (e.target === briefModal) closeBriefModal(); });
 
+/* =========================================================
+   WORLDS — curtain transition + bloom
+   ========================================================= */
+let worldTransitioning = false, savedScrollY = 0;
+function playWorldBloom() {
+  worldBloomEl.classList.remove('active');
+  void worldBloomEl.offsetWidth;
+  worldBloomEl.classList.add('active');
+}
+async function openWorld(id) {
+  const w = WORLD_REGISTRY[id];
+  if (!w || worldTransitioning) return;
+  worldTransitioning = true;
+  stopAllPlayback();
+  playWorldBloom();
+  curtain.className = 'closing';
+  await waitForAnim(curtain, 950);
+  savedScrollY = SS.enabled ? SS.current : window.pageYOffset;
+  document.body.classList.add('scroll-locked');
+  worldIframe.src = w.file;
+  worldContainer.classList.add('active');
+  curtain.className = 'opening';
+  await waitForAnim(curtain, 1150);
+  curtain.className = '';
+  worldTransitioning = false;
+}
+async function closeWorld() {
+  if (worldTransitioning || !worldContainer.classList.contains('active')) return;
+  worldTransitioning = true;
+  curtain.className = 'closing';
+  await waitForAnim(curtain, 950);
+  worldContainer.classList.remove('active');
+  worldIframe.src = 'about:blank';
+  document.body.classList.remove('scroll-locked');
+  SS.jump(savedScrollY);
+  curtain.className = 'opening';
+  await waitForAnim(curtain, 1150);
+  curtain.className = '';
+  worldTransitioning = false;
+}
+ $$('.world-trigger').forEach(btn => btn.addEventListener('click', () => openWorld(btn.getAttribute('data-world'))));
+worldExitBtn.addEventListener('click', closeWorld);
+
+/* =========================================================
+   GLOBAL KEYS
+   ========================================================= */
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (worldContainer.classList.contains('active')) closeWorld();
+  else if (briefModal.classList.contains('active')) closeBriefModal();
+  else stopAllPlayback();
+});
+
+/* =========================================================
+   AMBIENT CANVAS — drifting constellation, pauses when hidden
+   ========================================================= */
+(function ambient() {
+  const ctx = ambientCanvas.getContext('2d');
+  let W = 0, H = 0, dpr = 1, parts = [], raf = null, t = 0;
   function resize() {
-    w = c.width = window.innerWidth;
-    h = c.height = window.innerHeight;
-    grid = [];
-    var sp = 140;
-    for (var x = sp; x < w; x += sp) grid.push({ x1: x, y1: 0, x2: x, y2: h });
-    for (var y = sp; y < h; y += sp) grid.push({ x1: 0, y1: y, x2: w, y2: y });
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  var n = Math.min(50, Math.floor(window.innerWidth / 30));
-  for (var i = 0; i < n; i++) {
-    particles.push({
-      x: Math.random() * w, y: Math.random() * h,
-      r: Math.random() * 0.85 + 0.25,
-      vx: (Math.random() - 0.5) * 0.08, vy: (Math.random() - 0.5) * 0.06 - 0.015,
-      a: Math.random() * 0.18 + 0.03,
-      p: Math.random() * Math.PI * 2, ps: Math.random() * 0.006 + 0.002
+    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    W = ambientCanvas.width = Math.floor(innerWidth * dpr);
+    H = ambientCanvas.height = Math.floor(innerHeight * dpr);
+    ambientCanvas.style.width = innerWidth + 'px';
+    ambientCanvas.style.height = innerHeight + 'px';
+    const n = Math.max(18, Math.min(60, Math.round(innerWidth * innerHeight / 26000)));
+    parts = [];
+    for (let i = 0; i < n; i++) parts.push({
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random() - .5) * .12 * dpr, vy: (Math.random() - .5) * .12 * dpr,
+      r: (Math.random() * 1.1 + .5) * dpr, p: Math.random() * 6.283, s: Math.random() * .02 + .008
     });
   }
-
   function draw() {
-    ctx.clearRect(0, 0, w, h);
-    ctx.strokeStyle = 'rgba(78,201,212,0.014)';
-    ctx.lineWidth = 0.5;
-    for (var i = 0; i < grid.length; i++) {
-      var l = grid[i];
-      ctx.beginPath(); ctx.moveTo(l.x1, l.y1); ctx.lineTo(l.x2, l.y2); ctx.stroke();
-    }
-    var vol = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ar-vol')) || 0;
-    for (var i = 0; i < particles.length; i++) {
-      var p = particles[i];
-      p.x += p.vx; p.y += p.vy; p.p += p.ps;
-      if (p.x < -10) p.x = w + 10;
-      if (p.x > w + 10) p.x = -10;
-      if (p.y < -10) p.y = h + 10;
-      if (p.y > h + 10) p.y = -10;
-      var a = Math.min(p.a * (0.5 + 0.5 * Math.sin(p.p)) + vol * 0.1, 0.5);
+    ctx.clearRect(0, 0, W, H);
+    t++;
+    const lim = 110 * dpr, lim2 = lim * lim;
+    for (let i = 0; i < parts.length; i++) {
+      const p = parts[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < -20) p.x = W + 20; if (p.x > W + 20) p.x = -20;
+      if (p.y < -20) p.y = H + 20; if (p.y > H + 20) p.y = -20;
+      const a = .12 + Math.sin(t * p.s + p.p) * .08;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, Math.max(0.1, p.r), 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(78,201,212,' + a.toFixed(3) + ')';
+      ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+      ctx.fillStyle = 'rgba(78,201,212,' + Math.max(0, a).toFixed(3) + ')';
       ctx.fill();
-      if (p.r > 0.6) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, Math.max(0.1, p.r * 3), 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(78,201,212,' + (a * 0.1).toFixed(3) + ')';
-        ctx.fill();
-      }
-    }
-    ctx.strokeStyle = 'rgba(78,201,212,0.02)';
-    ctx.lineWidth = 0.5;
-    for (var i = 0; i < particles.length; i++) {
-      for (var j = i + 1; j < particles.length; j++) {
-        var dx = particles[i].x - particles[j].x;
-        var dy = particles[i].y - particles[j].y;
-        if (dx * dx + dy * dy < 14000) {
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.stroke();
+      for (let j = i + 1; j < parts.length; j++) {
+        const q = parts[j], dx = p.x - q.x, dy = p.y - q.y, d2 = dx * dx + dy * dy;
+        if (d2 < lim2) {
+          ctx.strokeStyle = 'rgba(78,201,212,' + ((1 - Math.sqrt(d2) / lim) * .05).toFixed(3) + ')';
+          ctx.lineWidth = dpr;
+          ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
         }
       }
     }
-    requestAnimationFrame(draw);
+    raf = requestAnimationFrame(draw);
   }
-  //draw();
+  resize();
+  window.addEventListener('resize', resize);
+  if (reducedMotion) {
+    ctx.clearRect(0, 0, W, H);
+    parts.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.2832); ctx.fillStyle = 'rgba(78,201,212,.12)'; ctx.fill(); });
+    return;
+  }
+  raf = requestAnimationFrame(draw);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { cancelAnimationFrame(raf); raf = null; }
+    else if (!raf) raf = requestAnimationFrame(draw);
+  });
 })();
-
-/* =========================================================
-   KEYBOARD
-   ========================================================= */
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    if (briefModal.classList.contains('active')) closeBriefModal();
-    else if (worldContainer.classList.contains('active')) exitWorld();
-    else if (introPlaying) stopIntro();
-    else if (activeBriefId) stopAllBriefs();
-  }
-});
 
 /* =========================================================
    INIT
    ========================================================= */
-qsa('.story-section').forEach(function(s) { s.classList.remove('in-view'); });
+measureOffsets();
+measureParallax();
+setTimeout(measureOffsets, 600); /* after fonts/images settle */
+if (location.hash) {
+  const el = document.getElementById(location.hash.slice(1));
+  if (el) requestAnimationFrame(() => { measureOffsets(); SS.scrollToY(el.getBoundingClientRect().top + SS.current, true); });
+}
 </script>
 </body>
-<!-- TONY//OS Portfolio Assistant -->
-<script
-  src="https://cloud.livekit.io/embed-popup.js"
-  data-lk-agent="CA_TXe27caYxTUy"
-  data-lk-color="#002CF2"
-></script>
-<script defer src="https://cloud.umami.is/script.js" data-website-id="288af2c5-54dc-46bd-802a-ac709dbc6c51"></script>
-
 </html>

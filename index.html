@@ -101,7 +101,7 @@ a{color:inherit;text-decoration:none}
 
 /* ---------- BOOT / HERO ---------- */
 #hero{position:relative;z-index:3;min-height:100vh;min-height:100dvh;overflow:hidden}
-#hero-media{position:absolute;inset:-40% 0;z-index:0;will-change:transform}
+#hero-media{position:absolute;inset:0;z-index:0}
 #hero-media video,#hslide{position:absolute;left:0;right:0;top:0;height:100%;width:100%;
   object-fit:cover;object-position:center}
 #hslide{background-size:cover;background-position:center;opacity:0;transition:opacity .9s ease}
@@ -774,36 +774,6 @@ if (window.ResizeObserver) new ResizeObserver(queueMeasure).observe(document.bod
 
 /* ================= MASTER rAF LOOP (single loop drives everything) ================= */
 let topOn = false;
-function tick() {
-  SS.update();
-  const y = SS.current;
-
-  prog.style.transform = 'scaleX(' + clamp(y / SS.max, 0, 1).toFixed(4) + ')';
-
-  const wantTop = y > vh * .6;
-  if (wantTop !== topOn) { topOn = wantTop; topbar.classList.toggle('on', wantTop); rail.classList.toggle('on', wantTop); }
-
-  if (!reduced) {
-    if (y < vh * 1.25) {
-      heroMedia.style.transform = 'translate3d(0,' + (y * .28).toFixed(1) + 'px,0)';
-      heroInner.style.transform = 'translate3d(0,' + (y * .14).toFixed(1) + 'px,0)';
-      heroInner.style.opacity = clamp(1 - y / (vh * .8), 0, 1).toFixed(3);
-    }
-    if (!coarse) {
-      for (let i = 0; i < mods.length; i++) {
-        const m = mods[i];
-        const near = m.top < y + vh * 1.3 && m.top + m.h > y - vh * .3;
-        if (!near) { if (m.near) { m.near = false; m.par.style.willChange = ''; } continue; }
-        if (!m.near) { m.near = true; m.par.style.willChange = 'transform'; }
-        const p = ((y + vh * .5) - (m.top + m.h * .5)) / ((m.h + vh) * .5);
-        const off = (clamp(p, -1, 1) * m.strength).toFixed(1);
-        if (off !== m.last) { m.par.style.transform = 'translate3d(0,' + off + 'px,0) scale(1.12)'; m.last = off; }
-      }
-    }
-  }
-  requestAnimationFrame(tick);
-}
-
 /* ================= NAV / REVEAL ================= */
  $$('.rl').forEach(d => d.addEventListener('click', () => {
   const t = document.getElementById(d.dataset.t);

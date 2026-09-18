@@ -1332,5 +1332,162 @@ if (location.hash) {
 })();
 </script>
 <!-- ═══════════════════════════ /CLICK-GLOW PACK ═══════════════════════════ -->
+  <!-- ═══════════ HIDDEN NAV + HACKERNEWS TICKER · paste before </body> ═══════════ -->
+<style>
+/* A · NAVBAR — force visible on load, hide on scroll-down, reveal on scroll-up */
+#topbar.hn-force{opacity:1!important;visibility:visible!important;transform:translateY(0)!important}
+#topbar.hn-hide{opacity:0!important;visibility:hidden!important;transform:translateY(-110%)!important}
+#topbar.hn-hide .hn-track{animation-play-state:paused}
+#topbar #topBtn{margin-left:auto}
+
+/* B · TICKER (top-left, next to brand) */
+#topbar .hn-ticker{margin-left:clamp(.6rem,2vw,1.4rem)}
+.hn-ticker{position:relative;width:min(44vw,520px);min-width:0;
+  font-family:var(--mono);font-size:.58rem;letter-spacing:.06em;color:var(--dim);
+  border:1px solid var(--line);border-radius:3px;background:var(--panel);
+  padding:.45em .8em;cursor:default}
+.hn-viewport{overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+.hn-track{display:inline-flex;white-space:nowrap;will-change:transform;
+  animation:hnScroll var(--hn-dur,48s) linear infinite}
+.hn-ticker:hover .hn-track,.hn-ticker:focus-within .hn-track{animation-play-state:paused}
+@keyframes hnScroll{to{transform:translateX(-50%)}}
+.hn-run{display:inline-flex;gap:1.6em;padding-right:1.6em}
+.hn-run a{color:var(--dim);text-decoration:none;transition:color .25s}
+.hn-run a:hover{color:var(--cyan)}
+.hn-badge{color:var(--cyan);font-weight:500}
+.hn-score{color:var(--gold)}
+.hn-status{letter-spacing:.2em}
+
+/* C · HOVER PANEL — scrollable top-stories list */
+.hn-panel{position:absolute;top:calc(100% + 10px);left:0;z-index:60;
+  width:min(430px,86vw);max-height:min(58vh,460px);overflow-y:auto;
+  background:var(--panel);backdrop-filter:blur(14px);
+  border:1px solid var(--line2);border-radius:4px;padding:.6rem;
+  opacity:0;visibility:hidden;transform:translateY(6px);
+  transition:opacity .25s ease,transform .25s var(--ease),visibility .25s}
+.hn-ticker:hover .hn-panel,.hn-ticker:focus-within .hn-panel{opacity:1;visibility:visible;transform:none}
+.hn-head{display:flex;justify-content:space-between;align-items:center;
+  font-size:.55rem;letter-spacing:.22em;color:var(--faint);
+  padding:.2rem .4rem .6rem;border-bottom:1px solid var(--line)}
+.hn-head a{color:var(--cyan);text-decoration:none}
+.hn-row{display:flex;gap:.7em;align-items:baseline;padding:.55em .4rem;border-bottom:1px solid var(--line)}
+.hn-row:last-child{border-bottom:none}
+.hn-row:hover{background:rgba(78,201,212,.05)}
+.hn-rank{color:var(--faint);font-size:.55rem;flex:none}
+.hn-title{flex:1;color:var(--fg);text-decoration:none;font-size:.66rem;line-height:1.45}
+.hn-title:hover{color:var(--cyan)}
+.hn-meta{color:var(--dim);font-size:.54rem;white-space:nowrap;flex:none}
+.hn-disc{color:var(--dim);font-size:.54rem;text-decoration:none;flex:none;
+  border:1px solid var(--line);border-radius:3px;padding:.25em .5em;white-space:nowrap}
+.hn-disc:hover{color:var(--cyan);border-color:var(--line2)}
+
+@media(max-width:640px){
+  .hn-ticker{flex:1;width:auto;margin-left:.8rem!important}
+  .hn-panel{width:min(430px,94vw)}
+}
+@media(prefers-reduced-motion:reduce){.hn-track{animation:none}}
+</style>
+<script>
+(function(){
+  var bar=document.getElementById('topbar');if(!bar)return;
+  bar.classList.add('hn-force');
+
+  /* 1 · hide on scroll down · reveal on scroll up · always at top */
+  var last=0;
+  addEventListener('scroll',function(){
+    var y=scrollY;
+    if(y<60)bar.classList.remove('hn-hide');
+    else if(y>last+6)bar.classList.add('hn-hide');
+    else if(y<last-6)bar.classList.remove('hn-hide');
+    last=y;
+  },{passive:true});
+
+  /* 2 · HACKERNEWS ticker — free Firebase API, no key needed */
+  var t=document.createElement('div');
+  t.className='hn-ticker';t.id='hnTicker';
+  t.setAttribute('aria-label','Hacker News top stories');
+  t.innerHTML=
+    '<div class="hn-viewport"><div class="hn-track"><span class="hn-status">FETCHING HACKERNEWS FEED …</span></div></div>'+
+    '<div class="hn-panel"><div class="hn-head"><span>HACKERNEWS // TOP STORIES</span>'+
+    '<a href="https://news.ycombinator.com" target="_blank" rel="noopener">YCOMBINATOR ↗</a></div>'+
+    '<div class="hn-list"></div></div>';
+  var brand=document.getElementById('brandBtn');
+  brand.parentNode.insertBefore(t,brand.nextSibling);
+  var track=t.querySelector('.hn-track'),list=t.querySelector('.hn-list');
+
+  var CACHE='hnTop_v1',TTL=10*60*1000,offline=false;
+  function when(ts){var m=Math.max(1,Math.round((Date.now()-ts*1000)/36e5));return m<24?m+'h':Math.round(m/24)+'d'}
+
+  function segDom(items){
+    var f=document.createDocumentFragment();
+    items.forEach(function(it,i){
+      var a=document.createElement('a');a.href=it.url;a.target='_blank';a.rel='noopener';
+      var b=document.createElement('span');b.className='hn-badge';
+      b.textContent=String(i+1).padStart(2,'0')+'▸ ';
+      a.appendChild(b);
+      a.appendChild(document.createTextNode(it.title+' '));
+      var s=document.createElement('span');s.className='hn-score';s.textContent='▲'+it.score;
+      a.appendChild(s);f.appendChild(a);
+    });
+    return f;
+  }
+  function run(items){
+    offline=false;track.innerHTML='';
+    var r1=document.createElement('div');r1.className='hn-run';r1.appendChild(segDom(items));
+    var r2=r1.cloneNode(true);r2.setAttribute('aria-hidden','true');
+    r2.querySelectorAll('a').forEach(function(a){a.tabIndex=-1});
+    track.append(r1,r2);
+    requestAnimationFrame(function(){
+      var w=track.scrollWidth/2;
+      track.style.setProperty('--hn-dur',Math.max(30,Math.round(w/55))+'s');
+    });
+    list.innerHTML='';
+    items.forEach(function(it,i){
+      var li=document.createElement('div');li.className='hn-row';
+      var r=document.createElement('span');r.className='hn-rank';r.textContent=String(i+1).padStart(2,'0');
+      var a=document.createElement('a');a.className='hn-title';a.href=it.url;a.target='_blank';a.rel='noopener';a.textContent=it.title;
+      var m=document.createElement('span');m.className='hn-meta';
+      m.textContent='▲ '+it.score+' · '+it.descendants+' comments · '+when(it.time);
+      var d=document.createElement('a');d.className='hn-disc';
+      d.href='https://news.ycombinator.com/item?id='+it.id;d.target='_blank';d.rel='noopener';d.textContent='HN ↗';
+      li.append(r,a,m,d);list.appendChild(li);
+    });
+  }
+  function load(force){
+    try{
+      var c=JSON.parse(localStorage.getItem(CACHE)||'null');
+      if(c&&Date.now()-c.t<TTL&&!force){run(c.items);return}
+      if(c&&!force){run(c.items)} /* paint stale instantly, refresh behind it */
+    }catch(e){}
+    fetch('https://hacker-news.firebaseio.com/v0/topstories.json')
+      .then(function(r){return r.json()})
+      .then(function(ids){
+        return Promise.all(ids.slice(0,12).map(function(id){
+          return fetch('https://hacker-news.firebaseio.com/v0/item/'+id+'.json')
+            .then(function(r){return r.json()});
+        }));
+      })
+      .then(function(items){
+        items=items.filter(Boolean).map(function(it){return{
+          id:it.id,title:it.title,score:it.score||0,
+          descendants:it.descendants||0,time:it.time||0,
+          url:it.url||('https://news.ycombinator.com/item?id='+it.id)}});
+        if(!items.length)throw 0;
+        try{localStorage.setItem(CACHE,JSON.stringify({t:Date.now(),items:items}))}catch(e){}
+        run(items);
+      })
+      .catch(function(){
+        offline=true;
+        if(!list.children.length)
+          track.innerHTML='<div class="hn-run"><span class="hn-status">HN FEED OFFLINE — CLICK TO RETRY</span></div>';
+      });
+  }
+  t.addEventListener('click',function(){if(offline)load(true)});
+  load();
+})();
+</script>
+<!-- ═══════════════════════ /HIDDEN NAV + HN TICKER ═══════════════════════ -->
 </body>
 </html>

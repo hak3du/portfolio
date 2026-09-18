@@ -506,7 +506,51 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
       </figure>
     </div>
   </section>
+<!-- ════════════════════════════════════════════════════════
+     HERO-MOD · self-contained hero-style banner
+     Paste anywhere in <body>. No IDs · no JS · uses your scene engine.
+     ════════════════════════════════════════════════════════ -->
+<style>
+/* scoped to .hero-mod only — or move these 4 rules into your main <style> */
+.hero-mod .parallax__slides .slide{animation:hmodSwap 16s ease-in-out infinite}
+.hero-mod .parallax__slides .slide:nth-child(2){animation-delay:-8s}
+@keyframes hmodSwap{0%,42%{opacity:1}50%,92%{opacity:0}100%{opacity:1}}
+@media (prefers-reduced-motion:reduce){
+  .hero-mod .parallax__slides .slide{animation:none}
+  .hero-mod .parallax__slides .slide:nth-child(1){opacity:1}
+}
+</style>
 
+<div class="parallax hero-mod" role="region" aria-label="Spotlight">
+  <!-- LAYERS — delete any you don't want. Same URLs as hero = browser cache = zero extra bandwidth -->
+  <img class="layer parallax__bg" src="https://images.pexels.com/photos/1252890/pexels-photo-1252890.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="" aria-hidden="true" decoding="async" loading="lazy">
+  <div class="layer parallax__slides" aria-hidden="true"><!-- pure-CSS crossfade; delete this div for a static bg -->
+    <div class="slide" style="background-image:url('https://images.pexels.com/photos/33798615/pexels-photo-33798615.jpeg?auto=compress&cs=tinysrgb&w=1600')"></div>
+    <div class="slide" style="background-image:url('https://images.pexels.com/photos/12899140/pexels-photo-12899140.jpeg?auto=compress&cs=tinysrgb&w=1600')"></div>
+  </div>
+  <img class="layer parallax__dust" src="https://images.pexels.com/photos/924824/pexels-photo-924824.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="" aria-hidden="true" decoding="async" loading="lazy">
+  <img class="layer parallax__luna" src="https://images.pexels.com/photos/110854/pexels-photo-110854.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="" aria-hidden="true" decoding="async" loading="lazy">
+  <img class="layer parallax__rays" src="https://images.pexels.com/photos/346529/pexels-photo-346529.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="" aria-hidden="true" decoding="async" loading="lazy">
+  <img class="layer parallax__ridge" src="https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=1920" alt="" aria-hidden="true" decoding="async" loading="lazy">
+  <img class="layer parallax__fg" src="https://images.pexels.com/photos/209831/pexels-photo-209831.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="" aria-hidden="true" decoding="async" loading="lazy">
+  <div class="parallax__veil" aria-hidden="true"></div>
+
+  <!-- CONTENT -->
+  <div class="parallax__content">
+    <div class="hero-box">
+      <p class="hero-kicker"><i></i>SPOTLIGHT<em>.X</em> — YOUR · LABELS · HERE</p>
+      <h2 class="hero-title">Your Headline<span>Supporting line</span></h2>
+      <p class="hero-role">TAGLINE · CONTEXT · EXPERTISE</p>
+      <p class="hero-lede">Two or three lines max. Say what this moment is about and why it matters.</p>
+      <div class="hero-actions btn-group">
+        <a href="#ch-contact" class="btn btn-primary">Primary Action <i class="fas fa-arrow-right"></i></a>
+        <a href="#story" class="btn btn-outline">Back to Modules <i class="fas fa-arrow-down"></i></a>
+      </div>
+    </div>
+    <div class="scroll-cue" aria-hidden="true"><span>SCROLL</span><div class="cue-line"></div></div>
+  </div>
+</div>
+<!-- ════════════════ /HERO-MOD ════════════════ -->
   <section class="scene" id="ch-systems" data-brief="systems" data-accent="emerald">
     <div class="layer s-bg" aria-hidden="true">
       <div class="bgA" style="background-image:url('https://images.pexels.com/photos/1590618/pexels-photo-1590618.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600')"></div>

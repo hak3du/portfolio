@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=5.0">
 <meta name="description" content="Thabang Tony Ngoepe — Systems Engineer, Ethical Hacker, Builder.">
+<meta property="og:title" content="Thabang Tony Ngoepe — Portfolio OS">
+<meta property="og:description" content="Systems that refuse to break. Engineering, security, and products built for the unthinkable.">
+<meta property="og:image" content="https://images.pexels.com/photos/1252890/pexels-photo-1252890.jpeg?auto=compress&cs=tinysrgb&w=1200">
 <meta name="theme-color" content="#05060a">
 <title>THABANG NGOEPE — PORTFOLIO_OS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,6 +14,14 @@
 <link rel="preconnect" href="https://images.pexels.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+<script>
+/* Apply saved theme BEFORE first paint — no flash of wrong theme */
+try{
+  var t=localStorage.getItem('pos-theme');
+  if(t==='light'||(!t&&matchMedia('(prefers-color-scheme: light)').matches))
+    document.documentElement.classList.add('light');
+}catch(e){}
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -23,6 +34,15 @@
   --body:'Inter',system-ui,sans-serif;
   --ease:cubic-bezier(.16,1,.3,1);
   --ar-vol:0;--ar-bass:0;
+  /* shared scene textures — swap once, updates every section */
+  --tex-dust:url('https://images.pexels.com/photos/924824/pexels-photo-924824.jpeg?auto=compress&cs=tinysrgb&w=1600');
+  --tex-ridge:url('https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&cs=tinysrgb&w=1920');
+}
+:root.light{
+  --bg:#f2f4f7;--bg2:#e7eaf0;--panel:rgba(255,255,255,.85);
+  --fg:#161a21;--dim:#59606f;--faint:#c2c8d4;
+  --cyan:#0d7f92;--blue:#2f6ea8;--gold:#9c7a33;--emerald:#1f9e68;--orange:#b05d22;
+  --line:rgba(20,50,70,.13);--line2:rgba(13,127,146,.4);
 }
 html{overflow-anchor:none;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;scrollbar-color:var(--faint) var(--bg)}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-weight:300;line-height:1.65;overflow-x:hidden}
@@ -32,27 +52,36 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 a{color:inherit;text-decoration:none}
 :focus{outline:none}:focus-visible{outline:1px solid var(--cyan);outline-offset:3px}
 ::selection{background:var(--cyan);color:var(--bg)}
+:root.light ::selection{color:#fff}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--faint);border-radius:2px}
 
-/* ---------- fixed atmosphere layers (zero JS cost) ---------- */
+/* ---------- atmosphere ---------- */
 .gridbg{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
   background-image:radial-gradient(rgba(120,165,185,.06) 1px,transparent 1.4px);
   background-size:26px 26px}
+:root.light .gridbg{background-image:radial-gradient(rgba(40,80,110,.14) 1px,transparent 1.4px)}
 .grain{position:fixed;inset:0;z-index:9990;pointer-events:none;opacity:.018;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size:128px}
+:root.light .grain{opacity:.012}
 #audio-edge{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .8s ease;
   box-shadow:inset 0 0 calc(50px + var(--ar-vol,0)*70px) rgba(78,201,212,calc(var(--ar-vol,0)*.07))}
 #audio-edge.on{opacity:1}
 #progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:400;pointer-events:none;
   background:linear-gradient(90deg,var(--cyan),var(--blue));transform:scaleX(0);transform-origin:0 0;opacity:.8}
 
+/* ---------- theme toggle ---------- */
+#themeBtn{position:fixed;left:clamp(.8rem,2vw,1.4rem);bottom:clamp(.8rem,2vw,1.4rem);z-index:500;
+  width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:var(--panel);border:1px solid var(--line2);
+  color:var(--dim);font-size:.85rem;transition:all .3s}
+#themeBtn:hover{color:var(--cyan);border-color:var(--cyan)}
+
 /* ---------- top bar / rail ---------- */
 #topbar{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:center;justify-content:space-between;
   padding:.85rem clamp(1rem,3vw,2rem);
-  background:linear-gradient(rgba(5,6,10,.82),rgba(5,6,10,0));
-  opacity:0;visibility:hidden;transform:translateY(-8px);
+  background:linear-gradient(var(--bg),transparent);opacity:0;visibility:hidden;transform:translateY(-8px);
   transition:opacity .5s ease,transform .5s var(--ease),visibility .5s}
 #topbar.on{opacity:1;visibility:visible;transform:none}
 .brand{display:flex;align-items:center;gap:.55em;font-family:var(--mono);font-size:.68rem;
@@ -62,7 +91,6 @@ a{color:inherit;text-decoration:none}
 #topBtn{font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;color:var(--dim);
   border:1px solid var(--line);padding:.45em .9em;border-radius:3px;transition:all .3s}
 #topBtn:hover{color:var(--cyan);border-color:var(--line2)}
-
 #rail{position:fixed;right:clamp(.7rem,1.8vw,1.6rem);top:50%;transform:translateY(-50%);z-index:300;
   display:flex;flex-direction:column;gap:9px;opacity:0;visibility:hidden;transition:opacity .7s ease,visibility .7s}
 #rail.on{opacity:1;visibility:visible}
@@ -71,7 +99,7 @@ a{color:inherit;text-decoration:none}
 .rl::after{content:'';width:14px;height:1px;background:var(--faint);margin-left:.6em;transition:all .35s var(--ease)}
 .rl span{position:absolute;right:34px;top:50%;transform:translateY(-50%) translateX(6px);white-space:nowrap;
   font-size:.6rem;letter-spacing:.18em;color:var(--dim);background:var(--panel);border:1px solid var(--line);
-  padding:.35em .8em;border-radius:3px;backdrop-filter:blur(10px);opacity:0;pointer-events:none;
+  padding:.35em .8em;border-radius:3px;opacity:0;pointer-events:none;
   transition:opacity .25s ease,transform .25s ease}
 .rl:hover{color:var(--dim)}.rl:hover span{opacity:1;transform:translateY(-50%) translateX(0)}
 .rl.active{color:var(--cyan)}.rl.active::after{width:26px;background:var(--cyan);box-shadow:0 0 8px rgba(78,201,212,.5)}
@@ -82,114 +110,134 @@ a{color:inherit;text-decoration:none}
   padding:.72em 1.5em;border-radius:3px;border:1px solid var(--line2);color:var(--dim);
   transition:transform .18s ease,box-shadow .35s ease,border-color .35s ease,color .35s ease,opacity .35s ease}
 .btn:active{transform:scale(.97)}
-.btn::before{content:'';position:absolute;inset:0;opacity:.45;pointer-events:none;
+.btn::before{content:'';position:absolute;inset:0;opacity:0;pointer-events:none;
   background:linear-gradient(100deg,transparent 20%,rgba(78,201,212,.12) 50%,transparent 80%);
-  background-size:280% 100%;animation:sweep 7s linear infinite}
+  background-size:280% 100%}
+.btn:hover::before,.btn.focused::before{opacity:.6;animation:sweep 2.4s linear infinite}
 @keyframes sweep{0%{background-position:180% 0}100%{background-position:-80% 0}}
 .btn-group.has-focus .btn:not(.focused){opacity:.35}
-.btn-group.has-focus .btn:not(.focused)::before{opacity:.06}
-.btn.focused::before{opacity:1;animation-duration:1.6s}
 .btn-primary{color:var(--cyan);background:rgba(78,201,212,.07);border-color:rgba(78,201,212,.4)}
 .btn-primary:hover{box-shadow:0 0 20px rgba(78,201,212,.16);border-color:rgba(78,201,212,.65);color:var(--cyan)}
 .btn-outline{background:rgba(78,201,212,.02)}
 .btn-outline:hover{color:var(--cyan);border-color:var(--line2);box-shadow:0 0 14px rgba(78,201,212,.08)}
-.btn-sm{font-size:.6rem;padding:.62em 1.15em}
 .btn.playing{color:var(--gold)!important;border-color:rgba(200,164,92,.55)!important;
   box-shadow:0 0 16px rgba(200,164,92,.12)!important}
-.btn.playing::before{background:linear-gradient(100deg,transparent,rgba(200,164,92,.2),transparent);background-size:280% 100%}
 .btn i{font-size:.72em}
 
-/* ---------- BOOT / HERO ---------- */
-#hero{position:relative;z-index:3;min-height:100vh;min-height:100dvh;overflow:hidden}
-#hero-media{position:absolute;inset:0;z-index:0}
-#hero-media video,#hslide{position:absolute;left:0;right:0;top:0;height:100%;width:100%;
-  object-fit:cover;object-position:center}
-#hslide{background-size:cover;background-position:center;opacity:0;transition:opacity .9s ease}
-#hA{opacity:1;background:transparent}
-.veil{position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(5,6,10,.88) 0%,rgba(5,6,10,.66) 38%,rgba(5,6,10,.72) 62%,rgba(5,6,10,.95) 100%)}
-.veil2{position:absolute;inset:0;opacity:0;transition:opacity .8s ease;
-  background:radial-gradient(ellipse at center,transparent 30%,rgba(5,6,10,.72) 100%)}
-#hero.expanded .veil2{opacity:1}
-.scan{position:absolute;inset:0;opacity:.045;pointer-events:none;
-  background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(160,220,235,.5) 2px 3px)}
-#hero-inner{position:absolute;inset:0;z-index:2;will-change:transform,opacity}
-.phase{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:clamp(1rem,4vw,3rem);text-align:center;transition:opacity .55s ease,transform .55s var(--ease)}
-#phase1{gap:clamp(.8rem,2vw,1.3rem)}
-#hero.expanded #phase1,#hero.expanded #bootlog{opacity:0;transform:translateY(-20px);pointer-events:none}
-.mark{display:flex;align-items:center;gap:.7em;font-family:var(--disp);font-weight:600;
-  font-size:clamp(1rem,2.6vw,1.5rem);letter-spacing:.32em;text-transform:uppercase}
-.mark em{font-style:normal;color:var(--cyan)}
-.mark i{width:9px;height:9px;border-radius:2px;background:var(--cyan);box-shadow:0 0 12px rgba(78,201,212,.7)}
-.boot-sub{font-family:var(--mono);font-size:clamp(.58rem,1.2vw,.72rem);letter-spacing:.34em;color:var(--dim)}
-.boot-ver{font-family:var(--mono);font-size:.56rem;letter-spacing:.22em;color:var(--faint)}
-.boot-actions{display:flex;gap:clamp(.5rem,1.4vw,.9rem);margin-top:clamp(.6rem,2vw,1.2rem);flex-wrap:wrap;justify-content:center}
-#bootlog{position:absolute;left:50%;bottom:16%;transform:translateX(-50%);
-  font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;color:var(--dim);text-align:left;
-  opacity:0;pointer-events:none;transition:opacity .3s ease}
-#bootlog.on{opacity:1}
-#bootlog div{margin-top:.45em}
-#bootlog div::after{content:'▮';margin-left:.6em;color:var(--cyan);animation:blink 1s steps(1) infinite}
-@keyframes blink{50%{opacity:0}}
-.boot-hint{position:absolute;bottom:clamp(1.2rem,4vw,2.4rem);left:0;right:0;
-  font-family:var(--mono);font-size:.56rem;letter-spacing:.3em;color:var(--faint)}
-/* expanded identity */
-#phase2{opacity:0;transform:translateY(24px);pointer-events:none}
-#hero.expanded #phase2{opacity:1;transform:none;pointer-events:all}
-.ring{position:relative;width:clamp(82px,13vw,124px);height:clamp(82px,13vw,124px);cursor:pointer;
-  border-radius:50%;margin-bottom:var(--sgap,1rem);opacity:0;transform:scale(.72);
-  transition:opacity .7s ease .25s,transform .7s var(--ease) .25s}
-#hero.expanded .ring{opacity:1;transform:scale(1)}
-.ring::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid var(--line2);transition:all .4s}
-.ring:hover::before{border-color:var(--cyan);box-shadow:0 0 22px rgba(78,201,212,.18)}
-.ring::after{content:'';position:absolute;inset:-13px;border-radius:50%;border:1px dashed var(--line);
-  animation:spin 26s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;
-  filter:grayscale(25%) contrast(1.05);transition:filter .4s}
-.ring:hover img{filter:grayscale(0) contrast(1.1)}
-#phase2>*{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s var(--ease)}
-#hero.expanded #phase2>*{opacity:1;transform:none}
-#hero.expanded #phase2>:nth-child(2){transition-delay:.3s}
-#hero.expanded #phase2>:nth-child(3){transition-delay:.42s}
-#hero.expanded #phase2>:nth-child(4){transition-delay:.54s}
-#hero.expanded #phase2>:nth-child(5){transition-delay:.66s}
-#hero.expanded #phase2>:nth-child(6){transition-delay:.78s}
-.h-name{font-family:var(--disp);font-weight:300;font-size:clamp(2.1rem,6.4vw,4.8rem);
-  letter-spacing:-.02em;line-height:1.08;margin-top:.4rem}
-.h-role{font-family:var(--mono);font-size:clamp(.58rem,1.2vw,.74rem);letter-spacing:.32em;
-  text-transform:uppercase;color:var(--cyan);margin-top:.7rem}
-.h-intro{max-width:500px;color:var(--dim);font-size:clamp(.82rem,1.2vw,.95rem);line-height:1.85;margin-top:1.1rem}
-.h-actions{display:flex;gap:.6rem;margin-top:1.3rem;flex-wrap:wrap;justify-content:center}
-.scroll-cue{position:absolute;bottom:clamp(1.2rem,4vw,2.4rem);left:50%;transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;gap:.5rem;opacity:0;transition:opacity .6s ease 1s}
-#hero.expanded .scroll-cue{opacity:.5}
+/* =========================================================
+   SCENE SYSTEM — shared by hero AND every section.
+   Layers are absolutely positioned (zero layout → no CLS).
+   Motion = CSS scroll-driven animation on the compositor.
+   ── LAYER TUNING ──────────────────────────────
+   --speed : vertical drift in vh across the scene's passage.
+             positive = lags · negative = races ahead
+   --o     : layer opacity  ← per-image opacity knob
+   --zoom  : static overscale; keep --zoom ≥ 1 + |speed| ÷ 50
+   ───────────────────────────────────────────── */
+.parallax,.scene{position:relative;isolation:isolate;overflow:clip;background:var(--bg)}
+.parallax{z-index:3;min-height:100vh;min-height:100svh}
+.scene{z-index:3;display:grid;align-content:center;min-height:100vh;min-height:100svh;
+  padding:clamp(4rem,11vh,7rem) 0}
+.layer{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center;
+  transform:scale(var(--zoom,1));opacity:var(--o,1);pointer-events:none}
+
+/* --- per-layer tuning: HERO --- */
+.parallax__bg   {--speed:10; --o:1;   --zoom:1.3;  z-index:1}
+.parallax__slides{--speed:10;--o:1;  --zoom:1.3;  z-index:2}
+.parallax__dust {--speed:15; --o:.65; --zoom:1.4;  z-index:3; mix-blend-mode:screen}
+.parallax__luna {--speed:20; --o:.9;  --zoom:1.45; z-index:4; mix-blend-mode:screen}
+.parallax__rays {--speed:22; --o:.5;  --zoom:1.5;  z-index:5; mix-blend-mode:screen}
+.parallax__ridge{--speed:12; --o:.9;  --zoom:1.3;  z-index:6;
+  -webkit-mask-image:linear-gradient(to top,#000 40%,transparent 78%);
+          mask-image:linear-gradient(to top,#000 40%,transparent 78%)}
+.parallax__fg   {--speed:-10;--o:1;   --zoom:1.25; z-index:7;
+  -webkit-mask-image:linear-gradient(to top,#000 30%,transparent 62%);
+          mask-image:linear-gradient(to top,#000 30%,transparent 62%)}
+.parallax__slides .slide{position:absolute;inset:0;background-size:cover;background-position:center;
+  opacity:0;transition:opacity 1s ease}
+.parallax__veil{position:absolute;inset:0;z-index:8;pointer-events:none;
+  background:linear-gradient(180deg,rgba(5,6,10,.62) 0%,rgba(5,6,10,.28) 42%,rgba(5,6,10,.86) 100%)}
+:root.light .parallax__veil{background:linear-gradient(180deg,rgba(242,244,247,.66) 0%,rgba(242,244,247,.34) 42%,rgba(242,244,247,.88) 100%)}
+
+/* --- per-layer tuning: SECTIONS --- */
+.s-bg  {--speed:8;  --o:1;   --zoom:1.2;  z-index:1}
+.s-bg .bgA,.s-bg .bgB{position:absolute;inset:0;background-size:cover;background-position:center;
+  opacity:0;transition:opacity 1s ease}
+.s-bg .bgA{opacity:1}
+.s-mid {--speed:12; --o:.28; --zoom:1.35; z-index:2; mix-blend-mode:screen;
+  background-image:var(--tex-dust);background-size:cover;background-position:center}
+:root.light .s-mid{opacity:.16}
+.s-glow{--speed:-6; --o:.8;  --zoom:1.1;  z-index:3;
+  background:radial-gradient(60% 50% at 50% 46%,var(--ac-soft),transparent 70%);opacity:.35}
+.s-fg  {--speed:-9; --o:.55; --zoom:1.25; z-index:4;
+  background-image:var(--tex-ridge);background-size:cover;background-position:center bottom;
+  -webkit-mask-image:linear-gradient(to top,#000 22%,transparent 55%);
+          mask-image:linear-gradient(to top,#000 22%,transparent 55%)}
+:root.light .s-fg{--o:.4}
+.scene-tint{position:absolute;inset:0;z-index:5;pointer-events:none;background:var(--bg);
+  opacity:.58;transition:opacity .5s ease}
+.scene-veil{position:absolute;inset:0;z-index:6;pointer-events:none;
+  background:linear-gradient(180deg,var(--bg) 0%,transparent 30%,transparent 62%,var(--bg) 100%);
+  opacity:.9;transition:opacity .5s ease}
+.scene.hot .scene-tint{opacity:.3}
+.scene.hot .scene-veil{opacity:.55}
+
+/* scroll-driven parallax — compositor-run, main thread untouched.
+   No support (or reduced motion) → clean static scene. */
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .layer{animation:sceneParallax linear both;animation-duration:auto;
+      animation-timeline:view();animation-range:cover 0% cover 100%}
+  }
+}
+@keyframes sceneParallax{
+  to{transform:translateY(calc(var(--speed,0) * 1vh)) scale(var(--zoom,1))}
+}
+
+/* ---------- hero content (static — text stays crisp) ---------- */
+.parallax__content{position:absolute;inset:0;z-index:10;display:grid;place-items:center;
+  padding:clamp(1rem,4vw,3rem)}
+.hero-box{display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:clamp(.55rem,1.4vw,.9rem);max-width:760px}
+.hero-avatar{width:clamp(52px,8vw,68px);height:clamp(52px,8vw,68px);border-radius:50%;object-fit:cover;
+  border:1px solid var(--line2);padding:3px;background:var(--panel)}
+.hero-kicker{display:flex;align-items:center;gap:.7em;font-family:var(--mono);
+  font-size:clamp(.58rem,1.2vw,.72rem);letter-spacing:.34em;color:var(--dim);text-transform:uppercase}
+.hero-kicker em{font-style:normal;color:var(--cyan)}
+.hero-kicker i{width:8px;height:8px;border-radius:2px;background:var(--cyan);box-shadow:0 0 12px rgba(78,201,212,.7)}
+.hero-title{position:relative;font-family:var(--disp);font-weight:600;
+  font-size:clamp(2.6rem,9vw,6.4rem);line-height:1.02;letter-spacing:-.02em;margin-top:.2rem}
+.hero-title::after{content:'';position:absolute;inset:-12% -8%;z-index:-1;border-radius:2rem;
+  background:rgba(3,4,8,.5);filter:blur(3rem)}
+:root.light .hero-title::after{background:rgba(255,255,255,.55)}
+.hero-title span{display:block;font-size:.36em;font-weight:500;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--cyan);margin-top:.5em}
+.hero-role{font-family:var(--mono);font-size:clamp(.58rem,1.2vw,.74rem);letter-spacing:.3em;
+  text-transform:uppercase;color:var(--dim)}
+.hero-lede{max-width:520px;color:var(--dim);font-size:clamp(.84rem,1.2vw,.98rem);line-height:1.85}
+.hero-actions{display:flex;gap:.6rem;margin-top:.9rem;flex-wrap:wrap;justify-content:center}
+.scroll-cue{position:absolute;bottom:4.5vh;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;opacity:.55;pointer-events:none}
 .scroll-cue span{font-family:var(--mono);font-size:.52rem;letter-spacing:.32em;color:var(--dim)}
 .cue-line{width:1px;height:34px;background:var(--faint);position:relative;overflow:hidden}
-.cue-line::after{content:'';position:absolute;left:0;top:-60%;width:100%;height:50%;background:var(--cyan);animation:drop 2.2s ease-in-out infinite}
+.cue-line::after{content:'';position:absolute;left:0;top:-60%;width:100%;height:50%;
+  background:var(--cyan);animation:drop 2.2s ease-in-out infinite}
 @keyframes drop{0%{top:-60%}60%,100%{top:110%}}
 
-/* ---------- CHAPTERS ---------- */
-main{position:relative;z-index:3}
-.chapter{--ac:var(--cyan);--ac-soft:rgba(78,201,212,.5);
-  min-height:100vh;min-height:100dvh;display:grid;align-content:center;
-  padding:clamp(4rem,11vh,7rem) 0}
-.chapter[data-accent="gold"]{--ac:var(--gold);--ac-soft:rgba(200,164,92,.5)}
-.chapter[data-accent="emerald"]{--ac:var(--emerald);--ac-soft:rgba(62,207,142,.5)}
-.chapter[data-accent="orange"]{--ac:var(--orange);--ac-soft:rgba(212,122,58,.5)}
-.ch-wrap{width:min(1180px,91vw);margin:0 auto;display:grid;grid-template-columns:1.02fr .98fr;
-  gap:clamp(1.6rem,5vw,4.5rem);align-items:center}
-.chapter:nth-of-type(even) .ch-wrap{direction:rtl}
-.chapter:nth-of-type(even) .ch-wrap>*{direction:ltr}
+/* ---------- CHAPTER CONTENT ---------- */
+.ch-wrap{position:relative;z-index:7;width:min(1180px,91vw);margin:0 auto;
+  display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(1.6rem,5vw,4.5rem);align-items:center}
+.scene:nth-of-type(even) .ch-wrap{direction:rtl}
+.scene:nth-of-type(even) .ch-wrap>*{direction:ltr}
 .ch-copy{max-width:560px;justify-self:end}
-.chapter:nth-of-type(even) .ch-copy{justify-self:start}
+.scene:nth-of-type(even) .ch-copy{justify-self:start}
 .ch-copy>*{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s var(--ease)}
-.chapter.in-view .ch-copy>*{opacity:1;transform:none}
-.chapter.in-view .ch-copy>:nth-child(2){transition-delay:.07s}
-.chapter.in-view .ch-copy>:nth-child(3){transition-delay:.14s}
-.chapter.in-view .ch-copy>:nth-child(4){transition-delay:.21s}
-.chapter.in-view .ch-copy>:nth-child(5){transition-delay:.28s}
+.scene.in-view .ch-copy>*{opacity:1;transform:none}
+.scene.in-view .ch-copy>:nth-child(2){transition-delay:.07s}
+.scene.in-view .ch-copy>:nth-child(3){transition-delay:.14s}
+.scene.in-view .ch-copy>:nth-child(4){transition-delay:.21s}
+.scene.in-view .ch-copy>:nth-child(5){transition-delay:.28s}
 .ch-num{font-family:var(--disp);font-weight:600;font-size:clamp(3rem,7vw,5rem);line-height:1;
   color:transparent;-webkit-text-stroke:1px var(--ac-soft);opacity:.9;margin-bottom:.4rem}
 @supports not (-webkit-text-stroke:1px red){.ch-num{color:var(--ac-soft);opacity:.16}}
@@ -200,36 +248,37 @@ main{position:relative;z-index:3}
   line-height:1.12;letter-spacing:-.01em;margin-bottom:1rem}
 .ch-text{font-size:clamp(.84rem,1.2vw,.95rem);color:var(--dim);line-height:1.85;margin-bottom:1.6rem}
 .ch-actions{display:flex;gap:.55rem;flex-wrap:wrap}
-/* media frame */
+
+/* media frame + card gallery */
 .ch-media{position:relative;margin:0;opacity:0;transform:translateY(30px);
   transition:opacity .8s ease .12s,transform .8s var(--ease) .12s}
-.chapter.in-view .ch-media{opacity:1;transform:none}
-.media-frame{position:relative;height:clamp(320px,64vh,600px);overflow:hidden;
+.scene.in-view .ch-media{opacity:1;transform:none}
+.media-frame{position:relative;height:clamp(320px,58vh,560px);overflow:hidden;
   border:1px solid var(--line);background:var(--bg2)}
-.media-parallax{position:absolute;inset:0;will-change:auto}
 .mfa,.mfb{position:absolute;inset:0;background-size:cover;background-position:center;
   transition:opacity 1s ease}
 .mfb{opacity:0}
-.media-frame::after{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;
-  --c:var(--ac-soft);
-  background:
-    linear-gradient(var(--c),var(--c)) 0 0/18px 1px,
-    linear-gradient(var(--c),var(--c)) 0 0/1px 18px,
-    linear-gradient(var(--c),var(--c)) 100% 0/18px 1px,
-    linear-gradient(var(--c),var(--c)) 100% 0/1px 18px,
-    linear-gradient(var(--c),var(--c)) 0 100%/18px 1px,
-    linear-gradient(var(--c),var(--c)) 0 100%/1px 18px,
-    linear-gradient(var(--c),var(--c)) 100% 100%/18px 1px,
-    linear-gradient(var(--c),var(--c)) 100% 100%/1px 18px;
-  background-repeat:no-repeat;opacity:.8}
 .media-frame::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
   background:linear-gradient(180deg,rgba(5,6,10,.22),transparent 30%,transparent 70%,rgba(5,6,10,.5))}
+:root.light .media-frame::before{background:linear-gradient(180deg,rgba(242,244,247,.28),transparent 30%,transparent 70%,rgba(242,244,247,.55))}
 .ch-media.live .media-frame{box-shadow:0 0 calc(18px + var(--ar-bass,0)*26px) rgba(78,201,212,calc(.05 + var(--ar-vol,0)*.1)),
   0 20px 50px rgba(0,0,0,.35);border-color:rgba(78,201,212,.28)}
-.media-tag{position:absolute;left:12px;bottom:12px;z-index:3;display:flex;align-items:center;gap:.6em;
+.gallery{position:absolute;inset:0;z-index:3;display:flex;align-items:center;gap:10px;
+  padding:16px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;
+  scrollbar-width:thin;scrollbar-color:var(--faint) transparent}
+.gallery::-webkit-scrollbar{height:4px}
+.gallery::-webkit-scrollbar-track{background:transparent}
+.gallery::-webkit-scrollbar-thumb{background:var(--faint);border-radius:2px}
+.gcard{flex:0 0 auto;width:150px;height:96px;scroll-snap-align:center;border-radius:4px;
+  border:1px solid var(--line2);background-size:cover;background-position:center;
+  transition:transform .3s var(--ease),border-color .3s ease,box-shadow .3s ease}
+.gcard:hover,.gcard:focus-visible,.gcard.active{transform:translateY(-4px);
+  border-color:var(--ac);box-shadow:0 10px 26px rgba(0,0,0,.35)}
+:root.light .gcard:hover,:root.light .gcard:focus-visible,:root.light .gcard.active{box-shadow:0 10px 26px rgba(30,60,90,.18)}
+.gcard.active{border-width:2px}
+.media-tag{position:absolute;left:12px;bottom:12px;z-index:4;display:flex;align-items:center;gap:.6em;
   font-family:var(--mono);font-size:.56rem;letter-spacing:.2em;color:var(--dim);
-  background:rgba(5,6,10,.78);border:1px solid var(--line);padding:.5em .9em;border-radius:3px;
-  backdrop-filter:blur(8px)}
+  background:var(--panel);border:1px solid var(--line);padding:.5em .9em;border-radius:3px}
 .tdot{width:6px;height:6px;border-radius:50%;background:var(--ac);flex:none;transition:background .3s}
 .ch-media.live .tdot{background:var(--gold);animation:pulse 1.1s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.25}}
@@ -251,14 +300,15 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
 #brief-modal{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;
   background:rgba(5,6,10,.93);backdrop-filter:blur(16px);opacity:0;visibility:hidden;
   transition:opacity .4s ease,visibility .4s;padding:clamp(.8rem,3vw,2rem)}
+:root.light #brief-modal{background:rgba(238,241,246,.94)}
 #brief-modal.active{opacity:1;visibility:visible}
 .brief-box{width:100%;max-width:880px;aspect-ratio:16/9;position:relative;border-radius:6px;overflow:hidden;
-  border:1px solid var(--line2);background:#000;box-shadow:0 0 40px rgba(78,201,212,.08);
+  border:1px solid var(--line2);background:#000;
   transform:scale(.94);opacity:0;transition:transform .5s var(--ease),opacity .4s ease}
 #brief-modal.active .brief-box{transform:scale(1);opacity:1}
 .brief-box iframe{width:100%;height:100%;border:none}
 #briefClose{position:absolute;top:.5rem;right:.5rem;z-index:2;width:36px;height:36px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;background:rgba(5,6,10,.75);
+  display:flex;align-items:center;justify-content:center;background:var(--panel);
   border:1px solid var(--line);color:var(--dim);transition:all .3s}
 #briefClose:hover{color:var(--cyan);border-color:var(--line2)}
 
@@ -269,10 +319,10 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
 #world iframe{width:100%;height:100%;border:none;background:var(--bg)}
 #worldExit{position:fixed;top:clamp(1rem,3vw,2rem);right:clamp(1rem,3vw,2rem);z-index:10001;
   width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  background:rgba(5,6,10,.85);backdrop-filter:blur(10px);border:1px solid var(--line2);color:var(--dim);
+  background:var(--panel);border:1px solid var(--line2);color:var(--dim);
   opacity:0;transform:scale(.8);pointer-events:none;transition:all .35s ease .45s}
 #world.active #worldExit{opacity:1;transform:scale(1);pointer-events:all}
-#worldExit:hover{color:var(--cyan);box-shadow:0 0 18px rgba(78,201,212,.2)}
+#worldExit:hover{color:var(--cyan)}
 
 /* ---------- CURTAIN ---------- */
 #curtain{position:fixed;inset:0;z-index:10050;background:var(--bg);display:flex;align-items:center;justify-content:center;
@@ -282,23 +332,25 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
 #curtain.closing{animation:curIn .85s var(--ease) forwards}
 #curtain.closing span{opacity:1}
 #curtain.opening{transform-origin:bottom;animation:curOut 1.05s var(--ease) forwards}
-#curtain.opening span{opacity:0;transition-delay:0s}
 @keyframes curIn{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @keyframes curOut{from{transform:scaleY(1)}to{transform:scaleY(0)}}
 
 /* ---------- RESPONSIVE / MOTION ---------- */
 @media(max-width:860px){
   .ch-wrap{grid-template-columns:1fr;gap:1.6rem}
-  .ch-copy,.chapter:nth-of-type(even) .ch-copy{justify-self:start;max-width:none}
+  .ch-copy,.scene:nth-of-type(even) .ch-copy{justify-self:start;max-width:none}
   .ch-media{order:-1}
-  .media-frame{height:min(46vh,380px)}
+  .media-frame{height:min(50vh,400px)}
+  .gcard{width:122px;height:80px}
   #rail{display:none}
   .ch-num{font-size:2.4rem}
-  .h-actions{flex-direction:column;align-items:center}
+  .hero-actions{flex-direction:column;align-items:center}
+  .hero-title span{letter-spacing:.14em}
+  .s-fg{--o:.35}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.15s!important}
-  .cue-line::after,.ring::after{animation:none}
+  .cue-line::after{animation:none}
 }
 </style>
 </head>
@@ -308,6 +360,7 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
 <div class="grain" aria-hidden="true"></div>
 <div id="audio-edge" aria-hidden="true"></div>
 <div id="progress" aria-hidden="true"></div>
+<button id="themeBtn" aria-label="Toggle light / dark mode"><i class="fas fa-sun"></i></button>
 
 <header id="topbar">
   <div class="brand" id="brandBtn" role="button" tabindex="0"><i></i>T.NGOEPE//OS</div>
@@ -327,57 +380,56 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
   <div class="rl" data-t="ch-contact"><span>CONTACT</span>10</div>
 </nav>
 
-<!-- ============ BOOT / HERO ============ -->
-<header id="hero">
-  <div id="hero-media" aria-hidden="true">
-    <video autoplay muted loop playsinline preload="auto">
-      <source src="herovid.mp4" type="video/mp4">
-    </video>
-    <div id="hA" class="hslide"></div>
-    <div id="hB" class="hslide"></div>
-    <div class="veil"></div>
-    <div class="veil2"></div>
-    <div class="scan"></div>
+<!-- ============ HERO ============ -->
+<header class="parallax" id="hero" aria-label="Introduction">
+  <img class="layer parallax__bg" src="https://images.pexels.com/photos/1252890/pexels-photo-1252890.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1920" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+  <div class="layer parallax__slides" aria-hidden="true">
+    <div class="slide" id="slideA"></div>
+    <div class="slide" id="slideB"></div>
   </div>
+  <img class="layer parallax__dust" src="https://images.pexels.com/photos/924824/pexels-photo-924824.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600" alt="" aria-hidden="true" decoding="async">
+  <img class="layer parallax__luna" src="https://images.pexels.com/photos/110854/pexels-photo-110854.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1200" alt="" aria-hidden="true" decoding="async">
+  <img class="layer parallax__rays" src="https://images.pexels.com/photos/346529/pexels-photo-346529.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600" alt="" aria-hidden="true" decoding="async">
+  <img class="layer parallax__ridge" src="https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1920" alt="" aria-hidden="true" decoding="async">
+  <img class="layer parallax__fg" src="https://images.pexels.com/photos/209831/pexels-photo-209831.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600" alt="" aria-hidden="true" decoding="async">
+  <div class="parallax__veil" aria-hidden="true"></div>
 
-  <div id="hero-inner">
-    <div class="phase" id="phase1">
-      <div class="mark"><i></i>PORTFOLIO<em>OS</em></div>
-      <p class="boot-sub">T.NGOEPE &nbsp;//&nbsp; SYSTEMS · SECURITY · BUILD</p>
-      <p class="boot-ver">v3.0 — STABLE CHANNEL</p>
-      <div class="boot-actions btn-group" id="bootGroup">
-        <button class="btn btn-primary" id="btnInit">Initialize <i class="fas fa-power-off"></i></button>
-        <button class="btn btn-outline" id="btnBriefFilm">View Brief <i class="fas fa-film"></i></button>
+  <div class="parallax__content">
+    <div class="hero-box">
+      <img class="hero-avatar" src="profile-pic.png" alt="Portrait of Thabang Tony Ngoepe" width="64" height="64">
+      <p class="hero-kicker"><i></i>PORTFOLIO<em>OS</em> — SYSTEMS · SECURITY · BUILD</p>
+      <h1 class="hero-title">Thabang<span>Tony Ngoepe</span></h1>
+      <p class="hero-role">Systems Engineer · Ethical Hacker · Builder</p>
+      <p class="hero-lede">I architect resilient systems, dissect vulnerabilities before they become breaches, and build products that turn complex capability into meaningful experience.</p>
+      <div class="hero-actions btn-group">
+        <button class="btn btn-outline" id="btnIntroVoice"><i class="fas fa-play"></i> Play Intro</button>
+        <a href="#ch-intro" class="btn btn-primary">Explore Modules <i class="fas fa-arrow-down"></i></a>
+        <button class="btn btn-outline" id="btnBriefFilm"><i class="fas fa-film"></i> View Brief</button>
       </div>
     </div>
-    <div id="bootlog" aria-live="polite"></div>
-
-    <div class="phase" id="phase2">
-      <div class="ring" id="ring" role="button" tabindex="0" aria-label="Reset to boot screen">
-        <img src="profile-pic.png" alt="Thabang Tony Ngoepe">
-      </div>
-      <h1 class="h-name">Thabang Tony Ngoepe</h1>
-      <p class="h-role">Systems Engineer · Ethical Hacker · Builder</p>
-      <p class="h-intro">I architect resilient systems, dissect vulnerabilities before they become breaches, and build products that turn complex capability into meaningful experience.</p>
-      <div class="h-actions btn-group" id="heroGroup">
-        <button class="btn btn-outline btn-sm" id="btnIntroVoice"><i class="fas fa-play"></i> Play Intro</button>
-        <a href="#ch-intro" class="btn btn-ghostless btn-outline btn-sm" id="btnExplore">Explore Modules <i class="fas fa-arrow-down"></i></a>
-      </div>
-    </div>
-
     <div class="scroll-cue" aria-hidden="true"><span>SCROLL</span><div class="cue-line"></div></div>
   </div>
-  <p class="boot-hint" id="bootHint">SELECT INITIALIZATION TO CONTINUE ▮</p>
 </header>
 
-<!-- ============ MODULES ============ -->
+<!-- ============ SCENE MODULES ============
+     Each section = hero-style layered scene:
+     s-bg (main image, hover-crossfaded) · s-mid (shared dust)
+     · s-glow (accent) · s-fg (shared ridge) · tint/veil · content -->
 <main id="story">
 
-  <section class="chapter" id="ch-intro" data-brief="intro">
+  <section class="scene" id="ch-intro" data-brief="intro">
+    <div class="layer s-bg" aria-hidden="true">
+      <div class="bgA" style="background-image:url('https://images.pexels.com/photos/5380642/pexels-photo-5380642.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600')"></div>
+      <div class="bgB"></div>
+    </div>
+    <div class="layer s-mid" aria-hidden="true"></div>
+    <div class="layer s-glow" aria-hidden="true"></div>
+    <div class="layer s-fg" aria-hidden="true"></div>
+    <div class="scene-tint" aria-hidden="true"></div>
+    <div class="scene-veil" aria-hidden="true"></div>
     <div class="ch-wrap">
       <div class="ch-copy">
-        <div class="ch-num">01</div>
-        <div class="ch-label">MODULE.01 — INTRODUCTION</div>
+        <div class="ch-num">01</div><div class="ch-label">MODULE.01 — INTRODUCTION</div>
         <h2 class="ch-title">Introduction</h2>
         <p class="ch-text">Every system begins with a question: what happens when this fails? That question became the foundation of everything I build — from distributed architectures that survive the unthinkable to products that feel inevitable the moment you use them.</p>
         <div class="ch-actions btn-group">
@@ -386,20 +438,28 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
         </div>
       </div>
       <figure class="ch-media">
-        <div class="media-frame"><div class="media-parallax">
+        <div class="media-frame">
           <div class="mfa" style="background-image:url('https://images.pexels.com/photos/5380642/pexels-photo-5380642.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1400')"></div>
           <div class="mfb"></div>
-        </div></div>
+        </div>
         <figcaption class="media-tag"><i class="tdot"></i><span class="tag-txt">FEED.01 // STANDBY</span></figcaption>
       </figure>
     </div>
   </section>
 
-  <section class="chapter" id="ch-mission" data-brief="mission" data-accent="gold">
+  <section class="scene" id="ch-mission" data-brief="mission" data-accent="gold">
+    <div class="layer s-bg" aria-hidden="true">
+      <div class="bgA" style="background-image:url('https://images.pexels.com/photos/325229/pexels-photo-325229.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600')"></div>
+      <div class="bgB"></div>
+    </div>
+    <div class="layer s-mid" aria-hidden="true"></div>
+    <div class="layer s-glow" aria-hidden="true"></div>
+    <div class="layer s-fg" aria-hidden="true"></div>
+    <div class="scene-tint" aria-hidden="true"></div>
+    <div class="scene-veil" aria-hidden="true"></div>
     <div class="ch-wrap">
       <div class="ch-copy">
-        <div class="ch-num">02</div>
-        <div class="ch-label">MODULE.02 — MISSION</div>
+        <div class="ch-num">02</div><div class="ch-label">MODULE.02 — MISSION</div>
         <h2 class="ch-title">Mission</h2>
         <p class="ch-text">I exist at the intersection of systems thinking and product intuition. My mission is to build technology that doesn't just function — it adapts, protects, and evolves. Every project is an exercise in making complexity invisible.</p>
         <div class="ch-actions btn-group">
@@ -408,20 +468,28 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
         </div>
       </div>
       <figure class="ch-media">
-        <div class="media-frame"><div class="media-parallax">
+        <div class="media-frame">
           <div class="mfa" style="background-image:url('https://images.pexels.com/photos/325229/pexels-photo-325229.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1400')"></div>
           <div class="mfb"></div>
-        </div></div>
+        </div>
         <figcaption class="media-tag"><i class="tdot"></i><span class="tag-txt">FEED.02 // STANDBY</span></figcaption>
       </figure>
     </div>
   </section>
 
-  <section class="chapter" id="ch-engineering" data-brief="engineering">
+  <section class="scene" id="ch-engineering" data-brief="engineering">
+    <div class="layer s-bg" aria-hidden="true">
+      <div class="bgA" style="background-image:url('https://images.pexels.com/photos/8294564/pexels-photo-8294564.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600')"></div>
+      <div class="bgB"></div>
+    </div>
+    <div class="layer s-mid" aria-hidden="true"></div>
+    <div class="layer s-glow" aria-hidden="true"></div>
+    <div class="layer s-fg" aria-hidden="true"></div>
+    <div class="scene-tint" aria-hidden="true"></div>
+    <div class="scene-veil" aria-hidden="true"></div>
     <div class="ch-wrap">
       <div class="ch-copy">
-        <div class="ch-num">03</div>
-        <div class="ch-label">MODULE.03 — PHILOSOPHY</div>
+        <div class="ch-num">03</div><div class="ch-label">MODULE.03 — PHILOSOPHY</div>
         <h2 class="ch-title">Engineering Philosophy</h2>
         <p class="ch-text">Engineering is not about tools. It's about understanding constraints deeply enough to make them disappear. I design systems where failure is not an edge case but a first-class consideration — baked into the architecture from the first line.</p>
         <div class="ch-actions btn-group">
@@ -430,20 +498,28 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
         </div>
       </div>
       <figure class="ch-media">
-        <div class="media-frame"><div class="media-parallax">
+        <div class="media-frame">
           <div class="mfa" style="background-image:url('https://images.pexels.com/photos/8294564/pexels-photo-8294564.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1400')"></div>
           <div class="mfb"></div>
-        </div></div>
+        </div>
         <figcaption class="media-tag"><i class="tdot"></i><span class="tag-txt">FEED.03 // STANDBY</span></figcaption>
       </figure>
     </div>
   </section>
 
-  <section class="chapter" id="ch-systems" data-brief="systems" data-accent="emerald">
+  <section class="scene" id="ch-systems" data-brief="systems" data-accent="emerald">
+    <div class="layer s-bg" aria-hidden="true">
+      <div class="bgA" style="background-image:url('https://images.pexels.com/photos/1590618/pexels-photo-1590618.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600')"></div>
+      <div class="bgB"></div>
+    </div>
+    <div class="layer s-mid" aria-hidden="true"></div>
+    <div class="layer s-glow" aria-hidden="true"></div>
+    <div class="layer s-fg" aria-hidden="true"></div>
+    <div class="scene-tint" aria-hidden="true"></div>
+    <div class="scene-veil" aria-hidden="true"></div>
     <div class="ch-wrap">
       <div class="ch-copy">
-        <div class="ch-num">04</div>
-        <div class="ch-label">MODULE.04 — FEATURED SYSTEMS</div>
+        <div class="ch-num">04</div><div class="ch-label">MODULE.04 — FEATURED SYSTEMS</div>
         <h2 class="ch-title">Featured Systems</h2>
         <p class="ch-text">From distributed consensus protocols to real-time data pipelines, the systems I build operate at scale. Every architecture is designed for graceful degradation — so when the unexpected arrives, the system bends instead of breaks.</p>
         <div class="ch-actions btn-group">
@@ -452,20 +528,28 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
         </div>
       </div>
       <figure class="ch-media">
-        <div class="media-frame"><div class="media-parallax">
+        <div class="media-frame">
           <div class="mfa" style="background-image:url('https://images.pexels.com/photos/1590618/pexels-photo-1590618.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1400')"></div>
           <div class="mfb"></div>
-        </div></div>
+        </div>
         <figcaption class="media-tag"><i class="tdot"></i><span class="tag-txt">FEED.04 // STANDBY</span></figcaption>
       </figure>
     </div>
   </section>
 
-  <section class="chapter" id="ch-security" data-brief="security">
+  <section class="scene" id="ch-security" data-brief="security">
+    <div class="layer s-bg" aria-hidden="true">
+      <div class="bgA" style="background-image:url('https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600')"></div>
+      <div class="bgB"></div>
+    </div>
+    <div class="layer s-mid" aria-hidden="true"></div>
+    <div class="layer s-glow" aria-hidden="true"></div>
+    <div class="layer s-fg" aria-hidden="true"></div>
+    <div class="scene-tint" aria-hidden="true"></div>
+    <div class="scene-veil" aria-hidden="true"></div>
     <div class="ch-wrap">
       <div class="ch-copy">
-        <div class="ch-num">05</div>
-        <div class="ch-label">MODULE.05 — OFFENSIVE / DEFENSIVE</div>
+        <div class="ch-num">05</div><div class="ch-label">MODULE.05 — OFFENSIVE / DEFENSIVE</div>
         <h2 class="ch-title">Security Engineering</h2>
         <p class="ch-text">I don't just find vulnerabilities — I map the entire attack surface, understand the adversary's mindset, and demonstrate exactly how a system would fall. Every engagement ends with hardened defenses and a clear picture of true security posture.</p>
         <div class="ch-actions btn-group">
@@ -474,20 +558,28 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
         </div>
       </div>
       <figure class="ch-media">
-        <div class="media-frame"><div class="media-parallax">
+        <div class="media-frame">
           <div class="mfa" style="background-image:url('https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1400')"></div>
           <div class="mfb"></div>
-        </div></div>
+        </div>
         <figcaption class="media-tag"><i class="tdot"></i><span class="tag-txt">FEED.05 // STANDBY</span></figcaption>
       </figure>
     </div>
   </section>
 
-  <section class="chapter" id="ch-ai" data-brief="ai" data-accent="orange">
+  <section class="scene" id="ch-ai" data-brief="ai" data-accent="orange">
+    <div class="layer s-bg" aria-hidden="true">
+      <div class="bgA" style="background-image:url('https://images.pexels.com/photos/856898/pexels-photo-856898.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600')"></div>
+      <div class="bgB"></div>
+    </div>
+    <div class="layer s-mid" aria-hidden="true"></div>
+    <div class="layer s-glow" aria-hidden="true"></div>
+    <div class="layer s-fg" aria-hidden="true"></div>
+    <div class="scene-tint" aria-hidden="true"></div>
+    <div class="scene-veil" aria-hidden="true"></div>
     <div class="ch-wrap">
       <div class="ch-copy">
-        <div class="ch-num">06</div>
-        <div class="ch-label">MODULE.06 — MACHINE INTELLIGENCE</div>
+        <div class="ch-num">06</div><div class="ch-label">MODULE.06 — MACHINE INTELLIGENCE</div>
         <h2 class="ch-title">AI Engineering</h2>
         <p class="ch-text">Machine intelligence is only as valuable as the system it serves. I build AI not as an end but as a component — embedded into products, security pipelines, and decision systems where it creates measurable, reliable impact.</p>
         <div class="ch-actions btn-group">
@@ -496,20 +588,28 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
         </div>
       </div>
       <figure class="ch-media">
-        <div class="media-frame"><div class="media-parallax">
+        <div class="media-frame">
           <div class="mfa" style="background-image:url('https://images.pexels.com/photos/856898/pexels-photo-856898.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1400')"></div>
           <div class="mfb"></div>
-        </div></div>
+        </div>
         <figcaption class="media-tag"><i class="tdot"></i><span class="tag-txt">FEED.06 // STANDBY</span></figcaption>
       </figure>
     </div>
   </section>
 
-  <section class="chapter" id="ch-research" data-brief="research">
+  <section class="scene" id="ch-research" data-brief="research">
+    <div class="layer s-bg" aria-hidden="true">
+      <div class="bgA" style="background-image:url('https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600')"></div>
+      <div class="bgB"></div>
+    </div>
+    <div class="layer s-mid" aria-hidden="true"></div>
+    <div class="layer s-glow" aria-hidden="true"></div>
+    <div class="layer s-fg" aria-hidden="true"></div>
+    <div class="scene-tint" aria-hidden="true"></div>
+    <div class="scene-veil" aria-hidden="true"></div>
     <div class="ch-wrap">
       <div class="ch-copy">
-        <div class="ch-num">07</div>
-        <div class="ch-label">MODULE.07 — R&amp;D</div>
+        <div class="ch-num">07</div><div class="ch-label">MODULE.07 — R&amp;D</div>
         <h2 class="ch-title">Research</h2>
         <p class="ch-text">At the edge of known problems, conventional tools break down. My research operates between disciplines — combining formal methods, offensive security, and systems theory to surface insights that pure specialization would miss.</p>
         <div class="ch-actions btn-group">
@@ -518,20 +618,28 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
         </div>
       </div>
       <figure class="ch-media">
-        <div class="media-frame"><div class="media-parallax">
+        <div class="media-frame">
           <div class="mfa" style="background-image:url('https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1400')"></div>
           <div class="mfb"></div>
-        </div></div>
+        </div>
         <figcaption class="media-tag"><i class="tdot"></i><span class="tag-txt">FEED.07 // STANDBY</span></figcaption>
       </figure>
     </div>
   </section>
 
-  <section class="chapter" id="ch-trading" data-brief="trading" data-accent="gold">
+  <section class="scene" id="ch-trading" data-brief="trading" data-accent="gold">
+    <div class="layer s-bg" aria-hidden="true">
+      <div class="bgA" style="background-image:url('https://images.pexels.com/photos/5185437/pexels-photo-5185437.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600')"></div>
+      <div class="bgB"></div>
+    </div>
+    <div class="layer s-mid" aria-hidden="true"></div>
+    <div class="layer s-glow" aria-hidden="true"></div>
+    <div class="layer s-fg" aria-hidden="true"></div>
+    <div class="scene-tint" aria-hidden="true"></div>
+    <div class="scene-veil" aria-hidden="true"></div>
     <div class="ch-wrap">
       <div class="ch-copy">
-        <div class="ch-num">08</div>
-        <div class="ch-label">MODULE.08 — TRADINGOS</div>
+        <div class="ch-num">08</div><div class="ch-label">MODULE.08 — TRADINGOS</div>
         <h2 class="ch-title">TradingOS</h2>
         <p class="ch-text">A real-time institutional trading platform built from the ground up. Low-latency data pipelines, adaptive execution engines, and risk systems that operate at the speed of markets. Where nanoseconds matter, architecture is the product.</p>
         <div class="ch-actions btn-group">
@@ -540,20 +648,28 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
         </div>
       </div>
       <figure class="ch-media">
-        <div class="media-frame"><div class="media-parallax">
+        <div class="media-frame">
           <div class="mfa" style="background-image:url('https://images.pexels.com/photos/5185437/pexels-photo-5185437.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1400')"></div>
           <div class="mfb"></div>
-        </div></div>
+        </div>
         <figcaption class="media-tag"><i class="tdot"></i><span class="tag-txt">FEED.08 // STANDBY</span></figcaption>
       </figure>
     </div>
   </section>
 
-  <section class="chapter" id="ch-journey" data-brief="journey">
+  <section class="scene" id="ch-journey" data-brief="journey">
+    <div class="layer s-bg" aria-hidden="true">
+      <div class="bgA" style="background-image:url('https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600')"></div>
+      <div class="bgB"></div>
+    </div>
+    <div class="layer s-mid" aria-hidden="true"></div>
+    <div class="layer s-glow" aria-hidden="true"></div>
+    <div class="layer s-fg" aria-hidden="true"></div>
+    <div class="scene-tint" aria-hidden="true"></div>
+    <div class="scene-veil" aria-hidden="true"></div>
     <div class="ch-wrap">
       <div class="ch-copy">
-        <div class="ch-num">09</div>
-        <div class="ch-label">MODULE.09 — TRAJECTORY</div>
+        <div class="ch-num">09</div><div class="ch-label">MODULE.09 — TRAJECTORY</div>
         <h2 class="ch-title">Journey</h2>
         <p class="ch-text">The path from curiosity to capability wasn't linear. It was a series of deep immersions — into networks, into codebases, into adversarial mindsets, into markets. Each chapter built on the last. Each failure refined the next architecture.</p>
         <div class="ch-actions btn-group">
@@ -562,20 +678,28 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
         </div>
       </div>
       <figure class="ch-media">
-        <div class="media-frame"><div class="media-parallax">
+        <div class="media-frame">
           <div class="mfa" style="background-image:url('https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1400')"></div>
           <div class="mfb"></div>
-        </div></div>
+        </div>
         <figcaption class="media-tag"><i class="tdot"></i><span class="tag-txt">FEED.09 // STANDBY</span></figcaption>
       </figure>
     </div>
   </section>
 
-  <section class="chapter" id="ch-contact" data-brief="contact" data-accent="emerald">
+  <section class="scene" id="ch-contact" data-brief="contact" data-accent="emerald">
+    <div class="layer s-bg" aria-hidden="true">
+      <div class="bgA" style="background-image:url('https://images.pexels.com/photos/3735709/pexels-photo-3735709.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1600')"></div>
+      <div class="bgB"></div>
+    </div>
+    <div class="layer s-mid" aria-hidden="true"></div>
+    <div class="layer s-glow" aria-hidden="true"></div>
+    <div class="layer s-fg" aria-hidden="true"></div>
+    <div class="scene-tint" aria-hidden="true"></div>
+    <div class="scene-veil" aria-hidden="true"></div>
     <div class="ch-wrap">
       <div class="ch-copy">
-        <div class="ch-num">10</div>
-        <div class="ch-label">MODULE.10 — SIGNAL</div>
+        <div class="ch-num">10</div><div class="ch-label">MODULE.10 — SIGNAL</div>
         <h2 class="ch-title">Contact</h2>
         <p class="ch-text">If you're building something that matters — a system that needs to scale, a product that needs to defend itself, or a problem that needs a different kind of thinking — I'm here. The best work begins with a conversation.</p>
         <div class="ch-actions btn-group">
@@ -584,10 +708,10 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
         </div>
       </div>
       <figure class="ch-media">
-        <div class="media-frame"><div class="media-parallax">
+        <div class="media-frame">
           <div class="mfa" style="background-image:url('https://images.pexels.com/photos/3735709/pexels-photo-3735709.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1400')"></div>
           <div class="mfb"></div>
-        </div></div>
+        </div>
         <figcaption class="media-tag"><i class="tdot"></i><span class="tag-txt">FEED.10 // STANDBY</span></figcaption>
       </figure>
     </div>
@@ -599,9 +723,9 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
   <nav class="foot-links" aria-label="Links">
     <a href="https://github.com" target="_blank" rel="noopener"><i class="fab fa-github"></i>GITHUB</a>
     <a href="https://linkedin.com" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i>LINKEDIN</a>
-    <a href="mailto:contact@alexandervoss.dev"><i class="fas fa-envelope"></i>EMAIL</a>
+    <a href="mailto:contact@example.dev"><i class="fas fa-envelope"></i>EMAIL</a>
     <a href="#"><i class="fas fa-file-alt"></i>RESUME</a>
-    <span style="opacity:.5"><i class="fas fa-map-marker-alt"></i>BERLIN</span>
+    <span style="opacity:.5"><i class="fas fa-map-marker-alt"></i>JOHANNESBURG</span>
   </nav>
   <p class="foot-quote">"This isn't someone showing projects. <b>This is someone inviting you into the way they think.</b>"</p>
   <p class="foot-copy">© 2025 THABANG TONY NGOEPE — ALL RIGHTS RESERVED</p>
@@ -627,9 +751,14 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
 
 <script>
 'use strict';
-/* ================= ASSET REGISTRY (unchanged from original) ================= */
+/* =========================================================
+   CONFIG
+   ========================================================= */
+const CONFIG = { SMOOTH_SCROLL: true };
+
+/* World pages — paths resolve from the folder containing index.html */
 const WORLDS = {
-  intro:      { name:'INTRODUCTION',    file:'intro.html' },
+  intro:      { name:'INTRODUCTION',    file:'worlds/intro.html' },
   mission:    { name:'MISSION',         file:'worlds/mission.html' },
   engineering:{ name:'ENGINEERING',     file:'worlds/engineering.html' },
   systems:    { name:'FEATURED SYSTEMS',file:'worlds/systems.html' },
@@ -648,7 +777,7 @@ const VOICE = {
 };
 const YT_ID = 'dQw4w9WgXcQ';
 const BRIEF_MS = 3168, INTRO_MS = 3333;
-const PX = (id) => 'https://images.pexels.com/photos/' + id + '/pexels-photo-' + id + '.jpeg?auto=compress&cs=tinysrgb&w=1400';
+const PX = id => 'https://images.pexels.com/photos/' + id + '/pexels-photo-' + id + '.jpeg?auto=compress&cs=tinysrgb&w=1400';
 const SEC = 'https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=1400';
 
 const INTRO_IMAGES = [
@@ -670,10 +799,10 @@ const BRIEF_IMAGES = {
   journey:    [PX(3861969), PX(213162), PX(196645), PX(5380642), PX(3735709)],
   contact:    [PX(3735709), PX(442576), PX(707579), PX(8386440), PX(590022)]
 };
-const BOOT_LINES = ['MOUNTING /modules ........ OK','LOADING profile.bin ........ OK',
-  'CALIBRATING interface ........ OK','ACCESS GRANTED'];
 
-/* ================= DOM / ENV ================= */
+/* =========================================================
+   DOM / ENV
+   ========================================================= */
 const $  = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
@@ -681,9 +810,7 @@ const delay = ms => new Promise(r => setTimeout(r, ms));
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const coarse  = matchMedia('(hover: none), (pointer: coarse)').matches;
 
-const hero = $('#hero'), heroMedia = $('#hero-media'), heroInner = $('#hero-inner');
-const hA = $('#hA'), hB = $('#hB');
-const phase1 = $('#phase1'), phase2 = $('#phase2'), bootlog = $('#bootlog'), bootHint = $('#bootHint');
+const slideA = $('#slideA'), slideB = $('#slideB');
 const topbar = $('#topbar'), rail = $('#rail'), prog = $('#progress');
 const voice = $('#voice'), edge = $('#audio-edge');
 const curtain = $('#curtain'), curtainTxt = $('#curtainTxt');
@@ -691,13 +818,11 @@ const world = $('#world'), worldFrame = $('#worldFrame'), worldExit = $('#worldE
 const briefModal = $('#brief-modal'), briefIframe = $('#briefIframe');
 const btnIntroVoice = $('#btnIntroVoice');
 
-/* ================= SMOOTH SCROLL ENGINE =================
-   Native scroll stays authoritative (keyboard / scrollbar /
-   find-in-page untouched). Wheel input is intercepted and
-   re-driven through a lerped value — everything downstream
-   (parallax, progress, rail) reads the same smooth value. */
+/* =========================================================
+   SMOOTH SCROLL ENGINE (native-first)
+   ========================================================= */
 const SS = {
-  on: !reduced && !coarse,
+  on: CONFIG.SMOOTH_SCROLL && !reduced && !coarse,
   target: scrollY, current: scrollY, max: 1,
   locked: () => document.body.classList.contains('lock'),
   measure() {
@@ -728,53 +853,65 @@ if (SS.on) {
     e.preventDefault();
     SS.target = clamp(SS.target + clamp(d, -400, 400), 0, SS.max);
   }, { passive: false });
-  addEventListener('scroll', () => {           /* keyboard / scrollbar resync */
+  addEventListener('scroll', () => {
     if (SS.locked()) return;
     if (Math.abs(scrollY - SS.current) > 1.5) SS.current = SS.target = scrollY;
   }, { passive: true });
 }
 
-/* ================= MEASUREMENT (cached — no per-frame layout reads) ================= */
+/* =========================================================
+   SCENE REGISTRY
+   ========================================================= */
 let vh = innerHeight;
-const mods = $$('.chapter').map((el, i) => ({
+const scenes = $$('.scene').map((el, i) => ({
   el, num: String(i + 1).padStart(2, '0'),
-  par: el.querySelector('.media-parallax'),
   fig: el.querySelector('.ch-media'),
   tag: el.querySelector('.tag-txt'),
   a: el.querySelector('.mfa'), b: el.querySelector('.mfb'),
-  top: 0, h: 0, strength: 0, last: null, near: false
+  bgA: el.querySelector('.s-bg .bgA'), bgB: el.querySelector('.s-bg .bgB'),
+  baseURL: (el.querySelector('.mfa').style.backgroundImage || '').slice(4, -1).replace(/"/g, '')
 }));
-const modById = {}; mods.forEach(m => modById[m.el.dataset.brief] = m);
+const sceneById = {}; scenes.forEach(m => sceneById[m.el.dataset.brief] = m);
 
-function makeFader(a, b) {
-  let showA = true;
+function makeFader(x, y) {
+  let showX = true;
   return url => {
-    const nxt = showA ? b : a, cur = showA ? a : b;
+    const nxt = showX ? y : x, cur = showX ? x : y;
     if (url) nxt.style.backgroundImage = 'url("' + url + '")';
     nxt.style.opacity = '1'; cur.style.opacity = '0';
-    showA = !showA;
+    showX = !showX;
   };
 }
-mods.forEach(m => m.fader = makeFader(m.a, m.b));
-const heroFader = makeFader(hA, hB);
+scenes.forEach(m => {
+  m.fader    = makeFader(m.a, m.b);
+  m.bgFader  = makeFader(m.bgA, m.bgB);
+});
+const heroFader = makeFader(slideA, slideB);
 
-function measure() {
-  const y = scrollY;
-  mods.forEach(m => {
-    const r = m.el.getBoundingClientRect();
-    m.top = r.top + y; m.h = r.height;
-    m.strength = Math.min(30, m.h * .045);   /* clamped: never escapes the frame */
-  });
-  SS.measure(); vh = innerHeight;
-}
+function measure() { SS.measure(); vh = innerHeight; }
 let mzT; const queueMeasure = () => { clearTimeout(mzT); mzT = setTimeout(measure, 160); };
 addEventListener('resize', queueMeasure);
 addEventListener('load', () => setTimeout(measure, 120));
 if (window.ResizeObserver) new ResizeObserver(queueMeasure).observe(document.body);
 
-/* ================= MASTER rAF LOOP (single loop drives everything) ================= */
-let topOn = false;
-/* ================= NAV / REVEAL ================= */
+/* =========================================================
+   MASTER rAF LOOP — scroll smoothing + progress + rail only.
+   All parallax (hero + scenes) is CSS scroll-driven: zero JS.
+   ========================================================= */
+let topOn = false, lastP = -1;
+function tick() {
+  SS.update();
+  const y = SS.current;
+  const p = clamp(y / SS.max, 0, 1);
+  if (Math.abs(p - lastP) > .0005) { prog.style.transform = 'scaleX(' + p.toFixed(4) + ')'; lastP = p; }
+  const wantTop = y > vh * .6;
+  if (wantTop !== topOn) { topOn = wantTop; topbar.classList.toggle('on', wantTop); rail.classList.toggle('on', wantTop); }
+  requestAnimationFrame(tick);
+}
+
+/* =========================================================
+   NAV / REVEAL
+   ========================================================= */
  $$('.rl').forEach(d => d.addEventListener('click', () => {
   const t = document.getElementById(d.dataset.t);
   if (t) SS.to(t.getBoundingClientRect().top + SS.current);
@@ -794,47 +931,16 @@ const railIO = new IntersectionObserver(es => es.forEach(e => {
   if (!e.isIntersecting) return;
   $$('.rl').forEach(d => d.classList.toggle('active', d.dataset.t === e.target.id));
 }), { threshold: .35, rootMargin: '-8% 0px -8% 0px' });
-mods.forEach(m => railIO.observe(m.el));
+scenes.forEach(m => railIO.observe(m.el));
 
 const revealIO = new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting) { e.target.classList.add('in-view'); revealIO.unobserve(e.target); }
 }), { threshold: .18 });
-mods.forEach(m => revealIO.observe(m.el));
+scenes.forEach(m => revealIO.observe(m.el));
 
-/* ================= BOOT SEQUENCE ================= */
-let booted = false, booting = false;
- $('#btnInit').addEventListener('click', async () => {
-  if (booted || booting) return;
-  booting = true;
-  bootHint.style.opacity = '0';
-  if (reduced) { finishBoot(); return; }
-  bootlog.classList.add('on');
-  bootlog.innerHTML = '';
-  for (const line of BOOT_LINES) {
-    const d = document.createElement('div');
-    d.textContent = line;
-    bootlog.appendChild(d);
-    await delay(170);
-  }
-  await delay(340);
-  finishBoot();
-});
-function finishBoot() {
-  booting = false; booted = true;
-  bootlog.classList.remove('on');
-  hero.classList.add('expanded');
-}
-function resetHero() {
-  if (!booted) return;
-  stopAll();
-  booted = false;
-  hero.classList.remove('expanded');
-  bootHint.style.opacity = '';
-}
- $('#ring').addEventListener('click', resetHero);
- $('#ring').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); resetHero(); } });
-
-/* ================= BUTTON FOCUS ENERGY ================= */
+/* =========================================================
+   BUTTON FOCUS ENERGY
+   ========================================================= */
  $$('.btn-group').forEach(g => {
   const bs = Array.from(g.querySelectorAll('.btn'));
   bs.forEach(b => {
@@ -845,7 +951,9 @@ function resetHero() {
   });
 });
 
-/* ================= AUDIO + REACTIVE GLOW ================= */
+/* =========================================================
+   AUDIO + REACTIVE GLOW (throttled ~20Hz, quantized)
+   ========================================================= */
 let actx = null, analyser = null, connected = false, reactive = false, freq = null, sVol = 0, sBass = 0;
 function initAudio() {
   if (actx) return;
@@ -862,13 +970,14 @@ function connectAudio() {
     actx.createMediaElementSource(voice).connect(analyser);
     analyser.connect(actx.destination);
     connected = true;
-  } catch (e) { /* playback still works without analyser */ }
+  } catch (e) { /* playback works without analyser */ }
 }
 function startReactive() {
   if (!analyser || reactive) return;
   reactive = true;
   freq = freq || new Uint8Array(analyser.frequencyBinCount);
   edge.classList.add('on');
+  let f = 0, pV = -1, pB = -1;
   (function loop() {
     if (!reactive) {
       sVol = sBass = 0;
@@ -877,14 +986,19 @@ function startReactive() {
       edge.classList.remove('on');
       return;
     }
-    analyser.getByteFrequencyData(freq);
-    let sum = 0; for (let i = 0; i < freq.length; i++) sum += freq[i];
-    let bs = 0; for (let i = 0; i < 8; i++) bs += freq[i];
-    sVol  += (sum / freq.length / 255 - sVol) * .18;
-    sBass += (bs / 8 / 255 - sBass) * .18;
-    const rs = document.documentElement.style;
-    rs.setProperty('--ar-vol', sVol.toFixed(3));
-    rs.setProperty('--ar-bass', sBass.toFixed(3));
+    if (++f % 3 === 0) {
+      analyser.getByteFrequencyData(freq);
+      let sum = 0; for (let i = 0; i < freq.length; i++) sum += freq[i];
+      let bs = 0; for (let i = 0; i < 8; i++) bs += freq[i];
+      sVol  += (sum / freq.length / 255 - sVol) * .18;
+      sBass += (bs / 8 / 255 - sBass) * .18;
+      const v = Math.round(sVol * 50) / 50, b = Math.round(sBass * 50) / 50;
+      if (v !== pV || b !== pB) {
+        pV = v; pB = b;
+        const rs = document.documentElement.style;
+        rs.setProperty('--ar-vol', v); rs.setProperty('--ar-bass', b);
+      }
+    }
     requestAnimationFrame(loop);
   })();
 }
@@ -899,19 +1013,29 @@ function playVoice(id) {
   startReactive();
 }
 
-/* ================= PLAYBACK MANAGER (briefs + intro) ================= */
-let play = { id: null, mode: null, timer: null, mod: null, btn: null };
+/* =========================================================
+   PLAYBACK MANAGER — brief slideshows drive BOTH the media
+   frame and the full-bleed scene background.
+   ========================================================= */
+let play = { id: null, mode: null, timer: null, scene: null, btn: null };
 function setTag(m, state) {
   m.tag.textContent = 'FEED.' + m.num + ' // ' + state;
   m.fig.classList.toggle('live', state !== 'STANDBY');
 }
 function stopAll() {
   if (play.timer) { clearInterval(play.timer); play.timer = null; }
-  if (play.mod) setTag(play.mod, 'STANDBY');
+  if (play.scene) {
+    const m = play.scene;
+    setTag(m, 'STANDBY');
+    if (m.baseURL) { m.fader(m.baseURL); m.bgFader(m.baseURL); }
+    m.el.classList.remove('hot');
+  }
   if (play.btn) play.btn.classList.remove('playing');
-  if (play.mode === 'intro') btnIntroVoice.classList.remove('playing');
-  if (play.mode === 'intro') { hA.style.opacity = '1'; hB.style.opacity = '0'; hA.style.backgroundImage = 'none'; hB.style.backgroundImage = 'none'; }
-  play = { id: null, mode: null, timer: null, mod: null, btn: null };
+  if (play.mode === 'intro') {
+    slideA.style.opacity = '0'; slideB.style.opacity = '0';
+    slideA.style.backgroundImage = ''; slideB.style.backgroundImage = '';
+  }
+  play = { id: null, mode: null, timer: null, scene: null, btn: null };
   voice.pause();
   reactive = false;
 }
@@ -924,13 +1048,16 @@ voice.addEventListener('error', stopAll);
   stopAll();
   play.id = id; play.mode = 'brief'; play.btn = btn;
   btn.classList.add('playing');
-  const m = modById[id], imgs = BRIEF_IMAGES[id];
+  const m = sceneById[id], imgs = BRIEF_IMAGES[id];
   if (m && imgs && imgs.length) {
-    play.mod = m;
+    play.scene = m;
     setTag(m, 'BRIEF_PLAYING');
     let i = 0;
-    m.fader(imgs[0]);
-    play.timer = setInterval(() => { i = (i + 1) % imgs.length; m.fader(imgs[i]); }, BRIEF_MS);
+    m.fader(imgs[0]); m.bgFader(imgs[0]);
+    play.timer = setInterval(() => {
+      i = (i + 1) % imgs.length;
+      m.fader(imgs[i]); m.bgFader(imgs[i]);
+    }, BRIEF_MS);
   }
   playVoice(id);
 }));
@@ -946,7 +1073,9 @@ btnIntroVoice.addEventListener('click', () => {
   playVoice('hero');
 });
 
-/* ================= YOUTUBE BRIEF FILM ================= */
+/* =========================================================
+   YOUTUBE BRIEF FILM
+   ========================================================= */
  $('#btnBriefFilm').addEventListener('click', () => {
   briefIframe.src = 'https://www.youtube.com/embed/' + YT_ID + '?autoplay=1&rel=0&modestbranding=1';
   briefModal.classList.add('active');
@@ -960,7 +1089,9 @@ function closeBrief() {
  $('#briefClose').addEventListener('click', closeBrief);
 briefModal.addEventListener('click', e => { if (e.target === briefModal) closeBrief(); });
 
-/* ================= WORLDS (curtain transition) ================= */
+/* =========================================================
+   WORLDS (curtain transition)
+   ========================================================= */
 function waitForCurtain(ms) {
   return new Promise(res => {
     let done = false;
@@ -990,8 +1121,8 @@ async function openWorld(id) {
 async function closeWorld() {
   if (worldBusy || !world.classList.contains('active')) return;
   worldBusy = true;
-  curtain.className = 'closing';
   curtainTxt.textContent = 'RETURNING …';
+  curtain.className = 'closing';
   await waitForCurtain(900);
   world.classList.remove('active');
   worldFrame.src = 'about:blank';
@@ -1005,7 +1136,9 @@ async function closeWorld() {
  $$('.world-btn').forEach(b => b.addEventListener('click', () => openWorld(b.dataset.world)));
 worldExit.addEventListener('click', closeWorld);
 
-/* ================= KEYS ================= */
+/* =========================================================
+   KEYS
+   ========================================================= */
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
   if (world.classList.contains('active')) closeWorld();
@@ -1013,7 +1146,71 @@ document.addEventListener('keydown', e => {
   else stopAll();
 });
 
-/* ================= INIT ================= */
+/* =========================================================
+   THEME TOGGLE
+   ========================================================= */
+(function () {
+  const btn = $('#themeBtn'), icon = btn.querySelector('i'), root = document.documentElement;
+  const sync = () => icon.className = root.classList.contains('light') ? 'fas fa-moon' : 'fas fa-sun';
+  sync();
+  btn.addEventListener('click', () => {
+    const light = !root.classList.contains('light');
+    root.classList.toggle('light', light);
+    try { localStorage.setItem('pos-theme', light ? 'light' : 'dark'); } catch (e) {}
+    sync();
+  });
+})();
+
+/* =========================================================
+   GALLERIES + HOVER SCENE PREVIEW
+   Hovering a card crossfades the scene's parallax bg layer,
+   lifts the tint/veil ("hot" state), and previews the frame.
+   ========================================================= */
+(function () {
+  scenes.forEach(m => {
+    const imgs = BRIEF_IMAGES[m.el.dataset.brief];
+    if (!imgs || !imgs.length) return;
+    const base = m.baseURL || imgs[0];
+
+    const gal = document.createElement('div');
+    gal.className = 'gallery';
+    const cards = imgs.map((u, i) => {
+      const c = document.createElement('button');
+      c.className = 'gcard';
+      c.style.backgroundImage = 'url("' + u + '")';
+      c.setAttribute('aria-label', 'Preview image ' + (i + 1) + ' of ' + imgs.length);
+      gal.appendChild(c);
+      return c;
+    });
+    m.el.querySelector('.media-frame').appendChild(gal);
+
+    const preview = i => {
+      m.fader(imgs[i]); m.bgFader(imgs[i]);
+      m.el.classList.add('hot');
+      cards.forEach((c, j) => c.classList.toggle('active', j === i));
+      if (play.scene !== m) setTag(m, 'PREVIEW ' + (i + 1) + '/' + imgs.length);
+    };
+    const revert = () => {
+      m.fader(base); m.bgFader(base);
+      m.el.classList.remove('hot');
+      cards.forEach(c => c.classList.remove('active'));
+      if (play.scene !== m) setTag(m, 'STANDBY');
+    };
+    cards.forEach((c, i) => {
+      c.addEventListener('mouseenter', () => preview(i));
+      c.addEventListener('focus',      () => preview(i));
+      c.addEventListener('click',      () => {
+        if (c.classList.contains('active') && coarse) revert(); else preview(i);
+      });
+    });
+    gal.addEventListener('mouseleave', revert);
+    gal.addEventListener('focusout', e => { if (!gal.contains(e.relatedTarget)) revert(); });
+  });
+})();
+
+/* =========================================================
+   INIT
+   ========================================================= */
 measure();
 requestAnimationFrame(tick);
 setTimeout(measure, 700);

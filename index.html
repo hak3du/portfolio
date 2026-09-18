@@ -1264,5 +1264,73 @@ if (location.hash) {
   if (el) requestAnimationFrame(() => { measure(); SS.jump(el.getBoundingClientRect().top + SS.current); });
 }
 </script>
+  <!-- ═══════════ CLICK-GLOW PACK · paste once, just before </body> ═══════════ -->
+<style>
+/* 1 · glow tokens — Uiverse palette remapped to YOUR accent system */
+.btn,#themeBtn,#topBtn,#briefClose,#worldExit{
+  --glow:var(--cyan);
+  --glow-soft:rgba(78,201,212,.45);
+}
+.btn.playing{--glow:var(--gold);--glow-soft:rgba(200,164,92,.5)}
+
+/* 2 · WHILE PRESSED — instant glow (hold on mouse/touch) */
+.btn:active,#themeBtn:active,#topBtn:active,#briefClose:active,#worldExit:active{
+  color:var(--bg);
+  background-color:var(--glow);
+  text-shadow:0 0 .5em var(--glow);
+  box-shadow:0 0 .6em .15em var(--glow),
+             0 0 2.2em .5em var(--glow-soft),
+             inset 0 0 .5em .15em var(--glow)!important;
+}
+/* keep PLAYING (gold) buttons readable when they fill */
+.btn.playing:active,.btn.playing.glow-pop{color:var(--bg)!important}
+
+/* 3 · ONE-SHOT POP — JS adds .glow-pop on tap/click/Enter; self-removes = back to normal */
+.glow-pop{isolation:isolate;animation:btnGlowPop .6s var(--ease)}
+@keyframes btnGlowPop{
+  0% {box-shadow:0 0 0 0 rgba(0,0,0,0),inset 0 0 0 0 rgba(0,0,0,0)}
+  30%{color:var(--bg);
+      background-color:var(--glow);
+      text-shadow:0 0 .5em var(--glow);
+      box-shadow:0 0 .8em .18em var(--glow),
+                 0 0 2.6em .6em var(--glow-soft),
+                 inset 0 0 .6em .18em var(--glow)}
+  /* no 100% color/bg → they animate back to normal automatically */
+}
+/* light pool under the button (visible on round buttons; .btn clips it harmlessly) */
+.glow-pop::after{
+  content:"";position:absolute;left:8%;right:8%;top:104%;height:45%;
+  border-radius:50%;background:var(--glow-soft);filter:blur(1.1em);
+  transform:perspective(1.2em) rotateX(38deg);
+  pointer-events:none;z-index:-1;
+  animation:btnGlowCast .6s var(--ease);
+}
+@keyframes btnGlowCast{from{opacity:1}to{opacity:0}}
+
+@media(prefers-reduced-motion:reduce){
+  .glow-pop,.glow-pop::after{animation:none}
+  .glow-pop::after{content:none}
+}
+</style>
+<script>
+/* tap / click / keyboard → one glow pulse, then class removes itself */
+(function(){
+  var SEL='.btn,#themeBtn,#topBtn,#briefClose,#worldExit';
+  function pop(b){b.classList.remove('glow-pop');void b.offsetWidth;b.classList.add('glow-pop')}
+  document.addEventListener('pointerdown',function(e){
+    if(e.button&&e.button!==0)return;
+    var b=e.target.closest(SEL);if(b)pop(b);
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' ')return;
+    var t=e.target;if(t&&t.closest){var b=t.closest(SEL);if(b)pop(b)}
+  });
+  document.addEventListener('animationend',function(e){
+    if(e.animationName==='btnGlowPop'&&e.target.classList)
+      e.target.classList.remove('glow-pop');
+  });
+})();
+</script>
+<!-- ═══════════════════════════ /CLICK-GLOW PACK ═══════════════════════════ -->
 </body>
 </html>

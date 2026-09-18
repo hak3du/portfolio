@@ -1262,6 +1262,70 @@ if (location.hash) {
   const el = document.getElementById(location.hash.slice(1));
   if (el) requestAnimationFrame(() => { measure(); SS.jump(el.getBoundingClientRect().top + SS.current); });
 }
+  <!-- ════════════════════════════════════════════════════════════
+     MOBILE FIX PACK — paste once, just before </body>
+     Fixes: invisible section ends (reveal gate), veil fade bands,
+     safe-area padding, reduced-motion trap. Mobile-focused, harmless on desktop.
+     ════════════════════════════════════════════════════════════ -->
+<style>
+/* 1 ── SECTION END SPACE: keep content clear of notch / home bar */
+.scene{padding-bottom:max(clamp(4rem,11vh,7rem), env(safe-area-inset-bottom))}
+
+/* 2 ── FIXED UI + SAFE AREAS: only kicks in if you add viewport-fit=cover;
+        without it env()=0 and max() keeps your current values — zero risk */
+#topbar{padding-left:max(clamp(1rem,3vw,2rem), env(safe-area-inset-left));
+        padding-right:max(clamp(1rem,3vw,2rem), env(safe-area-inset-right))}
+#themeBtn{left:max(clamp(.8rem,2vw,1.4rem), env(safe-area-inset-left));
+          bottom:max(clamp(.8rem,2vw,1.4rem), env(safe-area-inset-bottom))}
+#rail{right:max(clamp(.7rem,1.8vw,1.6rem), env(safe-area-inset-right))}
+
+/* 3 ── MOBILE: real bottom floor + cap the veil fade bands
+        (on phones the % fades become ~350px dark walls that "cut" sections) */
+@media (max-width:860px){
+  .scene{padding-bottom:max(6.5rem, env(safe-area-inset-bottom))}
+  .scene-veil{background:linear-gradient(180deg,
+      var(--bg) 0%, transparent 110px,
+      transparent calc(100% - 110px), var(--bg) 100%);opacity:.7}
+  .scene-tint{opacity:.45}
+}
+
+/* 4 ── REDUCED MOTION SAFETY NET: never trap content behind reveals */
+@media (prefers-reduced-motion: reduce){
+  .ch-copy > *, .ch-media{opacity:1!important;transform:none!important;transition:none!important}
+}
+</style>
+
+<script>
+/* 5 ── MOBILE REVEAL PATCH: phones only show ~60–75% of the tall stacked
+        sections, so a high observer threshold can never fire and the copy
+        stays invisible ("cut off"). This fires at 12% visibility instead.
+        Idempotent — coexists safely with your existing observer. */
+(function () {
+  var scenes = document.querySelectorAll('.scene');
+  if (!scenes.length) return;
+
+  /* mobile only — remove this if-check to run on desktop too */
+  if (!matchMedia('(max-width: 860px)').matches) return;
+
+  if (!('IntersectionObserver' in window)) {
+    scenes.forEach(function (s) { s.classList.add('in-view'); });
+    return;
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    for (var i = 0; i < entries.length; i++) {
+      if (entries[i].isIntersecting) {
+        entries[i].target.classList.add('in-view');
+        io.unobserve(entries[i].target);
+      }
+    }
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+  scenes.forEach(function (s) { io.observe(s); });
+})();
+</script>
+<!-- ══════════════════════════ /MOBILE FIX PACK ══════════════════════════ -->
+
 </script>
 </body>
 </html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#05060a">
+<title>AR INTRO QR // TONY NGOEPE</title>
+<style>
+:root{color-scheme:dark;--bg:#05060a;--panel:#0a0e17;--cyan:#4ec9d4;--fg:#e7edf5;--muted:#a0adbd}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at top,#10242f,var(--bg) 65%);font:15px/1.65 Inter,system-ui,sans-serif;color:var(--fg)}main{width:min(100%,560px);padding:clamp(24px,6vw,44px);border:1px solid #4ec9d455;border-radius:12px;background:var(--panel);box-shadow:0 25px 100px #0008;text-align:center}.eyebrow{font:11px ui-monospace,monospace;letter-spacing:.2em;color:var(--cyan)}h1{font-size:clamp(30px,8vw,52px);line-height:1.02;letter-spacing:-.05em;margin:18px 0}p{color:var(--muted)}#qr{display:grid;place-items:center;width:192px;height:192px;padding:10px;margin:24px auto 12px;background:#fff;border-radius:7px}#qr img,#qr canvas{width:172px!important;height:172px!important}.btn{display:inline-block;margin:10px 5px 0;padding:12px 16px;border:1px solid #4ec9d477;border-radius:4px;color:var(--cyan);text-decoration:none;font:600 11px ui-monospace,monospace;letter-spacing:.1em}.primary{background:var(--cyan);color:#041015}.note{font-size:12px}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<main>
+<div class="eyebrow">PORTFOLIO_OS · AUGMENTED REALITY</div>
+<h1>Step into<br>the introduction.</h1>
+<p>Scan this code with your phone to open Tony Ngoepe's AR portfolio intro.</p>
+<div id="qr" aria-label="QR code for the AR introduction"></div>
+<a class="btn primary" href="ar.html">OPEN AR ON THIS DEVICE ↗</a>
+<a class="btn" href="index.html">RETURN TO PORTFOLIO</a>
+<p class="note">After opening AR, allow camera access and point at a Hiro marker shown on a separate screen or printed. Use HTTPS and a compatible mobile browser.</p>
+</main>
+<script>
+(function(){var target=document.getElementById('qr');var url=new URL('ar.html',window.location.href).href;if(window.QRCode){new QRCode(target,{text:url,width:172,height:172,colorDark:'#07101a',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});}else{target.textContent='QR library unavailable — use the OPEN AR link.';target.style.color='#07101a';}})();
+</script>
+</body>
+</html>

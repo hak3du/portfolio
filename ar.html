@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#05060a">
+  <meta name="description" content="Launch the augmented-reality introduction for Thabang Tony Ngoepe.">
+  <title>AR INTRO // TONY NGOEPE</title>
+  <style>
+    :root{color-scheme:dark;--bg:#05060a;--panel:rgba(8,13,22,.92);--cyan:#4ec9d4;--fg:#e7edf5;--muted:#9aa8b8}
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--fg)}
+    a{color:var(--cyan);text-decoration:none}
+    .hud{position:fixed;z-index:10;inset:0;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;padding:env(safe-area-inset-top,12px) 14px env(safe-area-inset-bottom,14px)}
+    .top,.bottom{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{font:600 11px/1.4 ui-monospace,monospace;letter-spacing:.18em;color:var(--cyan);text-shadow:0 1px 12px #000}
+    .status{font:10px ui-monospace,monospace;letter-spacing:.12em;color:#fff;background:#07101acc;border:1px solid #4ec9d455;padding:8px 10px;border-radius:4px}
+    .bottom{font-size:12px;color:#fff;text-shadow:0 1px 8px #000}
+    .bottom a{pointer-events:auto;border:1px solid #4ec9d477;border-radius:4px;padding:9px 11px;background:#07101acc}
+    .gate{position:fixed;z-index:20;inset:0;display:grid;place-items:center;padding:22px;background:radial-gradient(ellipse at 50% 35%,#10313c 0%,#05060a 65%)}
+    .gate-card{width:min(100%,440px);padding:28px;border:1px solid #4ec9d455;background:var(--panel);box-shadow:0 24px 90px #0009;border-radius:12px}
+    .eyebrow{font:11px ui-monospace,monospace;letter-spacing:.18em;color:var(--cyan)}
+    h1{font-size:clamp(27px,8vw,44px);line-height:1.02;letter-spacing:-.05em;margin:16px 0 12px}
+    p{font-size:14px;line-height:1.65;color:var(--muted)}
+    .primary{display:block;width:100%;border:0;border-radius:5px;background:var(--cyan);color:#041015;font-weight:800;letter-spacing:.1em;padding:15px 16px;margin-top:22px;cursor:pointer}
+    .note{font-size:11px;margin-top:16px}
+    .hidden{display:none!important}
+    #fallback{position:fixed;z-index:30;left:14px;right:14px;bottom:70px;background:#111b;border:1px solid #d47a3a88;border-radius:8px;padding:12px;font-size:12px;display:none}
+    @media(min-width:700px){.hud{padding:20px 24px}.gate-card{padding:34px}}
+  </style>
+  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.js"></script>
+</head>
+<body>
+  <video id="introVideo" src="intro.mp4" playsinline webkit-playsinline muted loop preload="auto" crossorigin="anonymous" class="hidden"></video>
+
+  <a-scene embedded vr-mode-ui="enabled:false" renderer="antialias:true; alpha:true; colorManagement:true" arjs="sourceType:webcam; debugUIEnabled:false; detectionMode:mono; matrixCodeType:3x3;" loading-screen="enabled:false">
+    <a-assets timeout="15000">
+      <video id="arVideo" src="intro.mp4" playsinline webkit-playsinline muted loop preload="auto" crossorigin="anonymous"></video>
+      <img id="portrait" src="profile-pic.png" crossorigin="anonymous">
+      <img id="aheMark" src="AHEpic.png" crossorigin="anonymous">
+    </a-assets>
+    <a-marker preset="hiro" smooth="true" smoothCount="5" smoothTolerance=".01" smoothThreshold="2">
+      <a-entity position="0 0 0">
+        <a-plane width="2.8" height="1.9" position="0 .82 -.025" material="color:#06111c;opacity:.82;transparent:true;side:double;shader:flat"></a-plane>
+        <a-plane width="2.72" height="1.82" position="0 .82 -.015" material="color:#4ec9d4;opacity:.13;transparent:true;wireframe:true;side:double;shader:flat"></a-plane>
+        <a-text value="THABANG TONY NGOEPE" align="center" color="#4ec9d4" width="3.4" position="0 1.56 .01" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt"></a-text>
+        <a-text value="SECURITY  /  SYSTEMS  /  BUILD" align="center" color="#e7edf5" width="2.6" position="0 1.36 .01"></a-text>
+        <a-video src="#arVideo" width="2.28" height="1.28" position="0 .66 .015" material="shader:flat;side:double"></a-video>
+        <a-plane width="2.28" height="1.28" position="0 .66 .005" material="color:#4ec9d4;opacity:.08;transparent:true;wireframe:true;side:double;shader:flat"></a-plane>
+        <a-text value="INVESTIGATE.  ENGINEER.  PROVE." align="center" color="#4ec9d4" width="2.8" position="0 -.04 .01"></a-text>
+        <a-text value="DFIR  |  APPSEC  |  PQC / AHE" align="center" color="#a8b7c8" width="2.6" position="0 -.22 .01"></a-text>
+        <a-entity position="-1.48 1.1 .02" rotation="0 0 0">
+          <a-plane width=".38" height=".38" material="src:#portrait;transparent:true;shader:flat;side:double"></a-plane>
+        </a-entity>
+        <a-entity position="1.48 1.1 .02">
+          <a-box width=".12" height=".12" depth=".12" material="color:#4ec9d4;wireframe:true"></a-box>
+          <a-box width=".07" height=".07" depth=".07" position="0 .17 0" material="color:#c8a45c;wireframe:true"></a-box>
+        </a-entity>
+      </a-entity>
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <div class="hud">
+    <div class="top"><div class="brand">T.NGOEPE // AR INTRO</div><div id="status" class="status">WAITING FOR MARKER</div></div>
+    <div class="bottom"><span>Find the Hiro marker in your camera view.</span><a href="./index.html">OPEN PORTFOLIO ↗</a></div>
+  </div>
+
+  <section id="gate" class="gate">
+    <div class="gate-card">
+      <div class="eyebrow">PORTFOLIO_OS · IMMERSIVE INTRO</div>
+      <h1>See the work<br>in another dimension.</h1>
+      <p>This experience places your introduction in augmented reality. Allow camera access, then point the camera at a <strong>Hiro marker</strong> printed or displayed on a second screen. Keep the marker fully in frame.</p>
+      <button id="start" class="primary">START AR EXPERIENCE ↗</button>
+      <p class="note">Camera access is used for marker tracking in this browser session. Your portfolio remains available if your device does not support AR.</p>
+    </div>
+  </section>
+  <div id="fallback">If the camera does not start, allow camera access in your browser settings, use HTTPS, and reload. AR requires a compatible mobile browser and a separate Hiro marker.</div>
+
+  <script>
+    (function(){
+      var gate=document.getElementById('gate');
+      var start=document.getElementById('start');
+      var status=document.getElementById('status');
+      var fallback=document.getElementById('fallback');
+      var video=document.getElementById('arVideo');
+      var markerSeen=false;
+      start.addEventListener('click',function(){
+        gate.classList.add('hidden');
+        video.play().catch(function(){status.textContent='TAP TO PLAY INTRO';});
+        setTimeout(function(){if(!markerSeen)fallback.style.display='block';},9000);
+      });
+      var marker=document.querySelector('a-marker');
+      marker.addEventListener('markerFound',function(){markerSeen=true;status.textContent='MARKER LOCKED';fallback.style.display='none';});
+      marker.addEventListener('markerLost',function(){markerSeen=false;status.textContent='SEARCHING FOR MARKER';});
+      window.addEventListener('error',function(){status.textContent='CHECK CAMERA / NETWORK';});
+      document.addEventListener('visibilitychange',function(){if(document.hidden&&video)video.pause();});
+    })();
+  </script>
+</body>
+</html>

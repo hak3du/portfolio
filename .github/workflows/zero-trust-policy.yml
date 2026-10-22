@@ -1,0 +1,44 @@
+name: Zero Trust Policy Checks
+
+on:
+  push:
+    branches:
+      - main
+      - "feat/zero-trust-policy-as-code"
+  pull_request:
+    paths:
+      - "projects/zero-trust-policy-as-code/**"
+      - ".github/workflows/zero-trust-policy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  policy-tests:
+    name: Rego tests and plan fixtures
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install OPA
+        uses: open-policy-agent/setup-opa@v2
+        with:
+          version: latest
+
+      - name: Run Rego unit tests
+        run: opa test projects/zero-trust-policy-as-code/policy -v
+
+      - name: Verify compliant plan passes
+        run: |
+          count="$(opa eval --format raw --data projects/zero-trust-policy-as-code/policy --input projects/zero-trust-policy-as-code/examples/compliant-plan.json 'count(data.terraform.guardrails.deny)')"
+          echo "Compliant fixture violation count: $count"
+          test "$count" = "0"
+
+      - name: Verify noncompliant plan is rejected
+        run: |
+          count="$(opa eval --format raw --data projects/zero-trust-policy-as-code/policy --input projects/zero-trust-policy-as-code/examples/noncompliant-plan.json 'count(data.terraform.guardrails.deny)')"
+          echo "Noncompliant fixture violation count: $count"
+          test "$count" -ge "1"
+          opa eval --format pretty --data projects/zero-trust-policy-as-code/policy --input projects/zero-trust-policy-as-code/examples/noncompliant-plan.json 'data.terraform.guardrails.deny'

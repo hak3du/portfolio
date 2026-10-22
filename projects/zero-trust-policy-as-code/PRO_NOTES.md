@@ -124,3 +124,17 @@ When a verified milestone is reached, append:
 - Sanitized output or artifact URL
 - Relevant commit SHA
 - Known limitations / next action
+
+
+### 2026-10-22 — Step 9: First hosted CI attempt
+
+Triggered GitHub Actions through a push to the feature branch.
+
+- Run: [Zero Trust Policy Checks — run 39824215135](https://github.com/hak3du/portfolio/actions/runs/39824215135)
+- Head commit: `b49d028adcc235be0bb7d52224faf2e1055286c9`
+- Observed result: `failure`, completed in approximately two seconds.
+- GitHub job metadata reported no executed steps. The connector did not expose the runner's failure annotations/log output, so the cause is **not established**.
+- Important distinction: this result does **not** establish that the Rego policy or tests failed; it establishes only that the hosted workflow run failed before providing usable step evidence.
+- Local execution was also unavailable in this environment: OPA is not installed and the execution environment could not resolve `github.com` to clone the branch. No runtime test pass is claimed.
+
+**Next action:** Inspect the run's annotations/logs in the GitHub Actions UI and determine whether the failure is due to runner/billing/permissions or workflow setup. Then execute the OPA tests in a working local environment or rerun CI. Record the exact cause and resulting evidence here before marking acceptance criteria complete.

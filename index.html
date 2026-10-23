@@ -1064,7 +1064,7 @@ function updateScrollUI() {
   const p = clamp(y / SS.max, 0, 1);
   if (Math.abs(p - lastP) > .0005) { prog.style.transform = 'scaleX(' + p.toFixed(4) + ')'; lastP = p; }
   const wantTop = y > vh * .6;
-  if (wantTop !== topOn) { topOn = wantTop; topbar.classList.toggle('on', wantTop); rail.classList.toggle('on', wantTop); }
+  if (wantTop !== topOn) { topOn = wantTop; topbar.classList.toggle('on', wantTop); rail.classList.toggle('on', wantTop); const hero = document.getElementById('hero'); if (hero) hero.classList.toggle('global-nav-active', wantTop); }
 }
 function queueScrollUI() {
   if (scrollUiQueued) return;
@@ -1677,6 +1677,10 @@ if (location.hash) {
 <!-- ═══════════════════════ /HIDDEN NAV + HN TICKER ═══════════════════════ -->
 
 <style id="tech-reactivity">
+/* Prevent the global scroll navbar from overlapping the hero's own navigation. */
+#hero .hero-nav{transition:opacity .24s ease,visibility .24s ease;}
+#hero.global-nav-active .hero-nav{opacity:0;visibility:hidden;pointer-events:none;}
+
 /* Interactive type + tactile controls */
 a,button,[role="button"],.hero-title,.hero-kicker,.hero-role,.hero-proof,.section-title,.section-label,.project-title,.ch-num{
   -webkit-tap-highlight-color:transparent;

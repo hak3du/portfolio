@@ -1464,7 +1464,7 @@ if (location.hash) {
     fetch('https://hacker-news.firebaseio.com/v0/topstories.json')
       .then(function(r){return r.json()})
       .then(function(ids){
-        return Promise.all(ids.slice(0,12).map(function(id){
+        return Promise.all(ids.slice(0,8).map(function(id){
           return fetch('https://hacker-news.firebaseio.com/v0/item/'+id+'.json')
             .then(function(r){return r.json()});
         }));
@@ -1485,7 +1485,9 @@ if (location.hash) {
       });
   }
   t.addEventListener('click',function(){if(offline)load(true)});
-  load();
+  /* Defer nonessential third-party feed work until the initial page has settled. */
+  if ('requestIdleCallback' in window) requestIdleCallback(function(){load()}, {timeout:2500});
+  else setTimeout(function(){load()}, 1800);
 })();
 </script>
 

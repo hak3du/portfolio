@@ -1674,6 +1674,75 @@ if (location.hash) {
 <!-- ═══════════════════════ /HIDDEN NAV + HN TICKER ═══════════════════════ -->
 
 <style id="tech-reactivity">
+/* Sacred-geometry rhythm: centered golden-ratio proportions and a deliberate hero inset. */
+:root{
+  --phi:1.618;
+  --sacred-unit:clamp(1rem,1.25vw,1.25rem);
+  --space-1:calc(var(--sacred-unit)*.382);
+  --space-2:calc(var(--sacred-unit)*.618);
+  --space-3:var(--sacred-unit);
+  --space-4:calc(var(--sacred-unit)*1.618);
+  --space-5:calc(var(--sacred-unit)*2.618);
+  --content-measure: min(100% - 2*clamp(1.25rem,5vw,5rem), 88rem);
+}
+#topbar{
+  opacity:1!important;visibility:visible!important;transform:none!important;
+  min-height:58px;gap:var(--space-2);
+  padding:var(--space-2) clamp(1.25rem,4.2vw,4rem);
+  background:rgba(8,11,16,.94);
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);
+}
+#topbar .brand{flex:0 0 auto}
+#topbar .hn-ticker{flex:1 1 34rem;width:auto;max-width:52rem;margin-inline:var(--space-3)}
+#topbar #topBtn{flex:0 0 auto}
+#hero.hero-redesign .hero-nav{
+  top:58px;
+  padding:var(--space-4) clamp(1.25rem,5vw,5rem);
+  min-height:78px;
+  border-bottom-color:var(--line);
+}
+#hero.hero-redesign .hero-nav nav{gap:clamp(var(--space-2),2vw,var(--space-4))}
+#hero.hero-redesign .hero-layout{
+  inset:58px 0 0;
+  padding:clamp(8rem,14vh,10rem) clamp(1.5rem,8.2vw,9rem) clamp(4rem,8vh,6rem);
+}
+#hero.hero-redesign .hero-copy{
+  width:min(52vw,48rem);
+  max-width:48rem;
+  margin-left:clamp(.25rem,2.8vw,3rem);
+  padding-left:clamp(0rem,1.6vw,1.5rem);
+}
+#hero.hero-redesign .hero-title{
+  max-width:10.5ch;
+  line-height:1.04;
+  margin-bottom:var(--space-4);
+}
+#hero.hero-redesign .hero-kicker{margin-bottom:var(--space-4)}
+#hero.hero-redesign .hero-role{margin-bottom:var(--space-2);line-height:1.8}
+#hero.hero-redesign .hero-lede{max-width:58ch;line-height:1.8}
+#hero.hero-redesign .hero-proof{margin-top:var(--space-4)}
+/* Let the fixed news feed remain legible without crushing the header on smaller screens. */
+@media(max-width:900px){
+  #topbar{min-height:54px;padding:.65rem 1rem}
+  #topbar .hn-ticker{margin-inline:.5rem;width:auto;flex:1 1 auto}
+  #hero.hero-redesign .hero-nav{top:54px;min-height:70px;padding:1rem 1.2rem}
+  #hero.hero-redesign .hero-layout{inset:54px 0 0;padding:8.5rem 1.5rem 4rem}
+  #hero.hero-redesign .hero-copy{width:min(72vw,42rem);margin-left:0;padding-left:0}
+}
+@media(max-width:600px){
+  #topbar{gap:.5rem;padding:.65rem .75rem}
+  #topbar .brand{font-size:.56rem;letter-spacing:.1em}
+  #topbar .hn-ticker{font-size:.52rem;padding:.4em .45em}
+  #topbar #topBtn{font-size:.54rem;padding:.4em .55em}
+  #hero.hero-redesign .hero-nav{top:54px;min-height:64px;padding:.8rem 1rem}
+  #hero.hero-redesign .hero-layout{inset:54px 0 0;padding:7.6rem 1.1rem 3rem}
+  #hero.hero-redesign .hero-copy{width:100%;max-width:100%;margin:0;padding:0}
+  #hero.hero-redesign .hero-title{font-size:clamp(2.7rem,12vw,4.2rem);max-width:11ch}
+}
+@media(prefers-reduced-motion:reduce){
+  #topbar{transition:none!important}
+}
 /* Refined low-glare palette and legible type across the hero and content */
 :root{
   --bg:#080b10;--bg2:#0d121a;--panel:rgba(15,21,30,.84);

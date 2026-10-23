@@ -1384,25 +1384,69 @@ if (location.hash) {
   if (el) requestAnimationFrame(() => { measure(); SS.jump(el.getBoundingClientRect().top + SS.current); });
 }
 </script>
-  <!-- ═══════════ CLICK-GLOW PACK · paste once, just before <script id="hero-art-interactions">
+<script id="hero-art-interactions">
 (function(){
   const art=document.querySelector('#hero.hero-redesign .hero-art');
   if(!art)return;
-  const panels=Array.from(art.querySelectorAll('[role="button"].hero-art-panel'));
+  const panels=Array.from(art.querySelectorAll('[role="button"].hero-art-panel:not(.hero-art-fg)'));
+  function selectPanel(panel){
+    const wasSelected=panel.classList.contains('is-selected');
+    panels.forEach(item=>{
+      item.classList.remove('is-selected');
+      item.setAttribute('aria-pressed','false');
+    });
+    if(!wasSelected){
+      panel.classList.add('is-selected');
+      panel.setAttribute('aria-pressed','true');
+    }
+  }
   panels.forEach(panel=>{
-    const selectPanel=()=>{
-      const wasSelected=panel.classList.contains('is-selected');
-      panels.forEach(item=>{item.classList.remove('is-selected');item.setAttribute('aria-pressed','false');});
-      if(!wasSelected){panel.classList.add('is-selected');panel.setAttribute('aria-pressed','true');}
-    };
-    panel.addEventListener('click',selectPanel);
+    panel.addEventListener('click',()=>selectPanel(panel));
     panel.addEventListener('keydown',event=>{
-      if(event.key==='Enter'||event.key===' '){event.preventDefault();selectPanel();}
+      if(event.key==='Enter'||event.key===' '){
+        event.preventDefault();
+        selectPanel(panel);
+      }
     });
   });
 })();
 </script>
-</body> ═══════════ -->
+<style id="hero-art-interaction-fix">
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg){
+  pointer-events:auto;
+  cursor:pointer;
+  transition:filter .22s ease, opacity .22s ease, transform .22s ease, box-shadow .22s ease;
+  filter:brightness(1.3) saturate(1.22);
+}
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg):hover,
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg):focus-visible{
+  filter:brightness(1.72) saturate(1.45) contrast(1.08);
+  opacity:1;
+  transform:scale(1.035);
+  z-index:8;
+  box-shadow:inset 0 0 0 2px rgba(69,220,255,.98),0 0 30px rgba(30,194,245,.4);
+}
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg).is-selected{
+  filter:brightness(1.6) saturate(1.4) contrast(1.06);
+  opacity:1;
+  z-index:7;
+  box-shadow:inset 0 0 0 3px rgba(69,220,255,.98),0 0 34px rgba(30,194,245,.45);
+}
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg).is-selected::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border:2px solid rgba(69,220,255,.98);
+  pointer-events:none;
+}
+#hero.hero-redesign .hero-art-fg,
+#hero.hero-redesign .hero-art-grid,
+#hero.hero-redesign .hero-art-glow{pointer-events:none}
+@media(prefers-reduced-motion:reduce){
+  #hero.hero-redesign .hero-art-panel{transition:none}
+}
+</style>
+
 
 <style>
 /* 1 · glow tokens — Uiverse palette remapped to YOUR accent system */

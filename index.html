@@ -655,55 +655,70 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
 #cyber-card-constellation.is-open .cyber-card{animation:cyberConstellationOpen .7s cubic-bezier(.2,.8,.2,1) both,cyberCardDrift var(--drift,9s) ease-in-out infinite alternate}
 @media(prefers-reduced-motion:reduce){#cyber-card-constellation .cyber-card{animation:none;transition:none}}
 
-/* Straighten the constellation into one lower, unified container with a clean inner card grid. */
-#cyber-card-constellation{
-  top:55%;right:clamp(1rem,3vw,3.5rem);
-  width:min(52vw,680px);height:min(64vh,570px);min-height:390px;
-  transform:translateY(-42%);perspective:none;
+/* Reuse the original three-image stack; reveal it with a cinematic swoop after the intro. */
+#cyber-card-constellation{display:none!important}
+#hero.hero-redesign .hero-art{
+  left:auto!important;right:clamp(1.5rem,6vw,6rem)!important;top:50%!important;
+  width:min(48vw,610px)!important;height:min(66vh,620px)!important;
+  transform:translateY(-43%);overflow:visible!important;opacity:1!important;
 }
-#cyber-card-constellation .cyber-orbit{display:none}
-#cyber-card-constellation .cyber-stack{
-  position:absolute;inset:0;display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  grid-template-rows:repeat(2,minmax(0,1fr));gap:12px;
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg){
+  display:block!important;position:absolute!important;left:auto!important;
+  width:clamp(180px,22vw,285px)!important;height:clamp(225px,34vh,360px)!important;
+  border:0!important;border-radius:5px!important;overflow:hidden!important;
+  background-size:cover!important;background-position:center!important;
+  box-shadow:0 22px 60px rgba(0,0,0,.4),0 0 0 1px rgba(133,218,255,.15)!important;
+  opacity:0!important;filter:saturate(.9) brightness(.83)!important;
+  transform:translate3d(110px,30px,0) rotate(8deg) scale(.92)!important;
+  clip-path:inset(0 0 0 0)!important;
+  transition:transform 1.05s cubic-bezier(.16,1,.3,1),opacity .8s ease,filter .5s ease!important;
+  animation:none!important;pointer-events:auto!important;
 }
-#cyber-card-constellation .cyber-card{
-  position:relative;inset:auto!important;left:auto!important;right:auto!important;
-  top:auto!important;bottom:auto!important;
-  width:100%;height:100%;min-width:0;min-height:0;
-  margin:0!important;transform:none;rotate:0deg;
-  border-radius:15px;animation:none;
-  opacity:var(--card-opacity,.65);
+#hero.hero-redesign .hero-art-mountains{right:auto!important;left:3%!important;top:8%!important;z-index:3!important}
+#hero.hero-redesign .hero-art-city{right:3%!important;top:1%!important;z-index:4!important}
+#hero.hero-redesign .hero-art-code{right:21%!important;left:auto!important;top:34%!important;z-index:5!important}
+#hero.hero-redesign .hero-art-globe{display:none!important}
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg)::before{
+  content:"";position:absolute;inset:45% 0 0!important;
+  background:linear-gradient(180deg,transparent,rgba(3,8,14,.82))!important;
+  pointer-events:none;
 }
-#cyber-card-constellation .cyber-card:hover,
-#cyber-card-constellation .cyber-card:focus-visible,
-#cyber-card-constellation .cyber-card[aria-expanded="true"]{
-  transform:translateY(-4px) scale(1.015);
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg)::after{
+  content:attr(aria-label);position:absolute;left:0;right:0;bottom:0;
+  padding:1rem;color:#e7f3fa;font-family:var(--mono);
+  font-size:clamp(.6rem,.75vw,.78rem);line-height:1.5;letter-spacing:.1em;
+  text-transform:uppercase;text-shadow:0 1px 8px rgba(0,0,0,.85);
+  border-top:1px solid rgba(143,194,218,.2);pointer-events:none;
 }
-#cyber-card-constellation .cyber-card[data-card="pqc"]{--card-opacity:.68}
-#cyber-card-constellation .cyber-card[data-card="forensics"]{--card-opacity:.78}
-#cyber-card-constellation .cyber-card[data-card="engineering"]{--card-opacity:.58}
-#cyber-card-constellation .cyber-card[data-card="ai"]{--card-opacity:.7}
-#cyber-card-constellation .cyber-card[data-card="threat"]{--card-opacity:.48}
-#cyber-card-constellation .cyber-card[data-card="global"]{--card-opacity:.6}
-#cyber-card-constellation .cyber-hint{right:1%;bottom:-1.6rem}
+#hero.hero-redesign .hero-art.is-swooped .hero-art-panel:not(.hero-art-fg){
+  opacity:.88!important;filter:saturate(1.05) brightness(.94)!important;
+  transform:translate3d(0,0,0) rotate(0deg) scale(1)!important;
+}
+#hero.hero-redesign .hero-art.is-swooped .hero-art-mountains{transition-delay:0s!important}
+#hero.hero-redesign .hero-art.is-swooped .hero-art-city{transition-delay:.16s!important}
+#hero.hero-redesign .hero-art.is-swooped .hero-art-code{transition-delay:.32s!important}
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg):hover,
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg):focus-visible,
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg).is-selected{
+  opacity:1!important;filter:saturate(1.2) brightness(1.08)!important;
+  transform:translate3d(0,-7px,0) rotate(0deg) scale(1.025)!important;
+  box-shadow:0 28px 65px rgba(0,0,0,.5),0 0 0 1px rgba(105,200,214,.65),0 0 26px rgba(105,200,214,.13)!important;
+}
 @media(max-width:900px){
- #cyber-card-constellation{top:57%;right:1rem;width:59vw;height:54vh;min-height:330px;transform:translateY(-38%)}
- #cyber-card-constellation .cyber-stack{gap:8px}
- #cyber-card-constellation .cyber-card{padding:.75rem;border-radius:12px}
+ #hero.hero-redesign .hero-art{right:1rem!important;width:56vw!important;height:54vh!important}
+ #hero.hero-redesign .hero-art-panel:not(.hero-art-fg){width:clamp(145px,25vw,210px)!important;height:clamp(180px,27vh,260px)!important}
 }
 @media(max-width:600px){
- #cyber-card-constellation{top:auto;bottom:4.3rem;right:0;width:100%;height:31vh;min-height:225px;transform:none;opacity:.86}
- #cyber-card-constellation .cyber-stack{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:6px}
- #cyber-card-constellation .cyber-card{padding:.55rem;border-radius:10px}
- #cyber-card-constellation .cyber-card .cyber-index{top:.5rem;left:.55rem;font-size:.46rem;letter-spacing:.08em}
- #cyber-card-constellation .cyber-card .cyber-icon{font-size:.85rem}
- #cyber-card-constellation .cyber-card strong{font-size:.64rem;letter-spacing:.015em}
- #cyber-card-constellation .cyber-card small{font-size:.49rem;line-height:1.35}
- #cyber-card-constellation .cyber-card .cyber-detail>span{font-size:.49rem;line-height:1.35}
- #cyber-card-constellation .cyber-hint{display:none}
+ #hero.hero-redesign .hero-art{top:auto!important;bottom:4.8rem!important;right:0!important;width:100%!important;height:32vh!important;transform:none!important;opacity:1!important}
+ #hero.hero-redesign .hero-art-panel:not(.hero-art-fg){width:43vw!important;height:25vh!important;max-height:205px!important}
+ #hero.hero-redesign .hero-art-mountains{left:2%!important;top:4%!important}
+ #hero.hero-redesign .hero-art-city{right:2%!important;top:0!important}
+ #hero.hero-redesign .hero-art-code{right:28%!important;top:24%!important}
+ #hero.hero-redesign .hero-art-panel:not(.hero-art-fg)::after{padding:.65rem;font-size:.52rem}
 }
-</style>
+@media(prefers-reduced-motion:reduce){
+ #hero.hero-redesign .hero-art-panel:not(.hero-art-fg){transition:none!important;opacity:.88!important;transform:none!important}
+}</style>
 </head>
 <body>
 
@@ -1834,21 +1849,21 @@ if (location.hash) {
 
 <script id="cyber-card-constellation-script">
 (function(){
- const mount=document.getElementById('cyber-card-constellation');
- if(!mount)return;
- const cards=Array.from(mount.querySelectorAll('.cyber-card'));
- cards.forEach(card=>{
-   card.addEventListener('click',()=>{
-     const open=card.getAttribute('aria-expanded')==='true';
-     cards.forEach(other=>{other.setAttribute('aria-expanded','false');other.classList.remove('is-active')});
-     card.setAttribute('aria-expanded',String(!open));
-     card.classList.toggle('is-active',!open);
-     mount.classList.toggle('is-open',!open);
+ const art=document.querySelector('#hero.hero-redesign .hero-art');
+ if(!art)return;
+ const panels=Array.from(art.querySelectorAll('.hero-art-panel:not(.hero-art-fg)'));
+ panels.forEach(panel=>{
+   panel.addEventListener('click',()=>{
+     panels.forEach(other=>{other.classList.remove('is-selected');other.setAttribute('aria-pressed','false')});
+     panel.classList.add('is-selected');panel.setAttribute('aria-pressed','true');
    });
-   card.addEventListener('keydown',e=>{
-     if(e.key==='Escape'){card.setAttribute('aria-expanded','false');card.classList.remove('is-active');mount.classList.remove('is-open');}
+   panel.addEventListener('keydown',event=>{
+     if(event.key==='Enter'||event.key===' '){event.preventDefault();panel.click()}
    });
  });
+ const reveal=()=>art.classList.add('is-swooped');
+ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){reveal();return}
+ window.setTimeout(reveal,3610);
 })();
 </script>
 

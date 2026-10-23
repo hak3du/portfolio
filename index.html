@@ -188,6 +188,8 @@ a{color:inherit;text-decoration:none}
 .layer{transform:none!important}
 /* Hero still needs its original blend/mask treatment to reveal the stacked layers.
    These are static effects; only scroll-driven movement is disabled. */
+/* Keep terrain layers anchored to the bottom of their source photos; centered crops can leave only sky/clouds visible. */
+#hero .parallax__ridge,#hero .parallax__fg{object-position:center bottom!important}
 .parallax__dust,.parallax__luna,.parallax__rays{mix-blend-mode:screen!important}
 #hero .parallax__ridge{-webkit-mask-image:linear-gradient(to top,#000 40%,transparent 78%)!important;mask-image:linear-gradient(to top,#000 40%,transparent 78%)!important}
 #hero .parallax__fg{-webkit-mask-image:linear-gradient(to top,#000 30%,transparent 62%)!important;mask-image:linear-gradient(to top,#000 30%,transparent 62%)!important}

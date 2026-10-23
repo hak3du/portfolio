@@ -462,6 +462,18 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
 #hero.hero-redesign .hero-art-fg,#hero.hero-redesign .hero-art-grid,#hero.hero-redesign .hero-art-glow{pointer-events:none;cursor:default}
 @media(max-width:760px){#hero.hero-redesign .hero-art-panel{filter:brightness(1.22) saturate(1.16)}}
 @media(prefers-reduced-motion:reduce){#hero.hero-redesign .hero-art-panel{transition:none}}
+
+/* Fade the identity label and live-news ticker after the 3.61-second opening beat. */
+@keyframes introIdentityNewsFade {
+  to { opacity:0; visibility:hidden; pointer-events:none; }
+}
+#topbar #brandBtn,
+#topbar .hn-ticker {
+  animation:introIdentityNewsFade .32s ease 3.61s forwards;
+}
+@media(prefers-reduced-motion:reduce){
+  #topbar #brandBtn,#topbar .hn-ticker{animation:introIdentityNewsFade .01ms linear 3.61s forwards}
+}
 </style>
 </head>
 <body>

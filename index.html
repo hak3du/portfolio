@@ -1582,17 +1582,8 @@ if (location.hash) {
 <script>
 (function(){
   var bar=document.getElementById('topbar');if(!bar)return;
-  bar.classList.add('hn-force');
-
-  /* 1 · hide on scroll down · reveal on scroll up · always at top */
-  var last=0;
-  addEventListener('scroll',function(){
-    var y=scrollY;
-    if(y<60)bar.classList.remove('hn-hide');
-    else if(y>last+6)bar.classList.add('hn-hide');
-    else if(y<last-6)bar.classList.remove('hn-hide');
-    last=y;
-  },{passive:true});
+  /* The main scroll controller owns navbar visibility; do not force this bar over the hero nav. */
+  bar.classList.remove('hn-force','hn-hide','on');
 
   /* 2 · HACKERNEWS ticker — free Firebase API, no key needed */
   var t=document.createElement('div');

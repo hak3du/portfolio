@@ -1674,6 +1674,77 @@ if (location.hash) {
 <!-- ═══════════════════════ /HIDDEN NAV + HN TICKER ═══════════════════════ -->
 
 <style id="tech-reactivity">
+/* Convert the right-side image layers into unmistakable, selectable cards. */
+#hero.hero-redesign .hero-art{z-index:1}
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg){
+  inset:auto;
+  position:absolute;
+  width:auto;height:auto;
+  clip-path:none!important;
+  pointer-events:auto;
+  overflow:hidden;
+  border:1px solid rgba(143,194,218,.42);
+  border-radius:12px;
+  background-size:cover;
+  background-position:center;
+  opacity:.88;
+  cursor:pointer;
+  box-shadow:0 16px 38px rgba(0,0,0,.34),inset 0 0 0 1px rgba(255,255,255,.035);
+  transition:transform .28s ease,opacity .28s ease,border-color .28s ease,box-shadow .28s ease,filter .28s ease;
+  filter:saturate(.88) brightness(.9);
+}
+#hero.hero-redesign .hero-art-mountains{left:auto;right:30%;top:22%;width:clamp(145px,17vw,255px);height:clamp(190px,27vh,300px);z-index:3}
+#hero.hero-redesign .hero-art-city{left:auto;right:7%;top:15%;width:clamp(150px,18vw,270px);height:clamp(155px,23vh,250px);z-index:4}
+#hero.hero-redesign .hero-art-code{left:auto;right:28%;top:56%;width:clamp(150px,18vw,265px);height:clamp(145px,22vh,240px);z-index:5}
+#hero.hero-redesign .hero-art-globe{left:auto;right:6%;top:51%;width:clamp(155px,19vw,285px);height:clamp(180px,27vh,295px);z-index:6}
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg)::before{
+  content:"";position:absolute;inset:35% 0 0;
+  background:linear-gradient(180deg,transparent,rgba(3,8,14,.9));
+  pointer-events:none;
+}
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg)::after{
+  content:attr(aria-label);
+  position:absolute;left:0;right:0;bottom:0;
+  padding:1rem .9rem .85rem;
+  color:#e7f3fa;font-family:var(--mono);font-size:clamp(.55rem,.68vw,.72rem);
+  line-height:1.5;letter-spacing:.09em;text-transform:uppercase;
+  text-shadow:0 1px 8px rgba(0,0,0,.85);
+  border-top:1px solid rgba(143,194,218,.2);
+  pointer-events:none;
+}
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg):hover,
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg):focus-visible{
+  opacity:1;filter:saturate(1.15) brightness(1.08);
+  transform:translateY(-5px) scale(1.025);
+  border-color:rgba(105,200,214,.95);
+  box-shadow:0 22px 48px rgba(0,0,0,.48),0 0 0 1px rgba(105,200,214,.24),0 0 26px rgba(105,200,214,.16);
+  outline:none;
+}
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg).is-selected{
+  opacity:1;filter:saturate(1.18) brightness(1.08);
+  border:2px solid var(--cyan);
+  box-shadow:0 20px 46px rgba(0,0,0,.48),0 0 0 3px rgba(105,200,214,.13),0 0 30px rgba(105,200,214,.24);
+}
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg).is-selected::after{border-top-color:var(--cyan)}
+#hero.hero-redesign .hero-art-fg{z-index:8;pointer-events:none}
+#hero.hero-redesign .hero-art-grid,#hero.hero-redesign .hero-art-glow{z-index:9;pointer-events:none}
+@media(max-width:900px){
+ #hero.hero-redesign .hero-art-mountains{right:31%;top:22%;width:clamp(120px,24vw,200px);height:clamp(160px,24vh,235px)}
+ #hero.hero-redesign .hero-art-city{right:4%;top:18%;width:clamp(125px,25vw,205px);height:clamp(135px,22vh,210px)}
+ #hero.hero-redesign .hero-art-code{right:29%;top:58%;width:clamp(125px,25vw,205px);height:clamp(130px,21vh,200px)}
+ #hero.hero-redesign .hero-art-globe{right:3%;top:54%;width:clamp(130px,26vw,215px);height:clamp(150px,24vh,230px)}
+}
+@media(max-width:600px){
+ #hero.hero-redesign .hero-art-panel:not(.hero-art-fg){opacity:.42}
+ #hero.hero-redesign .hero-art-mountains{right:25%;top:28%;width:38vw;height:19vh}
+ #hero.hero-redesign .hero-art-city{right:3%;top:24%;width:38vw;height:18vh}
+ #hero.hero-redesign .hero-art-code{right:25%;top:55%;width:38vw;height:18vh}
+ #hero.hero-redesign .hero-art-globe{right:3%;top:53%;width:38vw;height:21vh}
+ #hero.hero-redesign .hero-art-panel:not(.hero-art-fg):hover,
+ #hero.hero-redesign .hero-art-panel:not(.hero-art-fg):focus-visible,
+ #hero.hero-redesign .hero-art-panel:not(.hero-art-fg).is-selected{opacity:1}
+}
+@media(prefers-reduced-motion:reduce){#hero.hero-redesign .hero-art-panel:not(.hero-art-fg){transition:none}}
 /* Sacred-geometry rhythm: centered golden-ratio proportions and a deliberate hero inset. */
 :root{
   --phi:1.618;

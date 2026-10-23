@@ -68,8 +68,7 @@ a{color:inherit;text-decoration:none}
 #audio-edge{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .8s ease;
   box-shadow:inset 0 0 calc(50px + var(--ar-vol,0)*70px) rgba(78,201,212,calc(var(--ar-vol,0)*.07))}
 #audio-edge.on{opacity:1}
-#progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:400;pointer-events:none;
-  background:linear-gradient(90deg,var(--cyan),var(--blue));transform:scaleX(0);transform-origin:0 0;opacity:.8}
+#progress{display:none!important;}
 
 /* ---------- theme toggle ---------- */
 #themeBtn{position:fixed;left:clamp(.8rem,2vw,1.4rem);bottom:clamp(.8rem,2vw,1.4rem);z-index:500;
@@ -470,7 +469,7 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
 <div class="gridbg" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 <div id="audio-edge" aria-hidden="true"></div>
-<div id="progress" aria-hidden="true"></div>
+
 <button id="themeBtn" aria-label="Toggle light / dark mode"><i class="fas fa-sun"></i></button>
 
 <header id="topbar">
@@ -1675,6 +1674,30 @@ if (location.hash) {
 <!-- ═══════════════════════ /HIDDEN NAV + HN TICKER ═══════════════════════ -->
 
 <style id="tech-reactivity">
+/* Refined low-glare palette and legible type across the hero and content */
+:root{
+  --bg:#080b10;--bg2:#0d121a;--panel:rgba(15,21,30,.84);
+  --fg:#e2e8ef;--dim:#a0adbd;--faint:#465363;
+  --cyan:#69c8d6;--blue:#6ca6d8;--gold:#d1b879;
+  --line:rgba(145,173,196,.14);--line2:rgba(105,200,214,.34);
+}
+:root.light{
+  --bg:#f4f6f8;--bg2:#e9eef2;--panel:rgba(255,255,255,.94);
+  --fg:#202a35;--dim:#566575;--faint:#c0cbd4;
+  --cyan:#167f91;--blue:#316b9c;--gold:#80642c;
+  --line:rgba(35,58,77,.14);--line2:rgba(22,127,145,.35);
+}
+body{color:var(--fg)}
+#hero.hero-redesign .hero-nav{border-bottom-color:rgba(145,173,196,.16)}
+#hero.hero-redesign .hero-nav nav a{color:#c2ccd6}
+#hero.hero-redesign .hero-nav nav a:hover,#hero.hero-redesign .hero-nav nav a.active{color:#8edbe5}
+#hero.hero-redesign .hero-kicker{color:#9bdce4}
+#hero.hero-redesign .hero-title span{color:#69c8d6}
+#hero.hero-redesign .hero-role{color:#d8e0e8}
+#hero.hero-redesign .hero-lede{color:#b3c0cd}
+#hero.hero-redesign .hero-connect{border-color:#4faebc;color:#e2edf2}
+#hero.hero-redesign .hero-connect span{color:#8edbe5}
+
 /* Prevent the global scroll navbar from overlapping the hero's own navigation. */
 #hero .hero-nav{transition:opacity .24s ease,visibility .24s ease;}
 #hero.global-nav-active .hero-nav{opacity:0;visibility:hidden;pointer-events:none;}

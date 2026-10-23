@@ -446,7 +446,7 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
 @media(prefers-reduced-motion:reduce){#hero.hero-redesign *{scroll-behavior:auto!important;transition:none!important}}
 
 /* Interactive right-side artwork: stronger contrast, hover feedback, and persistent selection. */
-#hero.hero-redesign .hero-art-panel{appearance:none;-webkit-appearance:none;border:0;padding:0;margin:0;cursor:pointer;pointer-events:auto;transition:opacity .24s ease,filter .24s ease,transform .32s ease,box-shadow .24s ease;filter:brightness(1.18) saturate(1.18);outline:none}
+#hero.hero-redesign .hero-art-panel{border:0;padding:0;margin:0;cursor:pointer;pointer-events:auto;transition:opacity .24s ease,filter .24s ease,transform .32s ease,box-shadow .24s ease;filter:brightness(1.18) saturate(1.18);outline:none}
 #hero.hero-redesign .hero-art-mountains{opacity:.94}
 #hero.hero-redesign .hero-art-city{opacity:.82}
 #hero.hero-redesign .hero-art-code{opacity:.76}
@@ -489,10 +489,10 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
 <!-- ============ HERO ============ -->
 <header class="parallax hero-redesign" id="hero" aria-label="Introduction">
   <div class="hero-art" aria-label="Interactive visual panels">
-    <button class="hero-art-panel hero-art-mountains" type="button" aria-label="Select mountain landscape" aria-pressed="false"></button>
-    <button class="hero-art-panel hero-art-city" type="button" aria-label="Select city skyline" aria-pressed="false"></button>
-    <button class="hero-art-panel hero-art-code" type="button" aria-label="Select code and engineering" aria-pressed="false"></button>
-    <button class="hero-art-panel hero-art-globe" type="button" aria-label="Select global network" aria-pressed="false"></button>
+    <div class="hero-art-panel hero-art-mountains" role="button" tabindex="0" aria-label="Select mountain landscape" aria-pressed="false"></div>
+    <div class="hero-art-panel hero-art-city" role="button" tabindex="0" aria-label="Select city skyline" aria-pressed="false"></div>
+    <div class="hero-art-panel hero-art-code" role="button" tabindex="0" aria-label="Select code and engineering" aria-pressed="false"></div>
+    <div class="hero-art-panel hero-art-globe" role="button" tabindex="0" aria-label="Select global network" aria-pressed="false"></div>
     <div class="hero-art-panel hero-art-fg" aria-hidden="true"></div>
     <div class="hero-art-grid" aria-hidden="true"></div>
     <div class="hero-art-glow" aria-hidden="true"></div>
@@ -1388,12 +1388,18 @@ if (location.hash) {
 (function(){
   const art=document.querySelector('#hero.hero-redesign .hero-art');
   if(!art)return;
-  const panels=Array.from(art.querySelectorAll('button.hero-art-panel'));
-  panels.forEach(panel=>panel.addEventListener('click',()=>{
-    const wasSelected=panel.classList.contains('is-selected');
-    panels.forEach(item=>{item.classList.remove('is-selected');item.setAttribute('aria-pressed','false');});
-    if(!wasSelected){panel.classList.add('is-selected');panel.setAttribute('aria-pressed','true');}
-  }));
+  const panels=Array.from(art.querySelectorAll('[role="button"].hero-art-panel'));
+  panels.forEach(panel=>{
+    const selectPanel=()=>{
+      const wasSelected=panel.classList.contains('is-selected');
+      panels.forEach(item=>{item.classList.remove('is-selected');item.setAttribute('aria-pressed','false');});
+      if(!wasSelected){panel.classList.add('is-selected');panel.setAttribute('aria-pressed','true');}
+    };
+    panel.addEventListener('click',selectPanel);
+    panel.addEventListener('keydown',event=>{
+      if(event.key==='Enter'||event.key===' '){event.preventDefault();selectPanel();}
+    });
+  });
 })();
 </script>
 </body> ═══════════ -->

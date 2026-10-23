@@ -759,6 +759,7 @@ footer{position:relative;z-index:3;border-top:1px solid var(--line);background:v
   </div>
 
   <div id="cyber-card-constellation" aria-label="Expandable cybersecurity capability cards">
+    <button id="gallery-visibility-toggle" type="button" aria-controls="cyber-card-constellation" aria-pressed="false">HIDE GALLERY <span aria-hidden="true">−</span></button>
     <div class="cyber-orbit" aria-hidden="true"></div>
     <div class="cyber-stack">
       <button class="cyber-card" data-card="pqc" aria-expanded="false" type="button">
@@ -1861,6 +1862,16 @@ if (location.hash) {
      if(event.key==='Enter'||event.key===' '){event.preventDefault();panel.click()}
    });
  });
+ const gallery=document.querySelector('#cyber-card-constellation');
+ const toggle=document.querySelector('#gallery-visibility-toggle');
+ if(gallery&&toggle){
+   toggle.addEventListener('click',()=>{
+     const hidden=gallery.classList.toggle('gallery-hidden');
+     art.classList.toggle('gallery-hidden',hidden);
+     toggle.setAttribute('aria-pressed',String(hidden));
+     toggle.innerHTML=hidden?'SHOW GALLERY <span aria-hidden="true">+</span>':'HIDE GALLERY <span aria-hidden="true">−</span>';
+   });
+ }
  const reveal=()=>art.classList.add('is-swooped');
  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){reveal();return}
  window.setTimeout(reveal,3610);
@@ -2350,6 +2361,29 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
  #hero.hero-redesign .hero-art-panel:not(.hero-art-fg){opacity:.28!important}
  #cyber-card-constellation .cyber-card{opacity:1!important}
 }
+
+/* User-controlled visibility switch for the right-side gallery. */
+#hero.hero-redesign #gallery-visibility-toggle{
+  position:absolute;z-index:30;top:clamp(1rem,3vh,2rem);right:clamp(1rem,3vw,2.5rem);
+  display:inline-flex;align-items:center;gap:.65rem;padding:.7rem .9rem;
+  color:rgba(238,248,255,.9);background:rgba(8,16,28,.42);
+  border:0;border-radius:999px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  font:600 .62rem/1 var(--mono,monospace);letter-spacing:.12em;cursor:pointer;
+  transition:background .2s ease,color .2s ease;
+}
+#hero.hero-redesign #gallery-visibility-toggle:hover{background:rgba(35,65,88,.62);color:#fff}
+#hero.hero-redesign #gallery-visibility-toggle:focus-visible{outline:2px solid #66ddff;outline-offset:4px}
+#hero.hero-redesign #cyber-card-constellation.gallery-hidden .cyber-orbit,
+#hero.hero-redesign #cyber-card-constellation.gallery-hidden .cyber-stack{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+#hero.hero-redesign .hero-art.gallery-hidden .hero-art-panel:not(.hero-art-fg),
+#hero.hero-redesign .hero-art.gallery-hidden .hero-art-grid,
+#hero.hero-redesign .hero-art.gallery-hidden .hero-art-glow{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+#hero.hero-redesign #cyber-card-constellation .cyber-orbit,
+#hero.hero-redesign #cyber-card-constellation .cyber-stack{transition:opacity .28s ease,visibility .28s ease}
+@media(max-width:700px){
+ #hero.hero-redesign #gallery-visibility-toggle{top:auto;bottom:1rem;right:1rem;font-size:.58rem}
+}
+
 </style>
 
 <script id="tech-click-sound">

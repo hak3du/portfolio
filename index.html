@@ -2316,18 +2316,13 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
   background:linear-gradient(145deg,rgba(17,32,48,.57),rgba(8,15,25,.38))!important;
   backdrop-filter:blur(16px) saturate(125%)!important;-webkit-backdrop-filter:blur(16px) saturate(125%)!important;
   box-shadow:0 12px 35px rgba(0,0,0,.12)!important;
-  opacity:0;transform:translateY(18px);
+  opacity:1;transform:none;
   transition:opacity .7s ease,transform .7s cubic-bezier(.2,.75,.2,1),background .25s ease!important;
 }
-#hero.hero-redesign .hero-art.is-swooped ~ #cyber-card-constellation .cyber-card{
-  opacity:1;transform:translateY(0);
+#hero.hero-redesign #cyber-card-constellation .cyber-card{
+  opacity:1!important;transform:none!important;
 }
-#cyber-card-constellation .cyber-card:nth-child(1){transition-delay:.12s!important}
-#cyber-card-constellation .cyber-card:nth-child(2){transition-delay:.2s!important}
-#cyber-card-constellation .cyber-card:nth-child(3){transition-delay:.28s!important}
-#cyber-card-constellation .cyber-card:nth-child(4){transition-delay:.36s!important}
-#cyber-card-constellation .cyber-card:nth-child(5){transition-delay:.44s!important}
-#cyber-card-constellation .cyber-card:nth-child(6){transition-delay:.52s!important}
+
 #cyber-card-constellation .cyber-card:hover{background:linear-gradient(145deg,rgba(30,62,83,.7),rgba(8,19,31,.55))!important;transform:translateY(-3px)!important}
 #cyber-card-constellation .cyber-card strong{font-size:clamp(.9rem,1.35vw,1.12rem)!important}
 #cyber-card-constellation .cyber-card small{line-height:1.5!important;color:rgba(228,241,249,.78)!important}
@@ -2336,7 +2331,7 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
  #hero.hero-redesign .hero-art{left:25%!important;width:75%!important}
  #cyber-card-constellation{right:1rem!important;width:min(68vw,540px)!important;height:min(62vh,520px)!important;min-height:350px!important}
  #cyber-card-constellation .cyber-stack{gap:9px!important}
- #cyber-card-constellation .cyber-card{padding:.8rem!important}
+ #cyber-card-constellation .cyber-card{padding:.8rem!important;opacity:1!important;transform:none!important}
 }
 @media(max-width:600px){
  #hero.hero-redesign .hero-art{left:0!important;width:100%!important;opacity:1!important}
@@ -2345,7 +2340,7 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
  #hero.hero-redesign .hero-art-code{left:17%!important;width:83%!important}
  #cyber-card-constellation{top:auto!important;bottom:1.1rem!important;right:1rem!important;left:1rem!important;width:auto!important;height:35vh!important;min-height:240px!important;transform:none!important}
  #cyber-card-constellation .cyber-stack{gap:7px!important}
- #cyber-card-constellation .cyber-card{padding:.65rem!important;border-radius:12px!important}
+ #cyber-card-constellation .cyber-card{padding:.65rem!important;border-radius:12px!important;opacity:1!important;transform:none!important}
  #cyber-card-constellation .cyber-card strong{font-size:.82rem!important}
  #cyber-card-constellation .cyber-card small{font-size:.65rem!important}
  #cyber-card-constellation .cyber-card .cyber-icon{font-size:1rem!important}

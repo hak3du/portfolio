@@ -1675,5 +1675,67 @@ if (location.hash) {
 </script>
 
 <!-- ═══════════════════════ /HIDDEN NAV + HN TICKER ═══════════════════════ -->
+
+<style id="tech-reactivity">
+/* Interactive type + tactile controls */
+a,button,[role="button"],.hero-title,.hero-kicker,.hero-role,.hero-proof,.section-title,.section-label,.project-title,.ch-num{
+  -webkit-tap-highlight-color:transparent;
+}
+a,button,[role="button"]{transition:color .18s ease,filter .18s ease,text-shadow .18s ease,transform .18s ease,box-shadow .18s ease}
+a:hover,button:hover,[role="button"]:hover{
+  text-shadow:0 0 12px rgba(55,211,255,.28);
+}
+a:active,button:active,[role="button"]:active{filter:brightness(1.35);transform:translateY(1px)}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
+  outline:1px solid rgba(61,218,255,.9);outline-offset:4px;
+}
+.hero-title span,.hero-kicker,.hero-role,.section-title,.project-title{
+  transition:color .22s ease,text-shadow .22s ease;
+}
+.hero-title span:hover,.hero-kicker:hover,.hero-role:hover,.section-title:hover,.project-title:hover{
+  color:#74e6ff;text-shadow:0 0 18px rgba(32,200,244,.28);
+}
+.tech-click-flash{animation:techClickFlash .34s ease-out}
+@keyframes techClickFlash{
+  0%{filter:brightness(1);text-shadow:none}
+  35%{filter:brightness(1.7);text-shadow:0 0 16px rgba(54,219,255,.8)}
+  100%{filter:brightness(1);text-shadow:none}
+}
+@media(prefers-reduced-motion:reduce){.tech-click-flash{animation:none}}
+</style>
+<script id="tech-click-sound">
+(function(){
+  if(window.__portfolioTechClicks)return;
+  window.__portfolioTechClicks=true;
+  let audioCtx=null,lastSound=0;
+  function clickTone(){
+    const now=performance.now();
+    if(now-lastSound<65)return;
+    lastSound=now;
+    try{
+      const AC=window.AudioContext||window.webkitAudioContext;
+      if(!AC)return;
+      if(!audioCtx)audioCtx=new AC();
+      if(audioCtx.state==='suspended')audioCtx.resume();
+      const t=audioCtx.currentTime;
+      const osc=audioCtx.createOscillator(),gain=audioCtx.createGain(),filter=audioCtx.createBiquadFilter();
+      osc.type='sine';osc.frequency.setValueAtTime(1180,t);osc.frequency.exponentialRampToValueAtTime(620,t+.055);
+      filter.type='highpass';filter.frequency.value=420;
+      gain.gain.setValueAtTime(.0001,t);gain.gain.exponentialRampToValueAtTime(.045,t+.006);gain.gain.exponentialRampToValueAtTime(.0001,t+.075);
+      osc.connect(filter);filter.connect(gain);gain.connect(audioCtx.destination);
+      osc.start(t);osc.stop(t+.08);
+    }catch(e){}
+  }
+  document.addEventListener('click',function(e){
+    const target=e.target.closest('a,button,[role="button"],input[type="button"],input[type="submit"]');
+    if(!target||target.disabled||target.getAttribute('aria-disabled')==='true')return;
+    clickTone();
+    target.classList.remove('tech-click-flash');
+    void target.offsetWidth;
+    target.classList.add('tech-click-flash');
+    setTimeout(()=>target.classList.remove('tech-click-flash'),380);
+  },true);
+})();
+</script>
 </body>
 </html>

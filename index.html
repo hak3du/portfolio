@@ -1063,7 +1063,9 @@ function updateScrollUI() {
   const y = SS.current;
   const p = clamp(y / SS.max, 0, 1);
   if (Math.abs(p - lastP) > .0005) { prog.style.transform = 'scaleX(' + p.toFixed(4) + ')'; lastP = p; }
-  const wantTop = y > vh * .6;
+  const hero = document.getElementById('hero');
+  /* Keep the global navbar hidden until the hero has fully scrolled away. */
+  const wantTop = hero ? y >= Math.max(1, hero.offsetHeight - 24) : y > vh * .6;
   if (wantTop !== topOn) { topOn = wantTop; topbar.classList.toggle('on', wantTop); rail.classList.toggle('on', wantTop); const hero = document.getElementById('hero'); if (hero) hero.classList.toggle('global-nav-active', wantTop); }
 }
 function queueScrollUI() {

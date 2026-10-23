@@ -1702,6 +1702,62 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
   100%{filter:brightness(1);text-shadow:none}
 }
 @media(prefers-reduced-motion:reduce){.tech-click-flash{animation:none}}
+
+/* Hero typography: every headline, descriptor, supporting line and label reacts */
+#hero .hero-copy > p,
+#hero .hero-title,
+#hero .hero-proof,
+#hero .hero-side-label span,
+#hero .hero-side-label strong,
+#hero .hero-location,
+#hero .hero-nav a,
+#hero .hero-brand,
+#hero .hero-socials a,
+#hero .hero-scroll{
+  transition:color .22s ease, text-shadow .22s ease, filter .22s ease, transform .22s ease;
+}
+#hero .hero-copy > p,
+#hero .hero-title,
+#hero .hero-proof,
+#hero .hero-side-label span,
+#hero .hero-side-label strong,
+#hero .hero-location{
+  cursor:default;
+}
+#hero .hero-copy > p:hover,
+#hero .hero-title:hover,
+#hero .hero-proof:hover,
+#hero .hero-side-label span:hover,
+#hero .hero-side-label strong:hover,
+#hero .hero-location:hover{
+  color:#83eaff;
+  text-shadow:0 0 14px rgba(48,207,255,.42);
+  filter:brightness(1.15);
+}
+#hero .hero-title:hover span{
+  color:#a2f0ff;
+  text-shadow:0 0 22px rgba(48,207,255,.58);
+}
+#hero .hero-kicker:hover i,
+#hero .hero-proof:hover .hero-proof-line{
+  box-shadow:0 0 12px rgba(48,207,255,.9);
+}
+#hero .hero-role:hover b{color:#65e2ff;text-shadow:0 0 10px rgba(48,207,255,.65)}
+#hero .hero-nav a:hover,
+#hero .hero-brand:hover,
+#hero .hero-socials a:hover,
+#hero .hero-scroll:hover{
+  color:#83eaff;
+  text-shadow:0 0 14px rgba(48,207,255,.5);
+  filter:brightness(1.18);
+}
+@media(prefers-reduced-motion:reduce){
+  #hero .hero-copy > p,#hero .hero-title,#hero .hero-proof,
+  #hero .hero-side-label span,#hero .hero-side-label strong,
+  #hero .hero-location,#hero .hero-nav a,#hero .hero-brand,
+  #hero .hero-socials a,#hero .hero-scroll{transition:none}
+}
+
 </style>
 <script id="tech-click-sound">
 (function(){

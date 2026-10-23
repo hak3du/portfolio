@@ -186,8 +186,13 @@ a{color:inherit;text-decoration:none}
    Preserve each layer's opacity and z-order; reduce GPU compositing cost. */
 .parallax > .layer,.scene > .s-bg,.scene > .s-mid,.scene > .s-glow,.scene > .s-fg{animation:none!important;transform:none!important}
 .layer{transform:none!important}
-.parallax__dust,.parallax__luna,.parallax__rays,.s-mid{mix-blend-mode:normal!important}
-.parallax__ridge,.parallax__fg,.s-fg{-webkit-mask-image:none!important;mask-image:none!important}
+/* Hero still needs its original blend/mask treatment to reveal the stacked layers.
+   These are static effects; only scroll-driven movement is disabled. */
+.parallax__dust,.parallax__luna,.parallax__rays{mix-blend-mode:screen!important}
+#hero .parallax__ridge{-webkit-mask-image:linear-gradient(to top,#000 40%,transparent 78%)!important;mask-image:linear-gradient(to top,#000 40%,transparent 78%)!important}
+#hero .parallax__fg{-webkit-mask-image:linear-gradient(to top,#000 30%,transparent 62%)!important;mask-image:linear-gradient(to top,#000 30%,transparent 62%)!important}
+.s-mid{mix-blend-mode:normal!important}
+.s-fg{-webkit-mask-image:none!important;mask-image:none!important}
 #hero .layer{backface-visibility:visible;contain:paint}
 
 /* ---------- hero content (static — text stays crisp) ---------- */

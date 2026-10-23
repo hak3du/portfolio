@@ -2270,6 +2270,93 @@ button:focus-visible,a:focus-visible,[role="button"]:focus-visible{
 }
 
 </style>
+
+<style id="right-gallery-and-layered-background">
+/* Right-side gallery: clean, borderless glass cards over three atmospheric image layers. */
+#hero.hero-redesign .hero-art{
+  left:39%!important;right:0!important;width:61%!important;inset-block:0!important;
+  overflow:hidden!important;background:transparent!important;isolation:isolate;
+}
+#hero.hero-redesign .hero-art-panel:not(.hero-art-fg){
+  display:block!important;position:absolute!important;inset-block:0!important;height:100%!important;
+  background-size:cover!important;background-position:center!important;clip-path:none!important;
+  border:0!important;outline:0!important;filter:saturate(.82);
+  transform:translateX(38px) scale(1.035);opacity:0!important;
+  transition:opacity 1.05s ease,transform 1.3s cubic-bezier(.2,.75,.2,1)!important;
+}
+#hero.hero-redesign .hero-art-mountains{left:4%!important;width:96%!important;z-index:1!important;opacity:0!important}
+#hero.hero-redesign .hero-art-city{left:15%!important;width:85%!important;z-index:2!important;opacity:0!important}
+#hero.hero-redesign .hero-art-code{left:28%!important;width:72%!important;z-index:3!important;opacity:0!important}
+#hero.hero-redesign .hero-art-globe{display:none!important}
+#hero.hero-redesign .hero-art.is-swooped .hero-art-mountains{opacity:.34!important;transform:translateX(0) scale(1)!important;transition-delay:0s!important}
+#hero.hero-redesign .hero-art.is-swooped .hero-art-city{opacity:.28!important;transform:translateX(0) scale(1)!important;transition-delay:.16s!important}
+#hero.hero-redesign .hero-art.is-swooped .hero-art-code{opacity:.2!important;transform:translateX(0) scale(1)!important;transition-delay:.32s!important}
+#hero.hero-redesign .hero-art-fg{
+  display:block!important;inset:0!important;z-index:4!important;pointer-events:none!important;
+  background:linear-gradient(90deg,#03070d 0%,rgba(3,7,13,.76) 20%,rgba(3,7,13,.22) 57%,rgba(3,7,13,.24) 100%),linear-gradient(0deg,rgba(2,6,11,.5),transparent 28%,transparent 75%,rgba(2,6,11,.32))!important;
+}
+#hero.hero-redesign .hero-art-grid{z-index:5!important;opacity:.08!important;pointer-events:none!important}
+#hero.hero-redesign .hero-art-glow{z-index:5!important;pointer-events:none!important;opacity:.45!important}
+#cyber-card-constellation{
+  display:block!important;position:absolute!important;z-index:8!important;
+  right:clamp(1.1rem,4vw,4rem)!important;top:51%!important;
+  width:min(49vw,620px)!important;height:min(70vh,590px)!important;min-height:390px!important;
+  transform:translateY(-48%)!important;perspective:none!important;pointer-events:auto!important;
+}
+#cyber-card-constellation::before,#cyber-card-constellation .cyber-orbit{display:none!important}
+#cyber-card-constellation .cyber-stack{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-template-rows:repeat(3,minmax(0,1fr))!important;gap:12px!important;
+  position:absolute!important;inset:0!important;pointer-events:auto!important;
+}
+#cyber-card-constellation .cyber-card{
+  position:relative!important;inset:auto!important;width:auto!important;height:auto!important;
+  min-width:0!important;min-height:0!important;padding:1rem!important;
+  border:0!important;border-radius:16px!important;outline:0!important;
+  background:linear-gradient(145deg,rgba(17,32,48,.57),rgba(8,15,25,.38))!important;
+  backdrop-filter:blur(16px) saturate(125%)!important;-webkit-backdrop-filter:blur(16px) saturate(125%)!important;
+  box-shadow:0 12px 35px rgba(0,0,0,.12)!important;
+  opacity:0;transform:translateY(18px);
+  transition:opacity .7s ease,transform .7s cubic-bezier(.2,.75,.2,1),background .25s ease!important;
+}
+#hero.hero-redesign .hero-art.is-swooped ~ #cyber-card-constellation .cyber-card{
+  opacity:1;transform:translateY(0);
+}
+#cyber-card-constellation .cyber-card:nth-child(1){transition-delay:.12s!important}
+#cyber-card-constellation .cyber-card:nth-child(2){transition-delay:.2s!important}
+#cyber-card-constellation .cyber-card:nth-child(3){transition-delay:.28s!important}
+#cyber-card-constellation .cyber-card:nth-child(4){transition-delay:.36s!important}
+#cyber-card-constellation .cyber-card:nth-child(5){transition-delay:.44s!important}
+#cyber-card-constellation .cyber-card:nth-child(6){transition-delay:.52s!important}
+#cyber-card-constellation .cyber-card:hover{background:linear-gradient(145deg,rgba(30,62,83,.7),rgba(8,19,31,.55))!important;transform:translateY(-3px)!important}
+#cyber-card-constellation .cyber-card strong{font-size:clamp(.9rem,1.35vw,1.12rem)!important}
+#cyber-card-constellation .cyber-card small{line-height:1.5!important;color:rgba(228,241,249,.78)!important}
+#cyber-card-constellation .cyber-card .cyber-icon{font-size:1.25rem!important}
+@media(max-width:900px){
+ #hero.hero-redesign .hero-art{left:25%!important;width:75%!important}
+ #cyber-card-constellation{right:1rem!important;width:min(68vw,540px)!important;height:min(62vh,520px)!important;min-height:350px!important}
+ #cyber-card-constellation .cyber-stack{gap:9px!important}
+ #cyber-card-constellation .cyber-card{padding:.8rem!important}
+}
+@media(max-width:600px){
+ #hero.hero-redesign .hero-art{left:0!important;width:100%!important;opacity:1!important}
+ #hero.hero-redesign .hero-art-mountains{left:0!important;width:100%!important}
+ #hero.hero-redesign .hero-art-city{left:8%!important;width:92%!important}
+ #hero.hero-redesign .hero-art-code{left:17%!important;width:83%!important}
+ #cyber-card-constellation{top:auto!important;bottom:1.1rem!important;right:1rem!important;left:1rem!important;width:auto!important;height:35vh!important;min-height:240px!important;transform:none!important}
+ #cyber-card-constellation .cyber-stack{gap:7px!important}
+ #cyber-card-constellation .cyber-card{padding:.65rem!important;border-radius:12px!important}
+ #cyber-card-constellation .cyber-card strong{font-size:.82rem!important}
+ #cyber-card-constellation .cyber-card small{font-size:.65rem!important}
+ #cyber-card-constellation .cyber-card .cyber-icon{font-size:1rem!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #hero.hero-redesign .hero-art-panel:not(.hero-art-fg),#cyber-card-constellation .cyber-card{transition:none!important;transform:none!important}
+ #hero.hero-redesign .hero-art-panel:not(.hero-art-fg){opacity:.28!important}
+ #cyber-card-constellation .cyber-card{opacity:1!important}
+}
+</style>
+
 <script id="tech-click-sound">
 (function(){
   if(window.__portfolioTechClicks)return;

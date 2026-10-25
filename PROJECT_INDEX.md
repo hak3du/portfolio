@@ -7,7 +7,7 @@ This index is a working map of public engineering artifacts. It distinguishes **
 | Project | Link | Current role in the portfolio | Verification priority |
 |---|---|---|---|
 | Interactive portfolio | [Live experience](https://hak3du.github.io/portfolio/) · [Source](https://github.com/hak3du/portfolio) | Main landing surface that should route reviewers to the strongest proof. | Test all links, keyboard navigation, responsive layouts, media loading, and the primary call to action. |
-| AR experience | [Source repository](https://github.com/hak3du/AugmentedReality) | Spatial/AR experiment and memorable presentation layer. | Verify marker assets, camera permission handling, repeat-trigger behavior, performance, and a non-camera desktop preview. |
+| AR experience | [Camera-free desktop preview](https://hak3du.github.io/AugmentedReality/preview.html) · [Source repository](https://github.com/hak3du/AugmentedReality) | Spatial/AR experiment and memorable presentation layer. | Desktop preview and documentation are now in main; verify CDN loading and orbit controls in a real browser, then test marker tracking on a supported mobile device. |
 | Portfolio OS | [Source repository](https://github.com/hak3du/TonyNgoepe) | Alternate portfolio implementation. | Decide whether this is an active product or archive; avoid splitting visitors between competing landing pages. |
 
 ## Security engineering and infrastructure

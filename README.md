@@ -62,3 +62,17 @@ For software engineering, API/backend work, security-control reviews, policy-as-
 <p align="center">
   <sub>Built by Thabang Tony Ngoepe · South Africa · Remote-friendly</sub>
 </p>
+
+
+## Live repository widgets
+
+These cards are third-party, dynamically rendered GitHub README widgets. If a service is unavailable, the project links above remain the source of truth.
+
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api?username=hak3du&show_icons=true&hide_border=true&theme=tokyonight&rank_icon=github" alt="GitHub account activity summary" height="165">
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=hak3du&layout=compact&hide_border=true&theme=tokyonight&langs_count=8" alt="Most-used public repository languages" height="165">
+</p>
+
+<p align="center">
+  <img src="https://streak-stats.demolab.com?user=hak3du&theme=tokyonight&hide_border=true" alt="GitHub contribution streak">
+</p>

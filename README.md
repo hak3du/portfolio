@@ -19,7 +19,7 @@
 | **AHE Market** | Full-stack marketplace engineering and Solana/Pump.fun integration work. Mainnet transaction, custody, fee-settlement, and persistence claims require explicit end-to-end evidence before being considered production-ready. | [workspace repository](https://github.com/hak3du/workspace) |
 | **Exposure intelligence** | Web-exposure scanning and security-oriented investigation workflows. Use only against systems you own or are explicitly authorised to assess. | [Web Exposure Scanner](https://github.com/hak3du/Web-exposure-scanner) |
 | **Spatial / AR experience** | Camera-free orbitable desktop preview plus a separate marker-tracked AR entry point. Device compatibility still requires browser QA. | [Desktop preview](https://hak3du.github.io/AugmentedReality/preview.html) · [AR source](https://github.com/hak3du/AugmentedReality) |
-| **Full-stack product engineering** | Application work focused on turning product requirements into usable web experiences. | [ShareTenant](https://github.com/hak3du/ShareTenantapp) |
+| **Internet infrastructure explorer** | ShareTenant 2.0 explores the layers behind a request to a website, including DNS, routing, hosting, and delivery. Live-data coverage must be verified per integration. | [ShareTenant](https://github.com/hak3du/ShareTenantapp) |
 
 A fuller, maintained project map—including evidence, maturity, and next verification steps—is in **[PROJECT_INDEX.md](./PROJECT_INDEX.md)**.
 

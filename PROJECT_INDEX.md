@@ -57,3 +57,10 @@ For a recruiter, technical lead, or buyer, show **depth before breadth**:
 Use this section to record dated evidence, not aspirations:
 
 - **2026-10-25:** Published this index and the portfolio repository overview. Repository links were checked via GitHub; this documentation change does not itself verify that every project runs or is production-ready.
+
+- **2026-10-26:** Added all 10 missing `worlds/*.html` modules referenced by the portfolio's `WORLDS` map. Static path check confirms all configured module files now exist in the default branch.
+- **2026-10-26:** Added a [camera-free, orbitable AR scene preview](https://github.com/hak3du/AugmentedReality/blob/main/preview.html) and documented the separation between desktop preview and marker-tracked AR.
+- **2026-10-26:** Updated the marker AR entry with pinned A-Frame/AR.js versions, guided camera launch, a floating intro-video panel, marker-loss cleanup, and reduced particle count. Embedded JavaScript syntax check passed; real browser/device QA is still outstanding.
+- **2026-10-26:** Added project READMEs for [Quantum Launchpad](https://github.com/hak3du/workspace) and [ShareTenant 2.0](https://github.com/hak3du/ShareTenantapp).
+- **2026-10-26:** Removed tracked local-only `.env` files from `workspace`, `Web-exposure-scanner`, and `ShareTenantapp`, replacing them with `.env.example` templates. The reviewed values were local SQLite-style connection strings, not detected service credentials; keep real secrets out of Git.
+- **2026-10-26:** Audit remains **in progress**. The 2-byte `assets/audi.glb` is not a valid model; AR marker/video behavior still needs real-device verification; Zero Trust policy tests and each application's clean install/build/test path must be rerun before production claims.
